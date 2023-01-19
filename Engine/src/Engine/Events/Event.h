@@ -1,8 +1,6 @@
 #pragma once
+#include "Engine/afx/stdafx.h"
 #include "Engine/Core.h"
-#include <string>
-#include <sstream>
-#include <functional>
 
 namespace Engine
 {

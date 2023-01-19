@@ -1,4 +1,6 @@
+#include "stdafx.h"
 #include "Application.h"
+
 namespace Engine
 {
 	Application::Application()
