@@ -8,3 +8,6 @@
 #else
 	#error ENGINE ONLY SUPPORTS WINDOWS!
 #endif // ENGINE_PLATFORM_WINDOWS
+
+
+#define BIT(x) (1 << x)

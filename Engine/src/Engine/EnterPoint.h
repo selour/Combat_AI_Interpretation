@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	Engine::Log::Init();
 	ENGINE_CORE_WARN("Initialized Log!");
 	ENGINE_INFO("Hello World!");
-
+	
 	auto app = Engine::CreateApp();
 	app->Run();
 	delete app;
