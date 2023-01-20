@@ -22,7 +22,16 @@ namespace Engine
 	}
 	void Application::OnEvent(Event& e)
 	{
-		ENGINE_CORE_INFO("{0}", e.ToString());
 
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+
+		ENGINE_CORE_TRACE("{0}", e.ToString());
+
+	}
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 }
