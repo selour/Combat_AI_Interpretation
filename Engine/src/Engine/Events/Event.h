@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Core.h"
 #include <functional>
-
+#include <sstream>
 namespace Engine
 {
 
