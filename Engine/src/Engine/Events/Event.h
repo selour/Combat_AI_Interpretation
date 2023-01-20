@@ -1,6 +1,6 @@
 #pragma once
-#include "stdafx.h"
 #include "Engine/Core.h"
+#include <functional>
 
 namespace Engine
 {
@@ -64,7 +64,7 @@ namespace Engine
 	class EventDispatcher
 	{
 		template<typename T>
-		using EventFn = std::functon<bool(T&)>;
+		using EventFn = std::function <bool(T&)>;
 	public:
 		EventDispatcher(Event& event)
 			:m_Event(event)

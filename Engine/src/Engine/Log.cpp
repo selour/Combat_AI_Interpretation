@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Log.h"
+
 namespace Engine
 {
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;

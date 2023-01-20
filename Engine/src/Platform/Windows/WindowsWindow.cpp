@@ -1,9 +1,6 @@
+
 #include "stdafx.h"
 #include "Platform/Windows/WindowsWindow.h"
-#include "Engine/Events/WindowEvent.h"
-#include "Engine/Events/MouseEvent.h"
-#include "Engine/Events/KeyEvent.h"
-
 #include <GLFW/glfw3.h>
 
 namespace Engine
@@ -71,11 +68,5 @@ namespace Engine
 		glfwDestroyWindow(m_Window);
 	}
 
-	
-
-
-
-
-
-
 }
+
