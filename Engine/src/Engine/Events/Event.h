@@ -61,6 +61,7 @@ namespace Engine
 		bool m_Handled = false;
 	};
 	//事件调度器
+	
 	class EventDispatcher
 	{
 		template<typename T>
@@ -86,7 +87,7 @@ namespace Engine
 		Event& m_Event;
 
 	};
-
+	
 	inline std::ostream& operator << (std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();
