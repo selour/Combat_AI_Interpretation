@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/afx/stdafx.h"
+#include "stdafx.h"
 #include "Engine/Core.h"
 
 namespace Engine
