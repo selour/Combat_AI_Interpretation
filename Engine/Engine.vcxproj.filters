@@ -45,10 +45,10 @@
     <ClInclude Include="src\stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+    <ClInclude Include="src\Engine\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Window.h">
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
