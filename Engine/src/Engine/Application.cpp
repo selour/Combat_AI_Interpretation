@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Application.h"
-
 namespace Engine
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
