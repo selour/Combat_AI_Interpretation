@@ -67,6 +67,9 @@ namespace Engine
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		ENGINE_CORE_ASSERT(status, "Fail to initialize Glad!");
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -110,6 +113,14 @@ namespace Engine
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				WindowCloseEvent event;
+				data.EventCallback(event);
+			}
+
+		);
+		glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int xpos, int ypos)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowMovedEvent event(xpos, ypos);
 				data.EventCallback(event);
 			}
 

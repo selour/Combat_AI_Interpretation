@@ -107,7 +107,7 @@ namespace Engine
 		EVENT_CLASS_TYPE(WindowMoved)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	private:
-		//移动的距离
+		//移动后的位置
 		float m_WindowX, m_WindowY;
 
 	};
