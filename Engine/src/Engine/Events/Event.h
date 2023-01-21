@@ -42,8 +42,12 @@ namespace Engine
 	//事件基类
 	class ENGINE_API Event
 	{
-		friend class EventDispatcher;
 	public:
+
+
+		//事件是否已被处理
+		bool m_Handled = false;
+
 		//获取事件类型
 		virtual EventType GetEventType() const = 0;
 		//获取过滤标识
@@ -56,9 +60,7 @@ namespace Engine
 		{
 			return GetCategoryFlags() & category;
 		}
-	protected:
-		//事件是否已被处理
-		bool m_Handled = false;
+		
 	};
 	//事件调度器
 	
