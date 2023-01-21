@@ -65,7 +65,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -83,7 +83,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -96,6 +96,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\LayerStack.h" />
+    <ClInclude Include="src\Engine\Layer.h" />
     <ClInclude Include="src\Engine\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\stdafx.h" />
@@ -110,6 +112,8 @@
     <ClInclude Include="src\Engine\EnterPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\LayerStack.cpp" />
+    <ClCompile Include="src\Engine\Layer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
