@@ -21,10 +21,10 @@ namespace Engine
 
 
 	//窗口尺寸改变事件
-	class ENGINE_API WindowResizeEvent : public Event
+	class ENGINE_API WindowResizedEvent : public Event
 	{
 	public:
-		WindowResizeEvent(unsigned int width, unsigned int height)
+		WindowResizedEvent(unsigned int width, unsigned int height)
 			:m_Width(width), m_Height(height)
 		{}
 		inline unsigned int GetWidth() const

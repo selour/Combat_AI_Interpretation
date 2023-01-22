@@ -8,7 +8,7 @@ public:
 	{}
 	void OnUpdate() override
 	{
-		ENGINE_INFO("TestLayer::Update");
+		//ENGINE_INFO("TestLayer::Update");
 
 	}
 	void OnEvent(Engine::Event& event) override

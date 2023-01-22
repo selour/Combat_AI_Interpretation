@@ -59,6 +59,22 @@ namespace Engine
 		EVENT_CLASS_TYPE(KeyReleased)
 	
 	};
+	//按键输入事件
+	class ENGINE_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int codepoint)
+			: KeyEvent(codepoint)
+		{}
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent:" << m_KeyCode;
+			return ss.str();
+		}
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
+
 
 
 }

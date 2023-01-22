@@ -10,6 +10,7 @@ namespace Engine
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer();
 
+		//层生命周期函数
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
 		virtual void OnUpdate() {}

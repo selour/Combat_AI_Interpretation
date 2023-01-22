@@ -82,7 +82,7 @@ namespace Engine
 				data.Width = width;
 				data.Height = height;
 
-				WindowResizeEvent event(width, height);
+				WindowResizedEvent event(width, height);
 				data.EventCallback(event);
 
 
@@ -125,7 +125,13 @@ namespace Engine
 			}
 
 		);
-
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(codepoint);
+				data.EventCallback(event);
+			}
+		);
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

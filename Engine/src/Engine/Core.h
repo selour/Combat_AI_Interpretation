@@ -17,7 +17,9 @@
 	#define ENGINE_CORE_ASSERT(x, ...) 
 #endif // ENGINE_ENABLE_ASSERTS
 
-
+//用于绑定事件的函数
+#define ENGINE_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+//用于事件过滤标志
 #define BIT(x) (1 << x)
 
 #include "Log.h"

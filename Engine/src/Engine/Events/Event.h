@@ -17,7 +17,7 @@ namespace Engine
 		//循环事件
 		AppTick, AppUpdate, AppRender,
 		//按键事件
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		//鼠标事件
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
