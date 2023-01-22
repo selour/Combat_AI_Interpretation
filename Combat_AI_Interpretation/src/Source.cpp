@@ -8,7 +8,8 @@ public:
 	{}
 	void OnUpdate() override
 	{
-		//ENGINE_INFO("TestLayer::Update");
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_TAB))
+			ENGINE_TRACE("Tab key is poressed!");
 
 	}
 	void OnEvent(Engine::Event& event) override

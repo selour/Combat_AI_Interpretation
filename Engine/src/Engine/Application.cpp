@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "Application.h"
 #include <glad/glad.h>
+
+#include "Application.h"
+#include "Engine/Input.h"
 namespace Engine
 {
 
@@ -29,6 +31,7 @@ namespace Engine
 			{
 				layer->OnUpdate();
 			}
+
 
 			m_Window->OnUpdate();
 		}
