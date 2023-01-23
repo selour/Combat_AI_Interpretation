@@ -16,6 +16,8 @@ namespace Engine
 		virtual void OnUpdate() {}
 		virtual void OnEvent(Event& event) {}
 
+		virtual void OnImGuiRender() {}
+
 	protected:
 		std::string m_DebugName;
 	};

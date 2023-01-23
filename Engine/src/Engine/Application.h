@@ -3,6 +3,7 @@
 #include "Engine/Window.h"
 #include "Events/WindowEvent.h"
 #include "Engine/LayerStack.h"
+#include "Engine/ImGui/ImGuiLayer.h"
 namespace Engine
 {
 	class ENGINE_API Application
@@ -30,6 +31,7 @@ namespace Engine
 		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_Window;
 		static Application* s_Instance;
+		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
 	};

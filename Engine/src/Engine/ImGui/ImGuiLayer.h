@@ -1,8 +1,6 @@
 #pragma once
 #include "Engine/Layer.h"
-#include "Engine/Events/MouseEvent.h"
-#include "Engine/Events/KeyEvent.h"
-#include "Engine/Events/WindowEvent.h"
+
 namespace Engine
 {
 	class ENGINE_API ImGuiLayer : public Layer
@@ -11,19 +9,14 @@ namespace Engine
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override; 
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
+		virtual void OnAttach() override; 
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
+
+		void Begin();
+		void End();
 	private:
-		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-		bool OnMouseMovedEvent(MouseMovedEvent& e);
-		bool OnMouseScrolledEvent(MouseScrolledEvent& e);
-		bool OnKeyPressedEvent(KeyPressedEvent& e);
-		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
-		bool OnKeyTypedEvent(KeyTypedEvent& e);
-		bool OnWindowResizedEvent(WindowResizedEvent& e);
+
 		float m_Time = 0.0f;
 	};
 }
