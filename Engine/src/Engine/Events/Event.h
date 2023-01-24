@@ -40,7 +40,7 @@ namespace Engine
 	
 	
 	//事件基类
-	class ENGINE_API Event
+	class Event
 	{
 	public:
 

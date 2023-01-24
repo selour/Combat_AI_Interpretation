@@ -14,7 +14,7 @@ namespace Engine
 		{}
 	};
 	//´°¿Ú»ùÀà
-	class ENGINE_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

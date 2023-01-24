@@ -18,7 +18,7 @@
 namespace Engine
 {
 
-	class ENGINE_API Log
+	class Log
 	{
 	public:
 		// 初始化日志系统

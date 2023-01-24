@@ -3,7 +3,7 @@
 namespace Engine
 {
 	//鼠标移动事件
-	class ENGINE_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y)
@@ -33,7 +33,7 @@ namespace Engine
 
 	};
 	//鼠标滚轮事件
-	class ENGINE_API MouseScrolledEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
@@ -62,7 +62,7 @@ namespace Engine
 
 	};
 	//鼠标按键事件基类
-	class ENGINE_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() const
@@ -78,7 +78,7 @@ namespace Engine
 		int m_Button;
 	};
 	//鼠标按键按下事件
-	class ENGINE_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -95,7 +95,7 @@ namespace Engine
 
 	};
 	//鼠标按键按下事件
-	class ENGINE_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

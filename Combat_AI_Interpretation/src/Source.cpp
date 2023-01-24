@@ -12,6 +12,10 @@ public:
 			ENGINE_TRACE("Tab key is poressed!");
 
 	}
+	void OnImGuiRender() override
+	{
+		
+	}
 	void OnEvent(Engine::Event& event) override
 	{
 		ENGINE_TRACE("{0}", event.ToString());

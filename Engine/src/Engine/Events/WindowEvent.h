@@ -4,7 +4,7 @@ namespace Engine
 {
 
 	//窗口关闭事件
-	class ENGINE_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent()
@@ -21,7 +21,7 @@ namespace Engine
 
 
 	//窗口尺寸改变事件
-	class ENGINE_API WindowResizedEvent : public Event
+	class WindowResizedEvent : public Event
 	{
 	public:
 		WindowResizedEvent(unsigned int width, unsigned int height)
@@ -50,7 +50,7 @@ namespace Engine
 
 
 	//窗口获得焦点事件
-	class ENGINE_API WindowFocusEvent : public Event
+	class WindowFocusEvent : public Event
 	{
 	public:
 		WindowFocusEvent()
@@ -66,7 +66,7 @@ namespace Engine
 	};
 
 	//窗口失去焦点事件
-		class ENGINE_API WindowLostFocusEvent : public Event
+		class WindowLostFocusEvent : public Event
 	{
 	public:
 		WindowLostFocusEvent()
@@ -82,7 +82,7 @@ namespace Engine
 	};
 	
 	//窗口移动事件
-	class ENGINE_API WindowMovedEvent : public Event
+	class WindowMovedEvent : public Event
 	{
 	public:
 		WindowMovedEvent(float x, float y)
@@ -113,7 +113,7 @@ namespace Engine
 	};
 
 	//AppTick事件
-	class ENGINE_API AppTickEvent : public Event
+	class AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent()
@@ -128,7 +128,7 @@ namespace Engine
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 	//App更新事件
-	class ENGINE_API AppUpdateEvent : public Event
+	class AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent()
@@ -143,7 +143,7 @@ namespace Engine
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 	//App渲染事件
-	class ENGINE_API AppRenderEvent : public Event
+	class AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent()

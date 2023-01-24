@@ -4,7 +4,7 @@ namespace Engine
 {
 
 	//按键事件基类
-	class ENGINE_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const
@@ -21,7 +21,7 @@ namespace Engine
 
 	};
 	//按键按下事件
-	class ENGINE_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keycode, int repeatCount)
@@ -43,7 +43,7 @@ namespace Engine
 		int m_RepeatCount;
 	};
 	//按键松开事件
-	class ENGINE_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode, int repeatCount)
@@ -60,7 +60,7 @@ namespace Engine
 	
 	};
 	//按键输入事件
-	class ENGINE_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int codepoint)
@@ -74,7 +74,6 @@ namespace Engine
 		}
 		EVENT_CLASS_TYPE(KeyTyped)
 	};
-
 
 
 }
