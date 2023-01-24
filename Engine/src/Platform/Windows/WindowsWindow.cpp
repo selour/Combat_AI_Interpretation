@@ -5,6 +5,7 @@
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Events/WindowEvent.h"
 
+
 namespace Engine
 {
 	static bool s_GLFWInitialized = false;
@@ -31,7 +32,8 @@ namespace Engine
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
+	
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
@@ -66,6 +68,9 @@ namespace Engine
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+		
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		ENGINE_CORE_ASSERT(status, "Fail to initialize Glad!");
@@ -120,7 +125,7 @@ namespace Engine
 		glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int xpos, int ypos)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				WindowMovedEvent event(xpos, ypos);
+				WindowMovedEvent event((float)xpos, (float)ypos);
 				data.EventCallback(event);
 			}
 
@@ -186,7 +191,7 @@ namespace Engine
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseScrolledEvent event(xoffset, yoffset);
+				MouseScrolledEvent event((float)xoffset, (float)yoffset);
 				data.EventCallback(event);
 			}
 		);
@@ -194,7 +199,7 @@ namespace Engine
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseMovedEvent event(xpos, ypos);
+				MouseMovedEvent event((float)xpos, (float)ypos);
 				data.EventCallback(event);
 			}
 		);

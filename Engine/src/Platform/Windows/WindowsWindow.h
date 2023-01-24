@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 #include "Engine/Window.h"
-
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Engine
 {
@@ -32,7 +32,7 @@ namespace Engine
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
-
+		GraphicsContext* m_Context;
 		GLFWwindow* m_Window;
 
 		struct WindowData

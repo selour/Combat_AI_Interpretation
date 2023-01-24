@@ -1,5 +1,5 @@
 #include "Engine.h"
-
+#include "imgui.h"
 class TestLayer : public Engine::Layer
 {
 public:
@@ -14,11 +14,13 @@ public:
 	}
 	void OnImGuiRender() override
 	{
-		
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World");
+		ImGui::End();
 	}
 	void OnEvent(Engine::Event& event) override
 	{
-		ENGINE_TRACE("{0}", event.ToString());
+		//ENGINE_TRACE("{0}", event.ToString());
 	}
 };
 

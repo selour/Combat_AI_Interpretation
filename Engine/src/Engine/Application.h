@@ -34,6 +34,9 @@ namespace Engine
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
+
+
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 	};
 	//将定义在实际的游戏中
 	Application* CreateApp();
