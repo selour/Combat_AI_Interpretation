@@ -105,6 +105,7 @@ namespace Engine
 	{
 		while (m_Running)
 		{
+			glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
