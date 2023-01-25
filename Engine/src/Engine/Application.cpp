@@ -3,11 +3,31 @@
 
 #include "Application.h"
 #include "Engine/Input.h"
+
 namespace Engine
 {
 
 	Application* Application::s_Instance = nullptr;
+	static unsigned int ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::Float:		return GL_FLOAT;
+		case ShaderDataType::Float2:	return GL_FLOAT;
+		case ShaderDataType::Float3:	return GL_FLOAT;
+		case ShaderDataType::Float4:	return GL_FLOAT;
+		case ShaderDataType::Mat3:		return GL_FLOAT;
+		case ShaderDataType::Mat4:		return GL_FLOAT;
+		case ShaderDataType::Int:		return GL_INT;
+		case ShaderDataType::Int2:		return GL_INT;
+		case ShaderDataType::Int3:		return GL_INT;
+		case ShaderDataType::Int4:		return GL_INT;
+		case ShaderDataType::Bool:		return GL_BOOL;
+		}
 
+		ENGINE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
+	}
 	Application::Application()
 	{
 		ENGINE_ASSERT(!s_Instance, "Application already exists!")
@@ -19,29 +39,64 @@ namespace Engine
 		m_ImGuiLayer = new ImGuiLayer();
 		AppPushOverlay(m_ImGuiLayer);
 		//¶¥µãÔØÈë
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
-		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
-		float vertices[3 * 3] = { 
-			-0.5f, -0.5f, 0.0f, 
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+		
+		float vertices[3 * 7] = { 
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 		};
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-		 
-
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-
 		unsigned int indices[3] = { 0, 1, 2 };
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
+
+		unsigned int index = 0;
+		BufferLayout layout = {
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" }
+		};
+		m_VertexBuffer->SetLayout(layout);
+		for (const auto& element : m_VertexBuffer->GetLayout())
+		{
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(index, 
+				element.GetCount(), 
+				ShaderDataTypeToOpenGLBaseType(element.Type), 
+				element.Normalized, 
+				layout.GetStride(),
+				(const void*)element.Offset);
+			++index;
+		}
+
+
+		
+
+		std::string vertexSrc = R"(
+			#version 330 core
+			layout (location = 0) in vec3 a_Position;
+			layout (location = 1) in vec4 a_Color;
+			out vec4 Color;
+			
+			void main()
+			{
+				Color = a_Color;
+			    gl_Position = vec4(a_Position, 1.0);
+			}
+
+		)";
+		std::string fragmentSrc = R"(
+			#version 330 core
+			in vec4 Color;
+			out vec4 color;
+
+			void main()
+			{
+			    color = Color;
+
+			}
+
+		)";
+
+		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
 	}
 	Application::~Application()
 	{
@@ -53,9 +108,10 @@ namespace Engine
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			m_Shader->Use();
+			m_VertexBuffer->Bind();
+			m_IndexBuffer->Bind();
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 			{

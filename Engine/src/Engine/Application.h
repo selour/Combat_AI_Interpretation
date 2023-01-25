@@ -4,6 +4,8 @@
 #include "Events/WindowEvent.h"
 #include "Engine/LayerStack.h"
 #include "Engine/ImGui/ImGuiLayer.h"
+#include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/Buffer.h"
 namespace Engine
 {
 	class Application
@@ -36,7 +38,9 @@ namespace Engine
 		bool m_Running = true;
 
 
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
 	};
 	//将定义在实际的游戏中
 	Application* CreateApp();
