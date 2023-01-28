@@ -3,7 +3,8 @@
 #include <glad/glad.h>  
 namespace Engine
 {
-	//VertexBuffer
+	//------------------------VertexBuffer-------------------------------------------
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, unsigned int size)
 	{
 		glCreateBuffers(1, &m_VBO);
@@ -29,7 +30,8 @@ namespace Engine
 
 
 
-	//IndexBuffer
+	//---------------------------IndexBuffer-------------------------------------------------
+
 	OpenGLElementBuffer::OpenGLElementBuffer(unsigned int* indices, unsigned int count)
 		:m_Count(count)
 	{

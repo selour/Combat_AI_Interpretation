@@ -9,10 +9,10 @@ namespace Engine
 	{
 		switch (Renderer::GetRendererAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(vertices, size);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
@@ -23,10 +23,10 @@ namespace Engine
 		
 		switch (Renderer::GetRendererAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLElementBuffer(indices, count);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");

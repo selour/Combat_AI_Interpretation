@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 
 #include "Application.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Input.h"
 
 namespace Engine
@@ -21,12 +22,13 @@ namespace Engine
 		AppPushOverlay(m_ImGuiLayer);
 		//¶¥µãÔØÈë
 		
-		float vertices[3 * 7] = { 
+		float vertices[4 * 7] = { 
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
 		};
-		unsigned int indices[3] = { 0, 1, 2 };
+		unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
 		m_VAO.reset(VertexArray::Create());
 		m_VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 		m_EBO.reset(ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
@@ -78,13 +80,14 @@ namespace Engine
 		while (m_Running)
 		{
 			glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
+			RendererCommand::Clear();
 
 			m_Shader->Use();
-			m_VAO->Bind();
-			glDrawElements(GL_TRIANGLES, m_EBO->GetCount(), GL_UNSIGNED_INT, nullptr);
 
+			
+			RendererCommand::Draw(m_VAO);
+			
 			for (Layer* layer : m_LayerStack)
 			{
 				layer->OnUpdate();
