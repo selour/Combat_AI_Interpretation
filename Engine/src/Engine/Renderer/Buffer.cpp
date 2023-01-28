@@ -18,7 +18,7 @@ namespace Engine
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
-	IndexBuffer* Engine::IndexBuffer::Create(unsigned int* indices, unsigned int count)
+	ElementBuffer* Engine::ElementBuffer::Create(unsigned int* indices, unsigned int count)
 	{
 		
 		switch (Renderer::GetRendererAPI())
@@ -27,7 +27,7 @@ namespace Engine
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::OpenGL:
-			return new OpenGLIndexBuffer(indices, count);
+			return new OpenGLElementBuffer(indices, count);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;

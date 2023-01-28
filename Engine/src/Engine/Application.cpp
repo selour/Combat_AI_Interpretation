@@ -8,26 +8,7 @@ namespace Engine
 {
 
 	Application* Application::s_Instance = nullptr;
-	static unsigned int ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-		case ShaderDataType::Float:		return GL_FLOAT;
-		case ShaderDataType::Float2:	return GL_FLOAT;
-		case ShaderDataType::Float3:	return GL_FLOAT;
-		case ShaderDataType::Float4:	return GL_FLOAT;
-		case ShaderDataType::Mat3:		return GL_FLOAT;
-		case ShaderDataType::Mat4:		return GL_FLOAT;
-		case ShaderDataType::Int:		return GL_INT;
-		case ShaderDataType::Int2:		return GL_INT;
-		case ShaderDataType::Int3:		return GL_INT;
-		case ShaderDataType::Int4:		return GL_INT;
-		case ShaderDataType::Bool:		return GL_BOOL;
-		}
-
-		ENGINE_CORE_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
+	
 	Application::Application()
 	{
 		ENGINE_ASSERT(!s_Instance, "Application already exists!")
@@ -46,29 +27,20 @@ namespace Engine
 			 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 		};
 		unsigned int indices[3] = { 0, 1, 2 };
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
-
-		unsigned int index = 0;
-		BufferLayout layout = {
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" }
-		};
-		m_VertexBuffer->SetLayout(layout);
-		for (const auto& element : m_VertexBuffer->GetLayout())
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, 
-				element.GetCount(), 
-				ShaderDataTypeToOpenGLBaseType(element.Type), 
-				element.Normalized, 
-				layout.GetStride(),
-				(const void*)element.Offset);
-			++index;
-		}
-
+		m_VAO.reset(VertexArray::Create());
+		m_VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		m_EBO.reset(ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
 
 		
+		{
+			BufferLayout layout = {
+				{ ShaderDataType::Float3, "a_Position" },
+				{ ShaderDataType::Float4, "a_Color" }
+			};
+			m_VBO->SetLayout(layout);
+		}
+		m_VAO->AddVertexBuffer(m_VBO);
+		m_VAO->SetElementBuffer(m_EBO);
 
 		std::string vertexSrc = R"(
 			#version 330 core
@@ -110,9 +82,8 @@ namespace Engine
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			m_Shader->Use();
-			m_VertexBuffer->Bind();
-			m_IndexBuffer->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_VAO->Bind();
+			glDrawElements(GL_TRIANGLES, m_EBO->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 			{

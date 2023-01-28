@@ -57,7 +57,10 @@ namespace Engine
 			case ShaderDataType::Int4:		return 4;
 			case ShaderDataType::Bool:		return 1;
 			}
+			ENGINE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			return 0;
 		}
+		
 
 	};
 
@@ -106,15 +109,15 @@ namespace Engine
 
 		static VertexBuffer* Create(float* vertices, unsigned int size);
 	};
-	class IndexBuffer
+	class ElementBuffer
 	{
 	public:
-		virtual ~IndexBuffer() {}
+		virtual ~ElementBuffer() {}
 	
 		virtual void Bind() const = 0;
 		virtual void UnBind() const = 0;
 		virtual unsigned int GetCount() const = 0;
-		static IndexBuffer* Create(unsigned int* indices, unsigned int count);
+		static ElementBuffer* Create(unsigned int* indices, unsigned int count);
 	};
 
 }

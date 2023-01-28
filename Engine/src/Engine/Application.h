@@ -6,6 +6,7 @@
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Buffer.h"
+#include "Engine/Renderer/VertexArray.h"
 namespace Engine
 {
 	class Application
@@ -38,9 +39,10 @@ namespace Engine
 		bool m_Running = true;
 
 
-		std::unique_ptr<Shader> m_Shader;
-		std::unique_ptr<VertexBuffer> m_VertexBuffer;
-		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+		std::shared_ptr<Shader> m_Shader;
+		std::shared_ptr<VertexArray> m_VAO;
+		std::shared_ptr<VertexBuffer> m_VBO;
+		std::shared_ptr<ElementBuffer> m_EBO;
 	};
 	//将定义在实际的游戏中
 	Application* CreateApp();
