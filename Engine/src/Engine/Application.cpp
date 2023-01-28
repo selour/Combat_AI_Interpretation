@@ -80,13 +80,12 @@ namespace Engine
 		while (m_Running)
 		{
 			glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-			RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
-			RendererCommand::Clear();
+			Renderer::BeginScene();
 
 			m_Shader->Use();
 
-			
-			RendererCommand::Draw(m_VAO);
+			Renderer::Submit(m_VAO);
+			Renderer::EndScene();
 			
 			for (Layer* layer : m_LayerStack)
 			{

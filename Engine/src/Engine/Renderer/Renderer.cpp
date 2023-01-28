@@ -5,6 +5,8 @@ namespace Engine
 {
 	void Renderer::BeginScene()
 	{
+		RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
+		RendererCommand::Clear();
 	}
 	void Renderer::EndScene()
 	{
