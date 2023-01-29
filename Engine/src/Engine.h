@@ -11,6 +11,16 @@
 #include "Engine/Layer.h"
 #include "Engine/ImGui/ImGuiLayer.h"
 
+//----------äÖÈ¾Æ÷--------------
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererCommand.h"
+
+#include "Engine/Renderer/Buffer.h"
+#include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/VertexArray.h"
+#include "Engine/Renderer/Camera.h"
+//-----------------------------
+
 //----------½øÈëµã--------------
 #include "Engine/EnterPoint.h"
 //-----------------------------

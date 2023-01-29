@@ -20,57 +20,7 @@ namespace Engine
 		
 		m_ImGuiLayer = new ImGuiLayer();
 		AppPushOverlay(m_ImGuiLayer);
-		//¶¥µãÔØÈë
 		
-		float vertices[4 * 7] = { 
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
-		};
-		unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
-		m_VAO.reset(VertexArray::Create());
-		m_VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		m_EBO.reset(ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
-
-		
-		{
-			BufferLayout layout = {
-				{ ShaderDataType::Float3, "a_Position" },
-				{ ShaderDataType::Float4, "a_Color" }
-			};
-			m_VBO->SetLayout(layout);
-		}
-		m_VAO->AddVertexBuffer(m_VBO);
-		m_VAO->SetElementBuffer(m_EBO);
-
-		std::string vertexSrc = R"(
-			#version 330 core
-			layout (location = 0) in vec3 a_Position;
-			layout (location = 1) in vec4 a_Color;
-			out vec4 Color;
-			
-			void main()
-			{
-				Color = a_Color;
-			    gl_Position = vec4(a_Position, 1.0);
-			}
-
-		)";
-		std::string fragmentSrc = R"(
-			#version 330 core
-			in vec4 Color;
-			out vec4 color;
-
-			void main()
-			{
-			    color = Color;
-
-			}
-
-		)";
-
-		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
 	}
 	Application::~Application()
 	{
@@ -79,13 +29,7 @@ namespace Engine
 	{
 		while (m_Running)
 		{
-			glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-			Renderer::BeginScene();
-
-			m_Shader->Use();
-
-			Renderer::Submit(m_VAO);
-			Renderer::EndScene();
+			
 			
 			for (Layer* layer : m_LayerStack)
 			{

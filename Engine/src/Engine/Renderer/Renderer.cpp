@@ -1,18 +1,20 @@
 #include "stdafx.h"
 #include "Renderer.h"
-
+#include "Shader.h"
 namespace Engine
 {
-	void Renderer::BeginScene()
+	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData();
+	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
-		RendererCommand::Clear();
+		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 	void Renderer::EndScene()
 	{
 	}
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader)
 	{
+		shader->Use();
+		shader->SetMatrix4("u_ViewProjection", s_SceneData->ViewProjectionMatrix, true);
 		RendererCommand::Draw(vertexArray);
 	}
 }

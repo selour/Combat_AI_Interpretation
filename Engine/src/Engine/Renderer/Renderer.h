@@ -1,5 +1,7 @@
 #pragma once
 #include "RendererCommand.h"
+#include "Camera.h"
+#include "Shader.h"
 namespace Engine
 {
 	
@@ -7,13 +9,19 @@ namespace Engine
 	{
 	public:
 
-		static void BeginScene();
+		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader);
 
 
 		inline static RendererAPI::API GetRendererAPI() { return RendererAPI::GetAPI(); }
+	private:
+		struct SceneData
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
+		static SceneData* s_SceneData;
 	};
 
 
