@@ -65,7 +65,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\stb_image;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -84,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\stb_image;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -98,6 +98,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\stb_image\stb_image.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Engine\Renderer\Camera.h" />
@@ -130,8 +132,11 @@
     <ClInclude Include="src\Engine\EnterPoint.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Engine\Core\TimeStep.h" />
+    <ClInclude Include="src\Engine\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdparty\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayerBuild.cpp" />
     <ClCompile Include="src\Engine\Renderer\Camera.cpp" />
@@ -157,6 +162,7 @@
     <ClCompile Include="src\Engine\Application.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Engine\Core\TimeStep.cpp" />
+    <ClCompile Include="src\Engine\Renderer\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="3rdparty\glad\glad.vcxproj">
