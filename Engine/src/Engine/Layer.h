@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core.h"
+#include "Core/TimeStep.h"
 #include "Engine/Events/Event.h"
 namespace Engine
 {
@@ -13,7 +14,7 @@ namespace Engine
 		//层生命周期函数
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(TimeStep ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

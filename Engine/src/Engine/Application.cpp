@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include <glad/glad.h>
-
+#include <GLFW/glfw3.h>
 #include "Application.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Input.h"
+#include "Engine/Core/TimeStep.h"
 
 namespace Engine
 {
@@ -29,11 +30,13 @@ namespace Engine
 	{
 		while (m_Running)
 		{
-			
+			float time = (float)glfwGetTime();
+			TimeStep timeStep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
 			
 			for (Layer* layer : m_LayerStack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(timeStep);
 			}
 
 

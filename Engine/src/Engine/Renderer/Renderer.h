@@ -12,7 +12,7 @@ namespace Engine
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader);
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, glm::mat4 model);
 
 
 		inline static RendererAPI::API GetRendererAPI() { return RendererAPI::GetAPI(); }

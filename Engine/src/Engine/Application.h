@@ -37,6 +37,9 @@ namespace Engine
 		static Application* s_Instance;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
+		float m_LastFrameTime = 0.0f;
+
+
 		bool m_Running = true;
 
 

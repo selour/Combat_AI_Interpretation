@@ -1,6 +1,10 @@
 #include "Engine.h"
 #include "imgui.h"
 #include <memory>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Platform/OpenGL/OpenGLShader.h"
+
 class TestLayer : public Engine::Layer
 {
 public:
@@ -9,11 +13,11 @@ public:
 	{
 		//¶¥µãÔØÈë
 
-		float vertices[4 * 7] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
+		float vertices[4 * 3] = {
+			-0.5f, -0.5f, 0.0f, 
+			 0.5f, -0.5f, 0.0f, 
+			 0.5f,  0.5f, 0.0f, 
+			-0.5f,  0.5f, 0.0f
 		};
 		unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
 		m_VAO.reset(Engine::VertexArray::Create());
@@ -23,8 +27,7 @@ public:
 
 		{
 			Engine::BufferLayout layout = {
-				{ Engine::ShaderDataType::Float3, "a_Position" },
-				{ Engine::ShaderDataType::Float4, "a_Color" }
+				{ Engine::ShaderDataType::Float3, "a_Position" }
 			};
 			m_VBO->SetLayout(layout);
 		}
@@ -34,55 +37,70 @@ public:
 		std::string vertexSrc = R"(
 			#version 330 core
 			layout (location = 0) in vec3 a_Position;
-			layout (location = 1) in vec4 a_Color;
-
-			uniform mat4 u_ViewProjection;
 			
-			out vec4 Color;
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Model;
+			
 			
 			void main()
 			{
-				Color = a_Color;
-			    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+			    gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
 			}
 
 		)";
 		std::string fragmentSrc = R"(
 			#version 330 core
-			in vec4 Color;
-			out vec4 color;
+			out vec3 color;
 
+			uniform vec3 u_Color;
 			void main()
 			{
-			    color = Color;
+			    color = u_Color;
 
 			}
 
 		)";
 
-		m_Shader.reset(new Engine::Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(Engine::Shader::Create(vertexSrc, fragmentSrc));
 
-		m_Camera.SetRotation(45.0f);
+		//m_Camera.SetRotation(45.0f);
 	
 	}
-	void OnUpdate() override
+	void OnUpdate(Engine::TimeStep ts) override
 	{
+
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_A))
+			m_Position.x -= m_MoveSpeed * ts;
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_D))
+			m_Position.x += m_MoveSpeed * ts;
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_W))
+			m_Position.y += m_MoveSpeed * ts;
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_S))
+			m_Position.y -= m_MoveSpeed * ts;
+
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position);
+
+
 		//glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
 
-		Engine::Renderer::BeginScene(m_Camera);
-		Engine::Renderer::Submit(m_VAO, m_Shader);
-		Engine::Renderer::EndScene();
+		m_Camera.SetPosition(m_CameraPosition);
 
-		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_TAB))
-			ENGINE_TRACE("Tab key is poressed!");
+
+		Engine::Renderer::BeginScene(m_Camera);
+		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_Shader)->SetVector3f("u_Color", m_Color);
+
+
+		Engine::Renderer::Submit(m_VAO, m_Shader, transform);
+		Engine::Renderer::EndScene();
 
 	}
 	void OnImGuiRender() override
 	{
-		ImGui::Begin("Test");
-		ImGui::Text("Hello World");
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Color", glm::value_ptr(m_Color));
 		ImGui::End();
 	}
 	void OnEvent(Engine::Event& event) override
@@ -97,6 +115,10 @@ private:
 	std::shared_ptr<Engine::ElementBuffer> m_EBO;
 
 	Engine::OrthographicCamera m_Camera;
+	glm::vec3 m_CameraPosition = glm::vec3(0.0f);
+	float m_MoveSpeed = 0.5f;
+	glm::vec3 m_Color = glm::vec3(1.0f);
+	glm::vec3 m_Position = glm::vec3(0.0f);
 };
 
 class Game : public Engine::Application
