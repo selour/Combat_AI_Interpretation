@@ -60,7 +60,7 @@ public:
 
 			void main()
 			{
-				color = texture(u_Texture, v_TexCoord);
+				color = texture(u_Texture, v_TexCoord) * vec4(u_Color, 1.0f);
 				//color = vec4(v_TexCoord, 0.0f, 1.0f);
 			    //color = vec4(u_Color, 1.0f);
 
@@ -71,7 +71,7 @@ public:
 		m_Shader.reset(Engine::Shader::Create(vertexSrc, fragmentSrc));
 		
 		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_Shader)->SetInteger("u_Texture", 0);
-		m_Texture.reset(Engine::Texture2D::Create("assets/textures/Checkerboard.png"));
+		m_Texture.reset(Engine::Texture2D::Create("assets/textures/eye.png"));
 		//m_Camera.SetRotation(45.0f);
 	
 	}

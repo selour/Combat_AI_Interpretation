@@ -17,14 +17,36 @@ namespace Engine
 
         m_Width = width;
         m_Height = height;
+
+
+     
+        GLenum internalFormat = 0, dataFormat = 0;
+        if (nrComponents == 4)
+        {
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
+        } 
+        else if (nrComponents == 3)
+        {
+            internalFormat = GL_RGB8;
+            dataFormat = GL_RGB;
+        }
+        else if (nrComponents == 1)
+        {
+            internalFormat = GL_RED;
+        }
+            
+        ENGINE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+      
+
         //创建纹理
         glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-        glTextureStorage2D(m_TextureID, 1, GL_RGB8, m_Width, m_Height);
+        glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
         //设置纹理
         glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, GL_RGB, GL_UNSIGNED_BYTE, image);
+        glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, image);
        
         // 释放图像数据空间
         stbi_image_free(image);
