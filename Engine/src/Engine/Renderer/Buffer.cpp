@@ -5,7 +5,7 @@
 namespace Engine
 {	
 	
-	VertexBuffer* Engine::VertexBuffer::Create(float* vertices, unsigned int size)
+	std::shared_ptr<VertexBuffer> VertexBuffer::Create(float* vertices, unsigned int size)
 	{
 		switch (Renderer::GetRendererAPI())
 		{
@@ -13,12 +13,12 @@ namespace Engine
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(vertices, size);
+			return std::make_shared<OpenGLVertexBuffer>(vertices, size);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
-	ElementBuffer* Engine::ElementBuffer::Create(unsigned int* indices, unsigned int count)
+	std::shared_ptr<ElementBuffer> ElementBuffer::Create(unsigned int* indices, unsigned int count)
 	{
 		
 		switch (Renderer::GetRendererAPI())
@@ -27,7 +27,7 @@ namespace Engine
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLElementBuffer(indices, count);
+			return std::make_shared<OpenGLElementBuffer>(indices, count);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;

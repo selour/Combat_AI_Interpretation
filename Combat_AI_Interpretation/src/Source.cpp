@@ -20,9 +20,9 @@ public:
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 		unsigned int indices[6] = { 0, 1, 2, 2, 3, 0 };
-		m_VAO.reset(Engine::VertexArray::Create());
-		m_VBO.reset(Engine::VertexBuffer::Create(vertices, sizeof(vertices)));
-		m_EBO.reset(Engine::ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned)));
+		m_VAO = Engine::VertexArray::Create();
+		m_VBO = Engine::VertexBuffer::Create(vertices, sizeof(vertices));
+		m_EBO = Engine::ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned));
 
 
 		{
@@ -35,43 +35,11 @@ public:
 		m_VAO->AddVertexBuffer(m_VBO);
 		m_VAO->SetElementBuffer(m_EBO);
 
-		std::string vertexSrc = R"(
-			#version 330 core
-			layout (location = 0) in vec3 a_Position;
-			layout (location = 1) in vec2 a_TexCoord;
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Model;
-			
-			out vec2 v_TexCoord;
-			void main()
-			{
-				v_TexCoord = a_TexCoord;
-			    gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
-			}
-
-		)";
-		std::string fragmentSrc = R"(
-			#version 330 core
-			in vec2 v_TexCoord;
-			out vec4 color;
-
-			uniform sampler2D u_Texture;
-			uniform vec3 u_Color;
-
-			void main()
-			{
-				color = texture(u_Texture, v_TexCoord) * vec4(u_Color, 1.0f);
-				//color = vec4(v_TexCoord, 0.0f, 1.0f);
-			    //color = vec4(u_Color, 1.0f);
-
-			}
-
-		)";
-
-		m_Shader.reset(Engine::Shader::Create(vertexSrc, fragmentSrc));
 		
-		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_Shader)->SetInteger("u_Texture", 0);
-		m_Texture.reset(Engine::Texture2D::Create("assets/textures/eye.png"));
+
+		m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->SetInteger("u_Texture", 0);
+		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
 		//m_Camera.SetRotation(45.0f);
 	
 	}
@@ -100,10 +68,10 @@ public:
 
 		Engine::Renderer::BeginScene(m_Camera);
 
-		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_Shader)->SetVector3f("u_Color", m_Color);
+		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->SetVector3f("u_Color", m_Color);
 		m_Texture->Bind(0);
 
-		Engine::Renderer::Submit(m_VAO, m_Shader, transform);
+		Engine::Renderer::Submit(m_VAO, m_ShaderLibrary.Get("Texture"), transform);
 		Engine::Renderer::EndScene();
 
 	}
@@ -118,8 +86,7 @@ public:
 		//ENGINE_TRACE("{0}", event.ToString());
 	}
 private:
-
-	std::shared_ptr<Engine::Shader> m_Shader;
+	Engine::ShaderLibrary m_ShaderLibrary;
 	std::shared_ptr<Engine::VertexArray> m_VAO;
 	std::shared_ptr<Engine::VertexBuffer> m_VBO;
 	std::shared_ptr<Engine::ElementBuffer> m_EBO;

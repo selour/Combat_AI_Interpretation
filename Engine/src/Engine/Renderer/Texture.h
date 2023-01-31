@@ -18,7 +18,7 @@ namespace Engine
     {
     public:
        
-        static Texture2D* Create(const std::string& path);
+        static std::shared_ptr<Texture2D> Create(const std::string& path);
        
     };
 

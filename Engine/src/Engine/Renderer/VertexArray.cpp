@@ -4,7 +4,7 @@
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 namespace Engine
 {
-	VertexArray* VertexArray::Create()
+	std::shared_ptr<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::GetRendererAPI())
 		{
@@ -12,7 +12,7 @@ namespace Engine
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return std::make_shared<OpenGLVertexArray>();
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;

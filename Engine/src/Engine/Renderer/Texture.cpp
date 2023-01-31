@@ -5,7 +5,7 @@
 namespace Engine
 {
 
-	Texture2D* Texture2D::Create(const std::string& path)
+	std::shared_ptr<Texture2D> Texture2D::Create(const std::string& path)
 	{
 		switch (Renderer::GetRendererAPI())
 		{
@@ -13,7 +13,7 @@ namespace Engine
 			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLTexture2D(path);
+			return std::make_shared<OpenGLTexture2D>(path);
 		}
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;

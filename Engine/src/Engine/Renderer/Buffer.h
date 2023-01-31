@@ -107,7 +107,7 @@ namespace Engine
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* Create(float* vertices, unsigned int size);
+		static std::shared_ptr<VertexBuffer> Create(float* vertices, unsigned int size);
 	};
 	class ElementBuffer
 	{
@@ -117,7 +117,7 @@ namespace Engine
 		virtual void Bind() const = 0;
 		virtual void UnBind() const = 0;
 		virtual unsigned int GetCount() const = 0;
-		static ElementBuffer* Create(unsigned int* indices, unsigned int count);
+		static std::shared_ptr<ElementBuffer> Create(unsigned int* indices, unsigned int count);
 	};
 
 }

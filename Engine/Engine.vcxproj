@@ -63,7 +63,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\stb_image;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -82,7 +82,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;ENGINE_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Engine\3rdparty\stb_image;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\3rdparty\glad\include;$(SolutionDir)Engine\3rdparty\glfw\include;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>

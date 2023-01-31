@@ -1,19 +1,23 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+
 #include "Engine/Renderer/Shader.h"
 typedef unsigned int GLuint;
-
+typedef unsigned int GLenum;
 namespace Engine
 {
 	class OpenGLShader : public Shader
 	{
 	public:
-		OpenGLShader(const std::string& vertexSrc, const std::string fragmentSrc);
+		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string fragmentSrc);
+		OpenGLShader(const std::string& filePath);
 		virtual ~OpenGLShader() override;
 
 		virtual void Use() const override;
 		virtual void UnUse() const override;
+
+		virtual const std::string& GetName() const override { return m_Name; }
 
 		// uniform工具函数
 		void SetFloat(const char* name, float value, bool useShader);
@@ -28,9 +32,14 @@ namespace Engine
 
 	private:
 		unsigned int m_ShaderID;
-	private:
+		std::string m_Name;
+		//解析着色器文件
+		std::string ReadFile(const std::string& filePath);
+		std::unordered_map<GLenum, std::string> PreProcess(const std::string& src);
+		void Compile(std::unordered_map<GLenum, std::string>& shaderSrc);
+
 		// 检查着色器构造是否出错
-		void checkCompileErrors(GLuint object, std::string type);
+		void checkCompileErrors(GLuint object, GLenum type);
 	};
 
 }
