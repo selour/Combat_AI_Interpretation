@@ -4,7 +4,19 @@
 #include "Platform/OpenGL/OpenGLTexture.h"
 namespace Engine
 {
-
+	std::shared_ptr<Texture2D> Texture2D::Create(unsigned int width, unsigned int height)
+	{
+		switch (Renderer::GetRendererAPI())
+		{
+		case RendererAPI::API::None:
+			ENGINE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLTexture2D>(width, height);
+		}
+		ENGINE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
 	std::shared_ptr<Texture2D> Texture2D::Create(const std::string& path)
 	{
 		switch (Renderer::GetRendererAPI())

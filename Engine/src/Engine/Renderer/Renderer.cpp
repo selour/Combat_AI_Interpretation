@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "Renderer.h"
+#include "Renderer2D.h"
 #include "Shader.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+
 namespace Engine
 {
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData();
 	void Renderer::Init()
 	{
 		RendererCommand::Init();
+		Renderer2D::Init();
 	}
 	void Renderer::OnWindowResize(unsigned int width, unsigned int height)
 	{
@@ -23,8 +25,8 @@ namespace Engine
 	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, glm::mat4 model)
 	{	
 		shader->Use();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetMatrix4("u_ViewProjection", s_SceneData->ViewProjectionMatrix, true);
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetMatrix4("u_Model", model, true);
+		shader->SetMatrix4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetMatrix4("u_Model", model);
 		RendererCommand::Draw(vertexArray);
 	}
 }

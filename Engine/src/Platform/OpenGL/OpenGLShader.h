@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <glm/glm.hpp>
-
 #include "Engine/Renderer/Shader.h"
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
@@ -20,15 +18,15 @@ namespace Engine
 		virtual const std::string& GetName() const override { return m_Name; }
 
 		// uniform¹¤¾ßº¯Êý
-		void SetFloat(const char* name, float value, bool useShader);
-		void SetInteger(const char* name, int value, bool useShader = false);
-		void SetVector2f(const char* name, float x, float y, bool useShader = false);
-		void SetVector2f(const char* name, const glm::vec2& value, bool useShader = false);
-		void SetVector3f(const char* name, float x, float y, float z, bool useShader = false);
-		void SetVector3f(const char* name, const glm::vec3& value, bool useShader = false);
-		void SetVector4f(const char* name, float x, float y, float z, float w, bool useShader = false);
-		void SetVector4f(const char* name, const glm::vec4& value, bool useShader = false);
-		void SetMatrix4(const char* name, const glm::mat4& matrix, bool useShader = false);
+		virtual void SetFloat(const char* name, float value, bool useShader) override;
+		virtual void SetInteger(const char* name, int value, bool useShader = false) override;
+		virtual void SetVector2f(const char* name, float x, float y, bool useShader = false) override;
+		virtual void SetVector2f(const char* name, const glm::vec2& value, bool useShader = false) override;
+		virtual void SetVector3f(const char* name, float x, float y, float z, bool useShader = false) override;
+		virtual void SetVector3f(const char* name, const glm::vec3& value, bool useShader = false) override;
+		virtual void SetVector4f(const char* name, float x, float y, float z, float w, bool useShader = false) override;
+		virtual void SetVector4f(const char* name, const glm::vec4& value, bool useShader = false) override;
+		virtual void SetMatrix4(const char* name, const glm::mat4& matrix, bool useShader = false) override;
 
 	private:
 		unsigned int m_ShaderID;

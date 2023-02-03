@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "OpenGLTexture.h"
-#include <glad/glad.h>
+
 #include <stb_image.h>
 namespace Engine
 {
@@ -20,7 +20,7 @@ namespace Engine
 
 
      
-        GLenum internalFormat = 0, dataFormat = 0;
+        internalFormat = 0, dataFormat = 0;
         if (nrComponents == 4)
         {
             internalFormat = GL_RGBA8;
@@ -45,6 +45,8 @@ namespace Engine
         //设置纹理
         glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
         glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, image);
        
@@ -52,11 +54,33 @@ namespace Engine
         stbi_image_free(image);
         
 	}
+    OpenGLTexture2D::OpenGLTexture2D(unsigned int width, unsigned int height)
+        :m_Width(width), m_Height(height)
+    {
+
+        internalFormat = GL_RGBA8, dataFormat = GL_RGBA;
+        
+        //创建纹理
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+        glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
+        //设置纹理
+        glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+      
+    }
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
         glDeleteTextures(1, &m_TextureID); 
 	}
-	void OpenGLTexture2D::Bind(unsigned slot) const
+    void OpenGLTexture2D::SetData(void* data, unsigned int size)
+    {
+        ENGINE_CORE_ASSERT(size == m_Width * m_Height * 4, "Data must be entire texture!")
+        glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+    }
+    void OpenGLTexture2D::Bind(unsigned slot) const
 	{
         glBindTextureUnit(slot, m_TextureID);
 	}
