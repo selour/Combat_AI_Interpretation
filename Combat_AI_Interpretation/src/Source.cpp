@@ -69,7 +69,7 @@ public:
 
 		Engine::Renderer::BeginScene(m_CameraController.GetCamera());
 
-		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->SetVector3f("u_Color", m_Color);
+		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->SetVector4f("u_Color", m_Color);
 		m_Texture->Bind(0);
 
 		Engine::Renderer::Submit(m_VAO, m_ShaderLibrary.Get("Texture"), transform);
@@ -79,7 +79,7 @@ public:
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Color", glm::value_ptr(m_Color));
+		ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
 		ImGui::End();
 	}
 	void OnEvent(Engine::Event& event) override
@@ -96,7 +96,7 @@ private:
 
 	Engine::OrthographicCameraController m_CameraController;	
 	float m_MoveSpeed = 0.5f;
-	glm::vec3 m_Color = glm::vec3(1.0f);
+	glm::vec4 m_Color = glm::vec4(1.0f);
 	glm::vec3 m_Position = glm::vec3(0.0f);
 };
 

@@ -18,11 +18,11 @@ in vec2 v_TexCoord;
 out vec4 color;
 
 uniform sampler2D u_Texture;
-uniform vec3 u_Color;
+uniform vec4 u_Color;
 
 void main()
 {
-	color = texture(u_Texture, v_TexCoord) * vec4(u_Color, 1.0f);
+	color = texture(u_Texture, v_TexCoord) * u_Color;
 	//color = vec4(v_TexCoord, 0.0f, 1.0f);
     //color = vec4(u_Color, 1.0f);
 
