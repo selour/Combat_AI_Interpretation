@@ -60,7 +60,7 @@ public:
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position);
 
 
-		//glViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
+		
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
 

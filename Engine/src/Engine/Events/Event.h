@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Core.h"
+#include "Engine/Core/Core.h"
 #include <functional>
 #include <sstream>
 namespace Engine
@@ -78,16 +78,14 @@ namespace Engine
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(*(T*)&m_Event);
+				m_Event.m_Handled |= func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
 		}
 
-
 	private:
 		Event& m_Event;
-
 	};
 	
 

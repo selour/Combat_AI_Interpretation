@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "WindowsInput.h"
-#include "Engine/Application.h"
+#include "Engine/Core/Application.h"
 namespace Engine
 {
 	Input* Input::s_Instance = new WindowsInput();

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CameraController.h"
-#include "Engine/Input.h"
-#include "Engine/KeyCodes.h"
+#include "Engine/Core/Input.h"
+#include "Engine/Core/KeyCodes.h"
 
 namespace Engine
 {
@@ -38,10 +38,9 @@ namespace Engine
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		
-		dispatcher.Dispatch<MouseScrolledEvent>(ENGINE_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizedEvent>(ENGINE_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
-	}
+		dispatcher.Dispatch<MouseScrolledEvent>(ENGINE_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
+		}
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		m_ZoomLevel -= e.GetYOffset();
@@ -55,4 +54,5 @@ namespace Engine
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
+
 }

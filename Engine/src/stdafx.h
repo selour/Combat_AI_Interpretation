@@ -14,8 +14,8 @@
 #include <array>
 #include <unordered_map>
 #include <unordered_set>
-#include "Engine/Core.h"
-#include "Engine/Log.h"
+#include "Engine/Core/Core.h"
+#include "Engine/Core/Log.h"
 
 #ifdef ENGINE_PLATFORM_WINDOWS
 	#include <Windows.h>

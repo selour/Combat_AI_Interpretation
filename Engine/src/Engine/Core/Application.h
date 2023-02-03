@@ -1,8 +1,8 @@
 #pragma once
-#include "Engine/Core.h"
-#include "Engine/Window.h"
-#include "Events/WindowEvent.h"
-#include "Engine/LayerStack.h"
+#include "Engine/Core/Core.h"
+#include "Engine/Core/Window.h"
+#include "Engine/Events/WindowEvent.h"
+#include "Engine/Core/LayerStack.h"
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Buffer.h"
@@ -33,6 +33,7 @@ namespace Engine
 		}
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizedEvent& e);
 		std::unique_ptr<Window> m_Window;
 		static Application* s_Instance;
 		ImGuiLayer* m_ImGuiLayer;
@@ -40,7 +41,8 @@ namespace Engine
 		float m_LastFrameTime = 0.0f;
 
 
-		bool m_Running = true;
+		bool m_Running = true;//应用是否运行
+		bool m_Minimized = false;//应用是否最小化
 
 
 	};

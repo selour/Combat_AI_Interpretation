@@ -86,7 +86,6 @@ namespace Engine
 				
 				data.Width = width;
 				data.Height = height;
-
 				WindowResizedEvent event(width, height);
 				data.EventCallback(event);
 

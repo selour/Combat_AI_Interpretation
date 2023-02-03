@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-#include "Engine/Window.h"
+#include "Engine/Core/Window.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Engine

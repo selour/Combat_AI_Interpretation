@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "Application.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Input.h"
+#include "Engine/Core/Input.h"
 #include "Engine/Core/TimeStep.h"
 
 namespace Engine
@@ -36,12 +36,16 @@ namespace Engine
 			TimeStep timeStep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 			
-			for (Layer* layer : m_LayerStack)
+			if (!m_Minimized)
 			{
-				layer->OnUpdate(timeStep);
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate(timeStep);
+				}
+
+
+
 			}
-
-
 			m_ImGuiLayer->Begin();
 
 			for (Layer* layer : m_LayerStack)
@@ -58,14 +62,15 @@ namespace Engine
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(ENGINE_BIND_EVENT_FN(Application::OnWindowClose));
-
+		dispatcher.Dispatch<WindowResizedEvent>(ENGINE_BIND_EVENT_FN(Application::OnWindowResize));
 		//ENGINE_CORE_TRACE("{0}", e.ToString());
 
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+		for (auto it = m_LayerStack.begin(); it != m_LayerStack.end(); ++it)
 		{
-			(*--it)->OnEvent(e);
+			
 			if (e.m_Handled)
 				break;
+			(*it)->OnEvent(e);
 		}
 
 	}
@@ -85,5 +90,16 @@ namespace Engine
 	{
 		m_Running = false;
 		return true;
+	}
+	bool Application::OnWindowResize(WindowResizedEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		return false;
 	}
 }

@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "OpenGLShader.h"
-#include "Engine/Core.h"
+#include "Engine/Core/Core.h"
 
 namespace Engine
 {

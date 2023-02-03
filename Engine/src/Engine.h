@@ -1,31 +1,31 @@
 #pragma once
 
 // 给游戏提供引擎的API
-#include "Engine/Application.h"
 
-#include "Engine/Log.h"
-
-#include "Engine/Input.h"
-#include "Engine/KeyCodes.h"
+//---------核心层------------------------
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Input.h"
+#include "Engine/Core/KeyCodes.h"
 #include "Engine/Core/TimeStep.h"
-#include "Engine/Layer.h"
+#include "Engine/Core/Layer.h"
 #include "Engine/ImGui/ImGuiLayer.h"
-#include "Engine/CameraController.h"
+//--------------------------------------
 
 
-//----------渲染器--------------
+//----------渲染层-----------------------
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/RendererCommand.h"
-
+#include "Engine/Renderer/CameraController.h"
 #include "Engine/Renderer/Buffer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Renderer/Camera.h"
-//-----------------------------
+//--------------------------------------
 
-//----------进入点--------------
-#include "Engine/EnterPoint.h"
-//-----------------------------
+//----------进入点-----------------------
+#include "Engine/Core/EnterPoint.h"
+//--------------------------------------
 
  
