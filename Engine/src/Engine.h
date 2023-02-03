@@ -10,6 +10,8 @@
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Layer.h"
 #include "Engine/ImGui/ImGuiLayer.h"
+#include "Engine/CameraController.h"
+
 
 //----------äÖÈ¾Æ÷--------------
 #include "Engine/Renderer/Renderer.h"

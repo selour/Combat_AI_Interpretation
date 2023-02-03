@@ -9,7 +9,7 @@ class TestLayer : public Engine::Layer
 {
 public:
 	TestLayer()
-		:Layer("Test"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+		:Layer("Test"), m_CameraController(1280.0f / 720.0f, true)
 	{
 		//∂•µ„‘ÿ»Î
 
@@ -45,14 +45,15 @@ public:
 	}
 	void OnUpdate(Engine::TimeStep ts) override
 	{
+		m_CameraController.OnUpdate(ts);
 
-		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_A))
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_LEFT))
 			m_Position.x -= m_MoveSpeed * ts;
-		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_D))
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_RIGHT))
 			m_Position.x += m_MoveSpeed * ts;
-		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_W))
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_UP))
 			m_Position.y += m_MoveSpeed * ts;
-		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_S))
+		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_DOWN))
 			m_Position.y -= m_MoveSpeed * ts;
 
 
@@ -63,10 +64,10 @@ public:
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
+		
 
 
-		Engine::Renderer::BeginScene(m_Camera);
+		Engine::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->SetVector3f("u_Color", m_Color);
 		m_Texture->Bind(0);
@@ -83,6 +84,7 @@ public:
 	}
 	void OnEvent(Engine::Event& event) override
 	{
+		m_CameraController.OnEvent(event);
 		//ENGINE_TRACE("{0}", event.ToString());
 	}
 private:
@@ -92,8 +94,7 @@ private:
 	std::shared_ptr<Engine::ElementBuffer> m_EBO;
 	std::shared_ptr<Engine::Texture2D> m_Texture;
 
-	Engine::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition = glm::vec3(0.0f);
+	Engine::OrthographicCameraController m_CameraController;	
 	float m_MoveSpeed = 0.5f;
 	glm::vec3 m_Color = glm::vec3(1.0f);
 	glm::vec3 m_Position = glm::vec3(0.0f);
