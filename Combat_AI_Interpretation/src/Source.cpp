@@ -46,7 +46,7 @@ public:
 		Engine::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
 		
-		Engine::Renderer2D::DrawQuad(glm::vec3(0.0f, 0.0f, -0.5f), glm::vec2(10.0f), glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f));
+		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(0.0f, 0.0f, -0.5f), glm::vec2(10.0f), glm::radians(45.0f), glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f));
 		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(1.0f), m_Texture, m_Color);
 		
 

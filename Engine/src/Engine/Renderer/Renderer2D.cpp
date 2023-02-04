@@ -95,5 +95,41 @@ namespace Engine
 		texture->Bind();
 		RendererCommand::Draw(s_Quad->VAO);
 	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		DrawRotatedQuad(glm::vec3(position.x, position.y, 0.0f), size, rotation, color);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		glm::mat4 tranform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
+
+		s_Quad->Shader->Use();
+		s_Quad->Shader->SetVector4f("u_Color", color);
+		s_Quad->Shader->SetMatrix4("u_Model", tranform);
+		s_Quad->WhiteTexture->Bind();
+		RendererCommand::Draw(s_Quad->VAO);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const std::shared_ptr<Texture2D> texture, const glm::vec4& color)
+	{
+		DrawRotatedQuad(glm::vec3(position.x, position.y, 0.0f), size, rotation, texture, color);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const std::shared_ptr<Texture2D> texture, const glm::vec4& color)
+	{
+		glm::mat4 tranform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
+
+		s_Quad->Shader->Use();
+		s_Quad->Shader->SetVector4f("u_Color", color);
+		s_Quad->Shader->SetMatrix4("u_Model", tranform);
+		texture->Bind();
+		RendererCommand::Draw(s_Quad->VAO);
+	}
 	
 }
