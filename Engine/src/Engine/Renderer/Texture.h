@@ -14,6 +14,8 @@ namespace Engine
         virtual void SetData(void* data, unsigned int size) = 0;
 
 		virtual void Bind(unsigned slot = 0) const = 0;
+
+        virtual bool operator==(const Texture& other) const = 0;
 	};
     //2DŒ∆¿Ì
     class Texture2D : public Texture
@@ -21,6 +23,8 @@ namespace Engine
     public:
         static std::shared_ptr<Texture2D> Create(unsigned int width, unsigned int height);
         static std::shared_ptr<Texture2D> Create(const std::string& path);
+
+       
     
     };
 

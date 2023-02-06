@@ -11,6 +11,13 @@ namespace Engine
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
+
+	OpenGLVertexBuffer::OpenGLVertexBuffer(unsigned int size)
+	{
+		glCreateBuffers(1, &m_VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
 	
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
@@ -27,7 +34,11 @@ namespace Engine
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	
-
+	void OpenGLVertexBuffer::SetData(const void* data, unsigned int size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
 
 
 	//---------------------------IndexBuffer-------------------------------------------------

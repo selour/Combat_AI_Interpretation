@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
-
+static float timer = 0.0f;
 class TestLayer : public Engine::Layer
 {
 public:
@@ -35,19 +35,27 @@ public:
 
 
 
-
+		timer += ts * 2;
 		
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
 
 		
 
-
+		Engine::Renderer2D::ResetStats();
 		Engine::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
+		glm::vec4 quadColor = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
+		for (float y = -5.0f; y < 5.0f; y += 0.25f)
+		{
+			for (float x = -5.0f; x < 5.0f; x += 0.25f)
+			{
+				Engine::Renderer2D::DrawQuad(glm::vec3(x, y, -0.1f), glm::vec2(0.23f), quadColor);
+			}
+		}
 		
-		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(0.0f, 0.0f, -0.5f), glm::vec2(10.0f), glm::radians(45.0f), glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f));
-		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(1.0f), m_Texture, m_Color);
+		
+		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Texture, m_Color);
 		
 
 		Engine::Renderer2D::EndScene();
@@ -56,7 +64,20 @@ public:
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
+
+
 		ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
+
+
+		auto stats = Engine::Renderer2D::GetStats();
+		ImGui::Text("Renderer2D Stats:");
+		ImGui::Text("Darw Calls:%d", stats.DrawCalls);
+		ImGui::Text("Quads Count:%d", stats.QuadCount);
+		ImGui::Text("Vertices Count:%d", stats.GetTotalVertexCount());
+		ImGui::Text("Indices Count:%d", stats.GetTotalIndexCount());
+
+		
+
 		ImGui::End();
 	}
 	void OnEvent(Engine::Event& event) override

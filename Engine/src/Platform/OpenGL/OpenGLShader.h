@@ -20,6 +20,7 @@ namespace Engine
 		// uniform¹¤¾ßº¯Êý
 		virtual void SetFloat(const char* name, float value, bool useShader) override;
 		virtual void SetInteger(const char* name, int value, bool useShader = false) override;
+		virtual void SetIntegerArray(const char* name, int* values, unsigned int count, bool useShader = false) override;
 		virtual void SetVector2f(const char* name, float x, float y, bool useShader = false) override;
 		virtual void SetVector2f(const char* name, const glm::vec2& value, bool useShader = false) override;
 		virtual void SetVector3f(const char* name, float x, float y, float z, bool useShader = false) override;

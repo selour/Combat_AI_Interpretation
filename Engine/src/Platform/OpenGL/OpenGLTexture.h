@@ -17,6 +17,11 @@ namespace Engine
 		virtual void SetData(void* data, unsigned int size) override;
 
 		virtual void Bind(unsigned slot = 0) const override;
+
+		virtual bool operator==(const Texture& other) const override
+		{
+			return m_TextureID == ((OpenGLTexture2D&)other).m_TextureID;
+		}
 	private:
 		std::string m_Path;
 		unsigned int m_Width, m_Height;

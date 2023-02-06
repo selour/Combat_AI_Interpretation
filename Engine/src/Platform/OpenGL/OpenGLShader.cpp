@@ -88,6 +88,13 @@ namespace Engine
             this->Use();
         glUniform1i(glGetUniformLocation(this->m_ShaderID, name), value);
     }
+    void OpenGLShader::SetIntegerArray(const char* name, int* values, unsigned int count, bool useShader)
+    {
+        if (useShader)
+            this->Use();
+        glUniform1iv(glGetUniformLocation(this->m_ShaderID, name), count, values);
+    }
+
     void OpenGLShader::SetVector2f(const char* name, float x, float y, bool useShader)
     {
         if (useShader)

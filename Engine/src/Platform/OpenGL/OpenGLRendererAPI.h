@@ -11,7 +11,7 @@ namespace Engine
 		virtual void SetClearColor(const glm::vec4 color) override;
 		virtual void Clear() override;
 
-		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count = 0) override;
 	};
 
 
