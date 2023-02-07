@@ -137,15 +137,6 @@ namespace Engine
 		RendererCommand::Draw(s_Data.VAO, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 	}
-	//当批处理数据超出上限时，提交数据
-	void Renderer2D::StartNewBatch()
-	{
-		EndScene();
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-		s_Data.TextureSoltIndex = 1;
-	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
@@ -158,34 +149,16 @@ namespace Engine
 		{
 			StartNewBatch();
 		}
-
+		const glm::vec2 textureCoords[] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
+		};
+		float textureIndex = 0.0f;
 
 		//载入顶点数据
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y - size.y / 2, position.z);;
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y - size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y + size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y + size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-		s_Data.QuadIndexCount += 6;
-
+		LoadVectex(position, size, color, textureCoords, textureIndex);
 
 		s_Data.Stats.QuadCount++;
 
@@ -198,11 +171,17 @@ namespace Engine
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const std::shared_ptr<Texture2D> texture, const glm::vec4& color)
 	{
+		
 		if (s_Data.QuadIndexCount >= Renderer2DQuad::MaxIndices)
 		{
 			StartNewBatch();
 		}
-		
+		const glm::vec2 textureCoords[] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
+		};
 		float textureIndex = 0.0f;
 		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
 		{
@@ -220,33 +199,55 @@ namespace Engine
 
 		}
 		//载入顶点数据
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y - size.y / 2, position.z);;
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y - size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y + size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y + size.y / 2, position.z);
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-		s_Data.QuadIndexCount += 6;
+		LoadVectex(position, size, color, textureCoords, textureIndex);
 
 		s_Data.Stats.QuadCount++;
 	}
+
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color)
+	{
+		DrawQuad(glm::vec3(position.x, position.y, 0.0f), size, subTexture, color);
+	}
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color)
+	{
+		
+		if (s_Data.QuadIndexCount >= Renderer2DQuad::MaxIndices)
+		{
+			StartNewBatch();
+		}
+
+		const glm::vec2* textureCoords = subTexture->GetTexCoord();
+		const std::shared_ptr<Texture2D> texture = subTexture->GetTexture();
+		float textureIndex = 0.0f;
+		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
+		{
+			if (*s_Data.TextureSolts[i].get() == *texture.get())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = (float)s_Data.TextureSoltIndex;
+			s_Data.TextureSolts[s_Data.TextureSoltIndex] = texture;
+			s_Data.TextureSoltIndex++;
+
+		}
+		LoadVectex(position, size, color, textureCoords, textureIndex);
+
+		s_Data.Stats.QuadCount++;
+	}
+
+
+
+
+
+
+
+
+
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const glm::vec3& rotationAxis)
 	{
@@ -259,37 +260,19 @@ namespace Engine
 		{
 			StartNewBatch();
 		}
-
+		const glm::vec2 textureCoords[] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
+		};
+		float textureIndex = 0.0f;
 		glm::mat4 tranform = glm::translate(glm::mat4(1.0f), position) *
 			glm::rotate(glm::mat4(1.0f), rotation, rotationAxis) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
 
-		//载入顶点数据
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = 0.0f;
-		++s_Data.QuadVertexBufferPtr;
-		s_Data.QuadIndexCount += 6;
-
+		LoadRotatedVectex(tranform, color, textureCoords, textureIndex);
+		
 		s_Data.Stats.QuadCount++;
 	}
 
@@ -304,6 +287,12 @@ namespace Engine
 		{
 			StartNewBatch();
 		}	
+		const glm::vec2 textureCoords[] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
+		};
 		float textureIndex = 0.0f;
 		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
 		{
@@ -324,36 +313,49 @@ namespace Engine
 			glm::rotate(glm::mat4(1.0f), rotation, rotationAxis) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
 
-		//载入顶点数据
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-
-		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		++s_Data.QuadVertexBufferPtr;
-		s_Data.QuadIndexCount += 6;
+		LoadRotatedVectex(tranform, color, textureCoords, textureIndex);
 
 
 		s_Data.Stats.QuadCount++;
 	}
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color, const glm::vec3& rotationAxis)
+	{
+		DrawRotatedQuad(glm::vec3(position.x, position.y, 0.0f), size, rotation, subTexture, color, rotationAxis);
+	}
 
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color, const glm::vec3& rotationAxis)
+	{
+		if (s_Data.QuadIndexCount >= Renderer2DQuad::MaxIndices)
+		{
+			StartNewBatch();
+		}
+		const glm::vec2* textureCoords = subTexture->GetTexCoord();
+		const std::shared_ptr<Texture2D> texture = subTexture->GetTexture();
+		float textureIndex = 0.0f;
+		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
+		{
+			if (*s_Data.TextureSolts[i].get() == *texture.get())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = (float)s_Data.TextureSoltIndex;
+			s_Data.TextureSolts[s_Data.TextureSoltIndex] = texture;
+			s_Data.TextureSoltIndex++;
+
+		}
+		glm::mat4 tranform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), rotation, rotationAxis) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
+
+		LoadRotatedVectex(tranform, color, textureCoords, textureIndex);
+
+
+		s_Data.Stats.QuadCount++;
+	}
 
 
 	Renderer2D::Statistics Renderer2D::GetStats()
@@ -369,6 +371,73 @@ namespace Engine
 
 
 
+	//当批处理数据超出上限时，提交数据
+	void Renderer2D::StartNewBatch()
+	{
+		EndScene();
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		s_Data.TextureSoltIndex = 1;
+	}
+
+	void Renderer2D::LoadVectex(const glm::vec3& position, const glm::vec2 size, const glm::vec4& color, const glm::vec2* textureCoords, float textureIndex)
+	{
+		//载入顶点数据
+		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y - size.y / 2, position.z);;
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[0];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y - size.y / 2, position.z);
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[1];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x + size.x / 2, position.y + size.y / 2, position.z);
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[2];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = glm::vec3(position.x - size.x / 2, position.y + size.y / 2, position.z);
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[3];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+		s_Data.QuadIndexCount += 6;
+	}
+
+	void Renderer2D::LoadRotatedVectex(const glm::mat4 tranform, const glm::vec4& color, const glm::vec2* textureCoords, float textureIndex)
+	{
+		//载入顶点数据
+		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[0];
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[0];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[1];
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[1];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[2];
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[2];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+
+		s_Data.QuadVertexBufferPtr->Position = tranform * s_Data.QuadVertexPositions[3];
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[3];
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		++s_Data.QuadVertexBufferPtr;
+		s_Data.QuadIndexCount += 6;
+	}
 
 
 

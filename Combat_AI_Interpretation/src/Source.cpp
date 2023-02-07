@@ -18,6 +18,8 @@ public:
 	void OnAttach()
 	{
 		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
+		m_SpriteSheet = Engine::Texture2D::Create("assets/textures/mapPack_tilesheet_2X.png");
+		m_TextureCactus = Engine::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 4, 9 }, { (float)m_SpriteSheet->GetWidth() / 17.0f, (float)m_SpriteSheet->GetHeight() / 12.0f });
 		//…Ë÷√¡£◊”
 		m_Particle.ColorBegin = m_Color;
 		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
@@ -66,7 +68,7 @@ public:
 		}
 		
 		
-		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Texture, m_Color);
+		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_TextureCactus, m_Color);
 		
 
 		Engine::Renderer2D::EndScene();
@@ -123,6 +125,8 @@ public:
 private:
 	
 	std::shared_ptr<Engine::Texture2D> m_Texture;
+	std::shared_ptr<Engine::Texture2D> m_SpriteSheet;
+	std::shared_ptr<Engine::SubTexture2D> m_TextureCactus;
 
 	Engine::OrthographicCameraController m_CameraController;	
 	float m_MoveSpeed = 0.5f;
