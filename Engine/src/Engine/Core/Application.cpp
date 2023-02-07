@@ -5,7 +5,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Core/Input.h"
 #include "Engine/Core/TimeStep.h"
-
+#include "Engine/Core/Random.h"
 namespace Engine
 {
 
@@ -21,6 +21,7 @@ namespace Engine
 		
 		Renderer::Init();
 
+		Random::Init();
 		m_ImGuiLayer = new ImGuiLayer();
 		AppPushOverlay(m_ImGuiLayer);
 		

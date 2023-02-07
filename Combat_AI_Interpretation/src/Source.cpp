@@ -18,6 +18,17 @@ public:
 	void OnAttach()
 	{
 		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
+		//…Ë÷√¡£◊”
+		m_Particle.ColorBegin = m_Color;
+		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
+		
+		m_Particle.SizeBegin = 0.1f;
+		m_Particle.SizeEnd = 0.0f;
+
+		m_Particle.LifeTime = 1.0f;
+		m_Particle.Velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		m_Particle.VelocityVariation = glm::vec3(1.0f, 1.0f, 0.0f);
+		m_Particle.Position = glm::vec3(0.0f, 0.0f, 0.1f);
 	}
 
 	void OnUpdate(Engine::TimeStep ts) override
@@ -60,6 +71,30 @@ public:
 
 		Engine::Renderer2D::EndScene();
 
+		m_Particle.ColorBegin = m_Color;
+		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
+		if (Engine::Input::IsMouseButtonPressed(ENGINE_MOUSE_BUTTON_LEFT))
+		{
+			auto [x, y] = Engine::Input::GetMousePosition();
+			auto width = Engine::Application::Get().GetWindow().GetWidth();
+			auto height = Engine::Application::Get().GetWindow().GetHeight();
+
+			auto bounds = m_CameraController.GetBounds();
+			auto pos = m_CameraController.GetCamera().GetPosition();
+
+			x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
+			y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();
+			m_Particle.Position = { x + pos.x, y + pos.y, 0.1f };
+			for (int i = 0; i < 2; i++)
+			{
+				m_ParticleSystem.Emit(m_Particle);
+			}
+		
+
+		}
+		m_ParticleSystem.OnUpdate(ts);
+		m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+
 	}
 	void OnImGuiRender() override
 	{
@@ -93,6 +128,9 @@ private:
 	float m_MoveSpeed = 0.5f;
 	glm::vec4 m_Color = glm::vec4(1.0f);
 	glm::vec2 m_Position = glm::vec2(0.0f);
+
+	Engine::ParticleSystem m_ParticleSystem;
+	Engine::ParticleProps m_Particle;
 };
 
 class Game : public Engine::Application

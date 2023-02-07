@@ -17,7 +17,7 @@ namespace Engine
 
 	struct Renderer2DQuad
 	{
-		static const unsigned int MaxQuads = 1000;
+		static const unsigned int MaxQuads = 2000;
 		static const unsigned int MaxVertices = MaxQuads * 4;
 		static const unsigned int MaxIndices = MaxQuads * 6;
 		static const unsigned int MaxTextureSlots = 16;

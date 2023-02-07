@@ -5,6 +5,13 @@
 #include "Engine/Events/WindowEvent.h"
 namespace Engine
 {
+	struct OrthographicCameraBounds
+	{
+		float Left, Right, Bottom, Top;
+
+		float GetWidth() { return Right - Left; }
+		float GetHeight() { return Top - Bottom; }
+	};
 	class OrthographicCameraController
 	{
 	public:
@@ -12,6 +19,7 @@ namespace Engine
 		
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
+		const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
 		void OnUpdate(TimeStep ts);
 		void OnEvent(Event& e);
 	private:
@@ -21,8 +29,10 @@ namespace Engine
 
 		float m_AspectRatio;//横纵比
 		float m_ZoomLevel = 1.0f;//缩放等级
-		
+
+		OrthographicCameraBounds m_Bounds;
 		OrthographicCamera m_Camera;
+		
 		bool m_Rotation;//旋转
 		glm::vec3 m_CameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 		float m_CameraRotation = 0.0f;

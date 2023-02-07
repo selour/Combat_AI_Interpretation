@@ -129,6 +129,9 @@
     <ClInclude Include="src\Engine\Core\Random.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\ParticleSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp">
@@ -210,6 +213,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Renderer2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\ParticleSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
