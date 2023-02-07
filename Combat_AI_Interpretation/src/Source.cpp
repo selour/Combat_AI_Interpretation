@@ -18,8 +18,8 @@ public:
 	void OnAttach()
 	{
 		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
-		m_SpriteSheet = Engine::Texture2D::Create("assets/textures/mapPack_tilesheet_2X.png");
-		m_TextureCactus = Engine::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 4, 9 }, { (float)m_SpriteSheet->GetWidth() / 17.0f, (float)m_SpriteSheet->GetHeight() / 12.0f });
+		m_SpriteSheet = Engine::Texture2D::Create("assets/textures/run.png");
+		m_TextureCactus = Engine::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 0, 0 }, { (float)m_SpriteSheet->GetWidth() / 6.0f, (float)m_SpriteSheet->GetHeight() / 1.0f });
 		//…Ë÷√¡£◊”
 		m_Particle.ColorBegin = m_Color;
 		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
@@ -67,8 +67,8 @@ public:
 			}
 		}
 		
-		
-		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_TextureCactus, m_Color);
+		Engine::Renderer2D::DrawQuad(glm::vec3(1.4f, -0.7f, 0.0f), glm::vec2(0.3f), m_TextureCactus);
+		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Texture, m_Color);
 		
 
 		Engine::Renderer2D::EndScene();
