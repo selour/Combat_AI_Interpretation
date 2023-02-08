@@ -17,7 +17,7 @@ public:
 	void OnAttach()
 	{
 		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
-		m_SpriteSheet = Engine::Texture2DArray::Create("assets/textures/eye.png", 1, 1);
+		m_SpriteSheet = Engine::Texture2DArray::Create("assets/textures/run.png", 1, 6);
 		/*
 		//…Ë÷√¡£◊”
 		m_Particle.ColorBegin = m_Color;
@@ -134,7 +134,7 @@ public:
 private:
 	
 	std::shared_ptr<Engine::Texture2D> m_Texture;
-	std::shared_ptr<Engine::Texture2DArray> m_SpriteSheet;;
+	std::shared_ptr<Engine::Texture2DArray> m_SpriteSheet;
 
 	Engine::OrthographicCameraController m_CameraController;	
 	float m_MoveSpeed = 0.5f;

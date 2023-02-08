@@ -34,6 +34,7 @@ namespace Engine
         else if (nrComponents == 1)
         {
             internalFormat = GL_RED;
+            dataFormat = GL_RED;
         }
             
         ENGINE_ASSERT(internalFormat & dataFormat, "Format not supported!");
@@ -93,11 +94,12 @@ namespace Engine
 
         unsigned char* image = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
         ENGINE_ASSERT(image, "Failed to load image!");
-
+       
         m_Width = width / xIndex;
         m_Height = height / yIndex;
         m_Count = xIndex * yIndex;
-
+       
+  
 
         internalFormat = 0, dataFormat = 0;
         if (nrComponents == 4)
@@ -113,6 +115,7 @@ namespace Engine
         else if (nrComponents == 1)
         {
             internalFormat = GL_RED;
+            dataFormat = GL_RED;
         }
 
         ENGINE_ASSERT(internalFormat & dataFormat, "Format not supported!");
@@ -121,20 +124,22 @@ namespace Engine
         //创建纹理
         glGenTextures(1, &m_TextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY, m_TextureID);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_Width, m_Height, m_Count, 0, dataFormat, GL_UNSIGNED_BYTE, NULL);
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, internalFormat, m_Width, m_Height, m_Count);
         //设置纹理
         glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-        //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,)
+        glTexSubImage3D(
+            GL_TEXTURE_2D_ARRAY,
+            0,
+            0, 0, 0,
+            m_Width, m_Height, m_Count,
+            dataFormat,
+            GL_UNSIGNED_BYTE,
+            image);
         
-       
-
-        
-
         // 释放图像数据空间
         stbi_image_free(image);
     }
@@ -143,9 +148,9 @@ namespace Engine
     {
         internalFormat = GL_RGBA8, dataFormat = GL_RGBA;
         //创建纹理
-        glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_TextureID);
+        glGenTextures(1, &m_TextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY, m_TextureID);
-        glTexStorage3D(m_TextureID, 1, internalFormat, m_Width, m_Height, m_Count);
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, internalFormat, m_Width, m_Height, m_Count);
         //设置纹理
         glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
