@@ -1,6 +1,7 @@
+/*
 #include "stdafx.h"
 #include "ParticleSystem.h"
-#include "Engine/Core/Random.h"
+//#include "Engine/Core/Random.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/compatibility.hpp"
@@ -85,3 +86,4 @@ namespace Engine
 	}
 
 }
+*/

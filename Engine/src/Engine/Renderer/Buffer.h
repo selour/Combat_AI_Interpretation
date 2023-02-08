@@ -31,13 +31,14 @@ namespace Engine
 
 	struct BufferElement
 	{
-		std::string Name;
+		unsigned int Index;
 		ShaderDataType Type;
 		unsigned int Size;
+		unsigned int AttributeDivisor;
 		unsigned int Offset;
 		bool Normalized;
-		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
-			:Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(false)
+		BufferElement(unsigned int index, ShaderDataType type, unsigned int attributeDivisor = 0, bool normalized = false)
+			:Index(index), Type(type), Size(ShaderDataTypeSize(type)), AttributeDivisor(attributeDivisor), Offset(0), Normalized(false)
 		{
 		}
 

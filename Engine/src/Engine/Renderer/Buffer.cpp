@@ -18,6 +18,7 @@ namespace Engine
 		ENGINE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
 	std::shared_ptr<VertexBuffer> VertexBuffer::Create(unsigned int size)
 	{
 		switch (Renderer::GetRendererAPI())

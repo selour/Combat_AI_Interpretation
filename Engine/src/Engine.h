@@ -9,7 +9,7 @@
 #include "Engine/Core/KeyCodes.h"
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Core/Layer.h"
-#include "Engine/Core/Random.h"
+//#include "Engine/Core/Random.h"
 #include "Engine/ImGui/ImGuiLayer.h"
 //--------------------------------------
 
@@ -19,7 +19,7 @@
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/RendererCommand.h"
 #include "Engine/Renderer/CameraController.h"
-#include "Engine/Renderer/ParticleSystem.h"
+//#include "Engine/Renderer/ParticleSystem.h"
 #include "Engine/Renderer/Buffer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Texture.h"

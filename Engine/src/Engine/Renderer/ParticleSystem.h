@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include "Engine/Core/TimeStep.h"
 #include "Camera.h"
@@ -47,4 +48,4 @@ namespace Engine
 
 }
 
-
+*/

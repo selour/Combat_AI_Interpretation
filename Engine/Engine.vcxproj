@@ -99,8 +99,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\stb_image\stb_image.h" />
-    <ClInclude Include="src\Engine\Renderer\ParticleSystem.h" />
-    <ClInclude Include="src\Engine\Core\Random.h" />
     <ClInclude Include="src\Engine\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Engine\Renderer\CameraController.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
@@ -141,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rdparty\stb_image\stb_image.cpp" />
-    <ClCompile Include="src\Engine\Renderer\ParticleSystem.cpp" />
     <ClCompile Include="src\Engine\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Engine\Renderer\CameraController.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />

@@ -46,18 +46,17 @@ namespace Engine
 		glBindVertexArray(m_VAO);
 		vertexBuffer->Bind();
 
-		unsigned int index = 0;
 		const auto layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
+			glEnableVertexAttribArray(element.Index);
+			glVertexAttribPointer(element.Index,
 				element.GetCount(),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized,
 				layout.GetStride(),
 				(const void*)element.Offset);
-			++index;
+			glVertexAttribDivisor(element.Index, element.AttributeDivisor);
 		}
 		m_VBOs.push_back(vertexBuffer);
 	}

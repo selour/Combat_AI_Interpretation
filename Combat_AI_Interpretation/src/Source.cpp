@@ -3,7 +3,7 @@
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Platform/OpenGL/OpenGLShader.h"
+
 static float timer = 0.0f;
 class TestLayer : public Engine::Layer
 {
@@ -13,13 +13,12 @@ public:
 	{
 		
 		
-	
 	}
 	void OnAttach()
 	{
 		m_Texture = Engine::Texture2D::Create("assets/textures/eye.png");
-		m_SpriteSheet = Engine::Texture2D::Create("assets/textures/run.png");
-		m_TextureCactus = Engine::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 0, 0 }, { (float)m_SpriteSheet->GetWidth() / 6.0f, (float)m_SpriteSheet->GetHeight() / 1.0f });
+		m_SpriteSheet = Engine::Texture2DArray::Create("assets/textures/eye.png", 1, 1);
+		/*
 		//…Ë÷√¡£◊”
 		m_Particle.ColorBegin = m_Color;
 		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
@@ -31,10 +30,12 @@ public:
 		m_Particle.Velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_Particle.VelocityVariation = glm::vec3(1.0f, 1.0f, 0.0f);
 		m_Particle.Position = glm::vec3(0.0f, 0.0f, 0.1f);
+		*/
 	}
 
 	void OnUpdate(Engine::TimeStep ts) override
 	{
+		m_FPS = 1.0f / ts;
 		m_CameraController.OnUpdate(ts);
 
 		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_LEFT))
@@ -63,16 +64,22 @@ public:
 		{
 			for (float x = -5.0f; x < 5.0f; x += 0.25f)
 			{
-				Engine::Renderer2D::DrawQuad(glm::vec3(x, y, -0.1f), glm::vec2(0.23f), quadColor);
+				Engine::Renderer2D::DrawQuad(glm::vec3(x, y, -0.1f), glm::vec2(0.23f), 0, quadColor);
 			}
 		}
-		
-		Engine::Renderer2D::DrawQuad(glm::vec3(1.4f, -0.7f, 0.0f), glm::vec2(0.3f), m_TextureCactus);
-		Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Texture, m_Color);
-		
-
 		Engine::Renderer2D::EndScene();
 
+		Engine::Renderer2D::BeginScene(m_CameraController.GetCamera(), m_SpriteSheet);
+
+		Engine::Renderer2D::DrawQuad(glm::vec3(1.4f, -0.7f, 0.0f), glm::vec2(0.3f), 0, glm::vec4(1.0f));
+
+		Engine::Renderer2D::EndScene();
+		//Engine::Renderer2D::DrawQuad(glm::vec3(1.4f, -0.7f, 0.0f), glm::vec2(0.3f), m_TextureCactus);
+		//Engine::Renderer2D::DrawRotatedQuad(glm::vec3(m_Position.x - sin(timer), m_Position.y, 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Texture, m_Color);
+		
+
+		
+		/*
 		m_Particle.ColorBegin = m_Color;
 		m_Particle.ColorEnd = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
 		if (Engine::Input::IsMouseButtonPressed(ENGINE_MOUSE_BUTTON_LEFT))
@@ -96,7 +103,7 @@ public:
 		}
 		m_ParticleSystem.OnUpdate(ts);
 		m_ParticleSystem.OnRender(m_CameraController.GetCamera());
-
+		*/
 	}
 	void OnImGuiRender() override
 	{
@@ -108,6 +115,7 @@ public:
 
 
 		auto stats = Engine::Renderer2D::GetStats();
+		ImGui::Text("%dFPS", m_FPS);
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Darw Calls:%d", stats.DrawCalls);
 		ImGui::Text("Quads Count:%d", stats.QuadCount);
@@ -126,16 +134,17 @@ public:
 private:
 	
 	std::shared_ptr<Engine::Texture2D> m_Texture;
-	std::shared_ptr<Engine::Texture2D> m_SpriteSheet;
-	std::shared_ptr<Engine::SubTexture2D> m_TextureCactus;
+	std::shared_ptr<Engine::Texture2DArray> m_SpriteSheet;;
 
 	Engine::OrthographicCameraController m_CameraController;	
 	float m_MoveSpeed = 0.5f;
 	glm::vec4 m_Color = glm::vec4(1.0f);
 	glm::vec2 m_Position = glm::vec2(0.0f);
 
-	Engine::ParticleSystem m_ParticleSystem;
-	Engine::ParticleProps m_Particle;
+	unsigned int m_FPS = 60;
+
+	//Engine::ParticleSystem m_ParticleSystem;
+	//Engine::ParticleProps m_Particle;
 };
 
 class Game : public Engine::Application

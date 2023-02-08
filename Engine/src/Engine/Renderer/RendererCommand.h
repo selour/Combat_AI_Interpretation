@@ -23,7 +23,7 @@ namespace Engine
 			s_RendererAPI->Clear();
 		}
 
-		inline static void Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count = 0)
+		inline static void Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count)
 		{
 			vertexArray->Bind();
 			s_RendererAPI->Draw(vertexArray, count);

@@ -1,55 +1,42 @@
 #type vertex
 #version 330 core
 layout (location = 0) in vec3 a_Position;
-layout (location = 1) in vec4 a_Color;
-layout (location = 2) in vec2 a_TexCoord;
-layout (location = 3) in float a_TexIndex;
+layout (location = 1) in vec2 a_TexCoord;
+layout (location = 2) in mat4 a_Tranform;
+layout (location = 6) in vec3 a_Color;
+layout (location = 7) in float a_Alpha;
+
 uniform mat4 u_ViewProjection;
 
-out vec4 v_Color;
+
 out vec2 v_TexCoord;
-out float v_TexIndex;
+out vec3 v_Color;
+out float v_Alpha;
 void main()
 {
-	v_Color = a_Color;
 	v_TexCoord = a_TexCoord;
-	v_TexIndex = a_TexIndex;
-    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+	v_Color = a_Color;
+	v_Alpha = a_Alpha;
+    gl_Position = u_ViewProjection * a_Tranform * vec4(a_Position, 1.0);
 }
 
 #type fragment
 #version 330 core
 layout (location = 0) out vec4 outColor;
 
-in vec4 v_Color;
-in vec2 v_TexCoord;
-in float v_TexIndex;
 
-uniform sampler2D u_Textures[16];
+in vec2 v_TexCoord;
+in vec3 v_Color;
+in float v_Alpha;
+
+uniform sampler2DArray u_Texture0;
 
 void main()
 {
-		vec4 texColor = v_Color;
-		switch(int(v_TexIndex))
-		{
-			case 0:		texColor *= texture(u_Textures[0], v_TexCoord);break;
-			case 1:		texColor *= texture(u_Textures[1], v_TexCoord);break;
-			case 2:		texColor *= texture(u_Textures[2], v_TexCoord);break;
-			case 3:		texColor *= texture(u_Textures[3], v_TexCoord);break;
-			case 4:		texColor *= texture(u_Textures[4], v_TexCoord);break;
-			case 5:		texColor *= texture(u_Textures[5], v_TexCoord);break;
-			case 6:		texColor *= texture(u_Textures[6], v_TexCoord);break;
-			case 7:		texColor *= texture(u_Textures[7], v_TexCoord);break;
-			case 8:		texColor *= texture(u_Textures[8], v_TexCoord);break;
-			case 9:		texColor *= texture(u_Textures[9], v_TexCoord);break;
-			case 10:	texColor *= texture(u_Textures[10], v_TexCoord);break;
-			case 11:	texColor *= texture(u_Textures[11], v_TexCoord);break;
-			case 12:	texColor *= texture(u_Textures[12], v_TexCoord);break;
-			case 13:	texColor *= texture(u_Textures[13], v_TexCoord);break;
-			case 14:	texColor *= texture(u_Textures[14], v_TexCoord);break;
-			case 15:	texColor *= texture(u_Textures[15], v_TexCoord);break;
-		}
-		outColor = texColor;
+		
+		//outColor = texture(u_Texture0, vec3(v_TexCoord.xy, 0)) * vec4(v_Color.rgb, v_Alpha);
+		
+		outColor = vec4(v_Color.rgb, v_Alpha);
 
 }
 

@@ -27,6 +27,6 @@ namespace Engine
 		shader->Use();
 		shader->SetMatrix4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetMatrix4("u_Model", model);
-		RendererCommand::Draw(vertexArray);
+		RendererCommand::Draw(vertexArray, 1);
 	}
 }
