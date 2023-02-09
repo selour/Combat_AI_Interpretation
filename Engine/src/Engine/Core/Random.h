@@ -1,4 +1,3 @@
-/*
 #pragma once
 #include <random>
 namespace Engine
@@ -21,4 +20,3 @@ namespace Engine
 	};
 
 }
-*/

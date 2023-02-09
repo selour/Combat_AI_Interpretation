@@ -13,6 +13,7 @@ namespace Engine
 		glm::mat4* Tranform = nullptr;
 		glm::vec3* Color = nullptr;
 		float* Alpha = nullptr;
+		float* TexCoordZ = nullptr;
 
 	};
 
@@ -25,6 +26,7 @@ namespace Engine
 		std::shared_ptr<VertexBuffer> TranformVBO;
 		std::shared_ptr<VertexBuffer> ColorVBO;
 		std::shared_ptr<VertexBuffer> AlphaVBO;
+		std::shared_ptr<VertexBuffer> TexCoordZVBO;
 		std::shared_ptr<Shader> Shader;
 		std::shared_ptr<Texture2DArray> WhiteTexture;
 
@@ -103,7 +105,17 @@ namespace Engine
 		}
 		s_Data.VAO->AddVertexBuffer(s_Data.AlphaVBO);
 		s_Data.instanceData.Alpha = new float[s_Data.MaxInstance];
-
+		
+		//TexCoordZVBO
+		s_Data.TexCoordZVBO = VertexBuffer::Create(s_Data.MaxInstance * sizeof(float));
+		{
+			Engine::BufferLayout layout = {
+				{ 8, Engine::ShaderDataType::Float, 1 }
+			};
+			s_Data.TexCoordZVBO->SetLayout(layout);
+		}
+		s_Data.VAO->AddVertexBuffer(s_Data.TexCoordZVBO);
+		s_Data.instanceData.TexCoordZ = new float[s_Data.MaxInstance];
 		//EBO
 		unsigned int indices[] = { 0,1,2,2,3,0 };
 
@@ -112,12 +124,8 @@ namespace Engine
 	
 		s_Data.Shader->SetInteger("u_Texture0", 0, true);
 
-		
-
 		//生成白色纹理
 		s_Data.WhiteTexture = Texture2DArray::Create();
-	
-
 	
 
 
@@ -143,6 +151,7 @@ namespace Engine
 		s_Data.TranformVBO->SetData(s_Data.instanceData.Tranform, s_Data.instanceCount * sizeof(glm::mat4));
 		s_Data.ColorVBO->SetData(s_Data.instanceData.Color, s_Data.instanceCount * sizeof(glm::vec3));
 		s_Data.AlphaVBO->SetData(s_Data.instanceData.Alpha, s_Data.instanceCount * sizeof(float));
+		s_Data.TexCoordZVBO->SetData(s_Data.instanceData.TexCoordZ, s_Data.instanceCount * sizeof(float));
 		Flush();
 	}
 	void Renderer2D::Flush()
@@ -151,12 +160,12 @@ namespace Engine
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, float texCoordZ)
 	{
-		DrawQuad(glm::vec3(position.x, position.y, 0.0f), size, rotation, color);
+		DrawQuad(glm::vec3(position.x, position.y, 0.0f), size, rotation, color, texCoordZ);
 		
 	}
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, float texCoordZ)
 	{
 		if (s_Data.instanceCount == s_Data.MaxInstance)
 		{
@@ -170,6 +179,7 @@ namespace Engine
 
 		s_Data.instanceData.Color[s_Data.instanceCount] = glm::vec3(color.r, color.g, color.b);
 		s_Data.instanceData.Alpha[s_Data.instanceCount] = color.a;
+		s_Data.instanceData.TexCoordZ[s_Data.instanceCount] = texCoordZ;
 
 		s_Data.instanceCount++;
 
@@ -177,85 +187,7 @@ namespace Engine
 
 
 	}
-	/*
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D> texture, const glm::vec4& color)
-	{
-		DrawQuad(glm::vec3(position.x, position.y, 0.0f), size, texture, color);
-	}
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const std::shared_ptr<Texture2D> texture, const glm::vec4& color)
-	{
-		
-		if (s_Data.QuadIndexCount >= Renderer2DQuad::MaxIndices)
-		{
-			StartNewBatch();
-		}
-		const glm::vec2 textureCoords[] = {
-			{ 0.0f, 0.0f },
-			{ 1.0f, 0.0f },
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f },
-		};
-		float textureIndex = 0.0f;
-		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
-		{
-			if (*s_Data.TextureSolts[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSoltIndex;
-			s_Data.TextureSolts[s_Data.TextureSoltIndex] = texture;
-			s_Data.TextureSoltIndex++;
-
-		}
-		//载入顶点数据
-		LoadVectex(position, size, color, textureCoords, textureIndex);
-
-		s_Data.Stats.QuadCount++;
-	}
-
-
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color)
-	{
-		DrawQuad(glm::vec3(position.x, position.y, 0.0f), size, subTexture, color);
-	}
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const std::shared_ptr<SubTexture2D> subTexture, const glm::vec4& color)
-	{
-		
-		if (s_Data.QuadIndexCount >= Renderer2DQuad::MaxIndices)
-		{
-			StartNewBatch();
-		}
-
-		const glm::vec2* textureCoords = subTexture->GetTexCoord();
-		const std::shared_ptr<Texture2D> texture = subTexture->GetTexture();
-		float textureIndex = 0.0f;
-		for (unsigned int i = 0; i < s_Data.TextureSoltIndex; i++)
-		{
-			if (*s_Data.TextureSolts[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSoltIndex;
-			s_Data.TextureSolts[s_Data.TextureSoltIndex] = texture;
-			s_Data.TextureSoltIndex++;
-
-		}
-		LoadVectex(position, size, color, textureCoords, textureIndex);
-
-		s_Data.Stats.QuadCount++;
-	}
-
-	*/
-
-
+	
 
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{

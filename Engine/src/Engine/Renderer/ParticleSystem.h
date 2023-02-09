@@ -1,6 +1,6 @@
-/*
 #pragma once
 #include "Engine/Core/TimeStep.h"
+#include "Texture.h"
 #include "Camera.h"
 #include <glm/glm.hpp>
 #include <vector>
@@ -15,6 +15,7 @@ namespace Engine
 		float SizeBegin, SizeEnd;
 		float LifeTime = 1.0f;
 	};
+
 	class ParticleSystem
 	{
 	public:
@@ -22,7 +23,7 @@ namespace Engine
 
 		void OnUpdate(TimeStep ts);
 
-		void OnRender(OrthographicCamera& camera);
+		void OnRender(OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture = nullptr);
 
 		void Emit(const ParticleProps& particleProps);
 
@@ -41,11 +42,9 @@ namespace Engine
 			bool Active = false;
 		};
 		std::vector<Particle> m_ParticlePool;
-		unsigned int m_PoolIndex = 999;
+		unsigned int m_PoolIndex = 0;
 
 		unsigned int m_QuadVAO = 0;
 	};
-
 }
 
-*/

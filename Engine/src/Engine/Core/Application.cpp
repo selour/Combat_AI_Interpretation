@@ -21,7 +21,8 @@ namespace Engine
 		
 		Renderer::Init();
 
-		//Random::Init();
+		Random::Init();
+
 		m_ImGuiLayer = new ImGuiLayer();
 		AppPushOverlay(m_ImGuiLayer);
 		

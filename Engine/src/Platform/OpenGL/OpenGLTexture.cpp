@@ -84,8 +84,6 @@ namespace Engine
 
 
 
-
-
     OpenGLTexture2DArray::OpenGLTexture2DArray(const std::string& path, unsigned int xIndex, unsigned int yIndex)
     {
         // 加载图片
@@ -100,7 +98,6 @@ namespace Engine
         m_Count = xIndex * yIndex;
        
   
-
         internalFormat = 0, dataFormat = 0;
         if (nrComponents == 4)
         {
@@ -119,8 +116,6 @@ namespace Engine
         }
 
         ENGINE_ASSERT(internalFormat & dataFormat, "Format not supported!");
-
-
         //创建纹理
         glGenTextures(1, &m_TextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY, m_TextureID);
@@ -130,16 +125,19 @@ namespace Engine
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
-        glTexSubImage3D(
-            GL_TEXTURE_2D_ARRAY,
-            0,
-            0, 0, 0,
-            m_Width, m_Height, m_Count,
-            dataFormat,
-            GL_UNSIGNED_BYTE,
-            image);
+        for (unsigned int y = 0; y < height; y++)
+        {
+            glTexSubImage3D(
+                GL_TEXTURE_2D_ARRAY,
+                0,
+                0, y, (y / m_Height)*xIndex ,
+                m_Width, 1, m_Count,
+                dataFormat,
+                GL_UNSIGNED_BYTE,
+                (image  + y * width * nrComponents));
+        }
         
+
         // 释放图像数据空间
         stbi_image_free(image);
     }
@@ -156,7 +154,7 @@ namespace Engine
         glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-
+       
         unsigned int WhiteData = 0xffffffff;
         glTexSubImage3D(
                     GL_TEXTURE_2D_ARRAY,

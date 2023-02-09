@@ -1,7 +1,6 @@
-/*
 #include "stdafx.h"
 #include "ParticleSystem.h"
-//#include "Engine/Core/Random.h"
+#include "Engine/Core/Random.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/compatibility.hpp"
@@ -35,9 +34,9 @@ namespace Engine
 		
 	}
 
-	void ParticleSystem::OnRender(OrthographicCamera& camera)
+	void ParticleSystem::OnRender(OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture)
 	{
-		Renderer2D::BeginScene(camera);
+		Renderer2D::BeginScene(camera, teture);
 		for (auto& particle : m_ParticlePool)
 		{
 			if (!particle.Active)
@@ -47,16 +46,9 @@ namespace Engine
 			glm::vec4 color = glm::lerp(particle.ColorEnd, particle.ColorBegin, life);
 			float size = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
 
-			if (particle.Rotation == 0)
-			{
-				Renderer2D::DrawQuad(particle.Position,{ size, size }, color);
-			}
-			else
-			{
-				Renderer2D::DrawRotatedQuad(particle.Position, { size, size }, particle.Rotation, color);
-			}
-
-
+	
+			Renderer2D::DrawQuad(particle.Position,{ size, size }, particle.Rotation, color);
+		
 		}
 		Renderer2D::EndScene();
 
@@ -66,8 +58,10 @@ namespace Engine
 	{
 		Particle& particle = m_ParticlePool[m_PoolIndex];
 		particle.Active = true;
-		particle.Position = particleProps.Position;
-		particle.Rotation = Random::Float() * 2.0f * glm::pi<float>();
+		particle.Position.x = particleProps.Position.x;
+		particle.Position.y = particleProps.Position.y;
+		particle.Position.z = particleProps.Position.z;
+		particle.Rotation = 0;//Random::Float() * 2.0f * glm::pi<float>();
 
 		particle.Velocity = particleProps.Velocity;
 		particle.Velocity.x += particleProps.VelocityVariation.x * (Random::Float() - 0.5f);
@@ -86,4 +80,3 @@ namespace Engine
 	}
 
 }
-*/
