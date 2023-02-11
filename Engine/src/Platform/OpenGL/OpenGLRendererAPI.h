@@ -10,8 +10,8 @@ namespace Engine
 		virtual void SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 		virtual void SetClearColor(const glm::vec4 color) override;
 		virtual void Clear() override;
-
-		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count = 0) override;
+		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void DrawInstanced(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count) override;
 	};
 
 

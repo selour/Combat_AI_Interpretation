@@ -25,7 +25,14 @@ namespace Engine
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-	void OpenGLRendererAPI::Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count)
+	void OpenGLRendererAPI::Draw(const std::shared_ptr<VertexArray>& vertexArray)
+	{
+		unsigned int indexCount = vertexArray->GetElementBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	void OpenGLRendererAPI::DrawInstanced(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count)
 	{
 		unsigned int indexCount = vertexArray->GetElementBuffer()->GetCount();
 		glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, count);

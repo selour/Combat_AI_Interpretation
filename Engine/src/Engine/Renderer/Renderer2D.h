@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera.h"
 #include "Texture.h"
+#include "Shader.h"
 namespace Engine
 {
 	
@@ -9,7 +10,7 @@ namespace Engine
 	public:
 		static void Init();
 		static void Shutdown();
-		static void BeginScene(const OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture = nullptr);
+		static void BeginScene(const OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture = nullptr, const std::shared_ptr<Shader> shader = nullptr);
 		static void EndScene();
 		static void Flush();
 

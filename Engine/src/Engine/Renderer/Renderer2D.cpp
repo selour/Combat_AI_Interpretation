@@ -2,7 +2,6 @@
 #include "Renderer2D.h"
 #include "RendererCommand.h"
 #include "VertexArray.h"
-#include "Shader.h"
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
 namespace Engine
@@ -48,6 +47,8 @@ namespace Engine
 
 		//着色器载入
 		s_Data.Shader = Shader::Create("assets/shaders/Texture.glsl");
+
+		s_Data.Shader->SetInteger("u_Texture0", 0, true);
 		//VAO
 		s_Data.VAO = Engine::VertexArray::Create();
 		
@@ -122,7 +123,7 @@ namespace Engine
 		std::shared_ptr<ElementBuffer> m_EBO = ElementBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int));
 		s_Data.VAO->SetElementBuffer(m_EBO);
 	
-		s_Data.Shader->SetInteger("u_Texture0", 0, true);
+		
 
 		//生成白色纹理
 		s_Data.WhiteTexture = Texture2DArray::Create();
@@ -133,8 +134,17 @@ namespace Engine
 	void Renderer2D::Shutdown()
 	{
 	}
-	void Renderer2D::BeginScene(const OrthographicCamera& camera, std::shared_ptr<Texture2DArray> texture)
+	void Renderer2D::BeginScene(const OrthographicCamera& camera, std::shared_ptr<Texture2DArray> texture, const std::shared_ptr<Shader> shader)
 	{
+		if (shader == nullptr)
+		{
+			s_Data.Shader->Use();
+		}
+		else
+		{
+			shader->Use();
+		}
+
 		if (texture == nullptr)
 		{
 			s_Data.WhiteTexture->Bind(0);
@@ -156,7 +166,7 @@ namespace Engine
 	}
 	void Renderer2D::Flush()
 	{
-		RendererCommand::Draw(s_Data.VAO, s_Data.instanceCount);
+		RendererCommand::DrawInstanced(s_Data.VAO, s_Data.instanceCount);
 		s_Data.Stats.DrawCalls++;
 	}
 

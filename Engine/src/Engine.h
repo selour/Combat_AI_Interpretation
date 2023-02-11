@@ -17,11 +17,13 @@
 //----------‰÷»æ≤„-----------------------
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Renderer2D.h"
+#include "Engine/Renderer/RendererPostProcessing.h"
 #include "Engine/Renderer/Animation2D.h"
 #include "Engine/Renderer/RendererCommand.h"
 #include "Engine/Renderer/CameraController.h"
 #include "Engine/Renderer/ParticleSystem.h"
 #include "Engine/Renderer/Buffer.h"
+#include "Engine/Renderer/FrameBuffer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexArray.h"

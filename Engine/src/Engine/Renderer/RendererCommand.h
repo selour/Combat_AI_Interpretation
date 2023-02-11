@@ -22,11 +22,15 @@ namespace Engine
 		{
 			s_RendererAPI->Clear();
 		}
-
-		inline static void Draw(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count)
+		inline static void Draw(const std::shared_ptr<VertexArray>& vertexArray)
 		{
 			vertexArray->Bind();
-			s_RendererAPI->Draw(vertexArray, count);
+			s_RendererAPI->Draw(vertexArray);
+		}
+		inline static void DrawInstanced(const std::shared_ptr<VertexArray>& vertexArray, unsigned int count)
+		{
+			vertexArray->Bind();
+			s_RendererAPI->DrawInstanced(vertexArray, count);
 		}
 	private:
 		static RendererAPI* s_RendererAPI;

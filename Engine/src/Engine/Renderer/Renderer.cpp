@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Renderer.h"
 #include "Renderer2D.h"
+#include "RendererPostProcessing.h"
 #include "Shader.h"
 
 namespace Engine
@@ -10,6 +11,7 @@ namespace Engine
 	{
 		RendererCommand::Init();
 		Renderer2D::Init();
+		RendererPostProcessing::Init();
 	}
 	void Renderer::OnWindowResize(unsigned int width, unsigned int height)
 	{
@@ -27,6 +29,6 @@ namespace Engine
 		shader->Use();
 		shader->SetMatrix4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetMatrix4("u_Model", model);
-		RendererCommand::Draw(vertexArray, 1);
+		RendererCommand::Draw(vertexArray);
 	}
 }
