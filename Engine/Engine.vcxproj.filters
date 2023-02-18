@@ -48,7 +48,7 @@
     <ClInclude Include="src\Engine\Core\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+    <ClInclude Include="src\Platform\GLFW\GLFWWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Layer.h">
@@ -57,7 +57,7 @@
     <ClInclude Include="src\Engine\Core\LayerStack.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
+    <ClInclude Include="src\Platform\GLFW\GLFWInput.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Input.h">
@@ -144,6 +144,15 @@
     <ClInclude Include="src\Engine\Renderer\RendererPostProcessing.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Core\PlatformAPI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\PlatformCommand.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\GLFW\GLFWAPI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp">
@@ -155,7 +164,7 @@
     <ClCompile Include="src\stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+    <ClCompile Include="src\Platform\GLFW\GLFWWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Core\Layer.cpp">
@@ -164,7 +173,7 @@
     <ClCompile Include="src\Engine\Core\LayerStack.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+    <ClCompile Include="src\Platform\GLFW\GLFWInput.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
@@ -198,9 +207,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Core\TimeStep.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
@@ -240,6 +246,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\RendererPostProcessing.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\Window.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\PlatformAPI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\Input.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\PlatformCommand.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\GLFW\GLFWAPI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

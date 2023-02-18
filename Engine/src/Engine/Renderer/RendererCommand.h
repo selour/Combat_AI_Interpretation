@@ -33,6 +33,7 @@ namespace Engine
 			s_RendererAPI->DrawInstanced(vertexArray, count);
 		}
 	private:
+		static RendererAPI* Creat();
 		static RendererAPI* s_RendererAPI;
 	};
 }

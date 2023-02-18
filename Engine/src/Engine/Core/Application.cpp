@@ -1,11 +1,10 @@
 #include "stdafx.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "Application.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Core/Input.h"
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Core/Random.h"
+#include "PlatformCommand.h"
 namespace Engine
 {
 
@@ -34,7 +33,7 @@ namespace Engine
 	{
 		while (m_Running)
 		{
-			float time = (float)glfwGetTime();
+			float time = PlatformCommand::GetTime();
 			TimeStep timeStep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 			

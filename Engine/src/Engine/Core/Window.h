@@ -1,6 +1,6 @@
 #pragma once
+#include "PlatformAPI.h"
 #include "Engine/Events/Event.h"
-
 namespace Engine
 {
 	struct WindowProps
