@@ -16,6 +16,7 @@
     <ProjectGuid>{f4c4336a-049f-40a1-8f7e-107b5a91b09f}</ProjectGuid>
     <RootNamespace>CombatAIInterpretation</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>TheFinalDance</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
