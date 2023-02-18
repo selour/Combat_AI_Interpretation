@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine.h"
 
 #ifdef ENGINE_PLATFORM_WINDOWS
 

@@ -2,13 +2,19 @@
 #include <glm/glm.hpp>
 namespace Engine
 {
+	struct OrthographicCameraBounds
+	{
+		float Left, Right, Bottom, Top;
+
+		float GetWidth() { return Right - Left; }
+		float GetHeight() { return Top - Bottom; }
+	};
 	class OrthographicCamera
 	{
 	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
-		void SetProjection(float left, float right, float bottom, float top);
+		OrthographicCamera(float aspectRatio, float zoomLevel);
 
-
+		void SetProjection(float aspectRatio, float zoomLevel);
 		const glm::vec3& GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix(); }
 		const float GetRotation() const { return m_Rotation; }
@@ -19,6 +25,13 @@ namespace Engine
 		const glm::mat4 GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 	private:
 		void RecalculateViewMatrix();
+
+		
+
+		float m_AspectRatio;//横纵比
+		float m_ZoomLevel = 1.0f;//缩放等级
+
+		OrthographicCameraBounds m_Bounds;
 
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_VeiwMatrix;

@@ -1,15 +1,16 @@
 #include "Engine.h"
+#include "EnterPoint.h"
 #include "imgui.h"
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "Core/BattleLayer.h"
 static float timer = 0.0f;
 class TestLayer : public Engine::Layer
 {
 public:
 	TestLayer()
-		:Layer("Test"), m_Run(6, true), m_CameraController(1280.0f / 720.0f, true)
+		:Layer("Test"), m_Run(6, true), m_Camera(1280.0f / 720.0f, 6.0f)
 	{
 	}
 	void OnAttach()
@@ -55,7 +56,6 @@ public:
 	void OnUpdate(Engine::TimeStep ts) override
 	{
 		m_FPS = 1.0f / ts;
-		m_CameraController.OnUpdate(ts);
 
 		if (Engine::Input::IsKeyPoressed(ENGINE_KEY_LEFT))
 		{
@@ -85,7 +85,7 @@ public:
 			Engine::RendererCommand::Clear();
 
 			Engine::Renderer2D::ResetStats();
-			Engine::Renderer2D::BeginScene(m_CameraController.GetCamera());
+			Engine::Renderer2D::BeginScene(m_Camera);
 
 			glm::vec4 quadColor = glm::vec4(1.0f - m_Color.r, 1.0f - m_Color.g, 1.0f - m_Color.b, 1.0f);
 			for (float y = -5.0f; y < 5.0f; y += 0.25f)
@@ -104,16 +104,16 @@ public:
 
 			m_ParticleSystem.Emit(m_EyeParticle);
 			m_ParticleSystem.OnUpdate(ts);
-			m_ParticleSystem.OnRender(m_CameraController.GetCamera(), m_Texture);
+			m_ParticleSystem.OnRender(m_Camera, m_Texture);
 
-			Engine::Renderer2D::BeginScene(m_CameraController.GetCamera(), m_Texture);
+			Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
 			
 			Engine::Renderer2D::DrawQuad(glm::vec2(- sin(timer), 0.0f), glm::vec2(1.0f), glm::radians(sin(timer * 3) * 10), m_Color);
 			
 			Engine::Renderer2D::EndScene();
 
 			
-			Engine::Renderer2D::BeginScene(m_CameraController.GetCamera(), m_SpriteSheet);
+			Engine::Renderer2D::BeginScene(m_Camera, m_SpriteSheet);
 			m_Run.OnUpdate(ts);
 			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_face * 0.3f, 0.3f), 0, glm::vec4(1.0f), m_Run.GetTexCoordZs());
 
@@ -176,7 +176,6 @@ public:
 	}
 	void OnEvent(Engine::Event& event) override
 	{
-		m_CameraController.OnEvent(event);
 		//ENGINE_TRACE("{0}", event.ToString());
 	}
 private:
@@ -186,7 +185,7 @@ private:
 	std::shared_ptr<Engine::FrameBuffer> m_FrameBuffer;
 
 	Engine::Animation2D m_Run;
-	Engine::OrthographicCameraController m_CameraController;	
+	Engine::OrthographicCamera m_Camera;	
 
 	float m_MoveSpeed = 0.5f;
 	glm::vec4 m_Color = glm::vec4(1.0f);
@@ -204,7 +203,8 @@ class Game : public Engine::Application
 public:
 	Game()
 	{
-		AppPushLayer(new TestLayer());
+		//AppPushLayer(new TestLayer());
+		AppPushLayer(new TutorialBattle());
 	}
 
 	~Game()

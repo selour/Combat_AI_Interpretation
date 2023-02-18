@@ -139,10 +139,12 @@ namespace Engine
 		if (shader == nullptr)
 		{
 			s_Data.Shader->Use();
+			s_Data.Shader->SetMatrix4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		}
 		else
 		{
 			shader->Use();
+			shader->SetMatrix4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		}
 
 		if (texture == nullptr)
@@ -153,7 +155,6 @@ namespace Engine
 		{
 			texture->Bind();
 		}
-		s_Data.Shader->SetMatrix4("u_ViewProjection", camera.GetViewProjectionMatrix(), true);
 		s_Data.instanceCount = 0;
 	}
 	void Renderer2D::EndScene()

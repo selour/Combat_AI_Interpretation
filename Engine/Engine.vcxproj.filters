@@ -24,7 +24,7 @@
     <ClInclude Include="src\Engine.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Core\EnterPoint.h">
+    <ClInclude Include="src\EnterPoint.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Log.h">
@@ -118,9 +118,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="3rdparty\stb_image\stb_image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Renderer\CameraController.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\Renderer2D.h">
@@ -225,9 +222,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="3rdparty\stb_image\stb_image.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Renderer\CameraController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Renderer2D.cpp">

@@ -100,11 +100,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\SoundEngine.cpp" />
     <ClCompile Include="src\Core\BattleLayer.cpp" />
     <ClCompile Include="src\Game.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\SoundEngine.h" />
     <ClInclude Include="src\Core\BattleLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\BeatShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,7 +20,6 @@
 #include "Engine/Renderer/RendererPostProcessing.h"
 #include "Engine/Renderer/Animation2D.h"
 #include "Engine/Renderer/RendererCommand.h"
-#include "Engine/Renderer/CameraController.h"
 #include "Engine/Renderer/ParticleSystem.h"
 #include "Engine/Renderer/Buffer.h"
 #include "Engine/Renderer/FrameBuffer.h"
@@ -28,10 +27,6 @@
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Renderer/Camera.h"
-//--------------------------------------
-
-//----------½øÈëµã-----------------------
-#include "Engine/Core/EnterPoint.h"
 //--------------------------------------
 
  

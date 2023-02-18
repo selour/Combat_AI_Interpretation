@@ -109,7 +109,6 @@
     <ClInclude Include="src\Engine\Core\Random.h" />
     <ClInclude Include="src\Engine\Renderer\ParticleSystem.h" />
     <ClInclude Include="src\Engine\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Engine\Renderer\CameraController.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
@@ -140,7 +139,7 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Engine\Core\Application.h" />
     <ClInclude Include="src\Engine\Core\Core.h" />
-    <ClInclude Include="src\Engine\Core\EnterPoint.h" />
+    <ClInclude Include="src\EnterPoint.h" />
     <ClInclude Include="src\Platform\GLFW\GLFWInput.h" />
     <ClInclude Include="src\Engine\Core\TimeStep.h" />
     <ClInclude Include="src\Engine\Renderer\Texture.h" />
@@ -158,7 +157,6 @@
     <ClCompile Include="src\Engine\Renderer\Animation2D.cpp" />
     <ClCompile Include="src\Engine\Renderer\ParticleSystem.cpp" />
     <ClCompile Include="src\Engine\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\Engine\Renderer\CameraController.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayerBuild.cpp" />
