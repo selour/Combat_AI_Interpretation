@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
-#include "SoundEngine.h"
+#include "AudioTrack.h"
+#include "BeatCounter.h"
 #include <memory>
 class BattleLayer :public Engine::Layer
 {
@@ -12,9 +13,7 @@ public:
 class TutorialBattle : public BattleLayer
 {
 public:
-	TutorialBattle()
-		:BattleLayer("TutorialBattle"), m_Camera(1280.0f / 720.0f, 10.0f)
-	{}
+	TutorialBattle();
 	//层生命周期函数
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
@@ -23,14 +22,19 @@ public:
 	virtual void OnEvent(Engine::Event& event) override;
 private:
 	int m_Bpm = 100;
-	float m_Time = 0.0f;
 	float m_Volume = 1.0f;
 
 	glm::vec4 m_Color = glm::vec4(1.0f);
 
-	std::shared_ptr<Engine::Shader> m_BeatShader;
+	BeatCounter m_BeatCounter;
 
 	SoundSourceLibrary m_SoundSources;
+	Track m_Track;
+
+	std::shared_ptr<Engine::Texture2DArray> m_Texture;
+	std::shared_ptr<Engine::Shader> m_BeatShader;
+	
 	Engine::OrthographicCamera m_Camera;
 	Engine::ShaderLibrary m_ShaderLibrary;
+	
 };

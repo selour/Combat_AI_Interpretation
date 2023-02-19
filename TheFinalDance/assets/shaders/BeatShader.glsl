@@ -47,12 +47,25 @@ float determineCircle(vec2 uv)
     col = smoothstep(.5/3., .5/3. -.01, d) * smoothstep(.5/3. -.05, .5/3. -.01, d) * 0.5;
     return col;
 }
+float roundrectTile(vec2 position, vec2 size, float radius)
+{
+    float d = length(max(abs(position) - size + radius, 0.0)) - radius;
+    float col = (1.-smoothstep(-.01, 0., d))*smoothstep(-.02, -0.01, d);
+    return col;
+}
 void main()
 {
 	vec2 uv = v_TexCoord.xy;
 	uv -= 0.5;
     //outColor = vec4(v_TexCoord.xy, 0.0, v_Alpha);
-	outColor = vec4(v_Color.rgb, (determineCircle(uv)+ beatCircle(uv)) * v_Alpha);
+    float outAlpha = 0.0;
+    switch(int(v_TexCoord.z))
+    {
+    case 0:outAlpha = (determineCircle(uv)+ beatCircle(uv));break;
+    case 1:outAlpha= roundrectTile(uv,vec2(0.5),0.05);break;
+    }
+    outColor = vec4(v_Color.rgb,outAlpha * v_Alpha);
+	
 		
 
 }
