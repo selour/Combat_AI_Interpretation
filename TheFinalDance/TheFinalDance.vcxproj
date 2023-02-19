@@ -64,7 +64,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_ENABLE_ASSERTS;ENGINE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)TheFinalDance\3rdparty\irrKlang-64bit-1.6.0\include;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TheFinalDance\3rdparty\irrKlang-64bit-1.6.0\include;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)TheFinalDance\src;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -82,7 +82,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_ENABLE_ASSERTS;ENGINE_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)TheFinalDance\3rdparty\irrKlang-64bit-1.6.0\include;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TheFinalDance\3rdparty\irrKlang-64bit-1.6.0\include;$(SolutionDir)Engine\3rdparty\imgui;$(SolutionDir)Engine\3rdparty\spdlog\include;$(SolutionDir)Engine\3rdparty\glm;$(SolutionDir)TheFinalDance\src;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -101,16 +101,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\BeatCounter.cpp" />
-    <ClCompile Include="src\Core\SoundEngine.cpp" />
+    <ClCompile Include="src\Audio\SoundEngine.cpp" />
     <ClCompile Include="src\Core\BattleLayer.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Core\AudioTrack.cpp" />
+    <ClCompile Include="src\Audio\AudioTrack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\BeatCounter.h" />
-    <ClInclude Include="src\Core\SoundEngine.h" />
+    <ClInclude Include="src\Audio\SoundEngine.h" />
     <ClInclude Include="src\Core\BattleLayer.h" />
-    <ClInclude Include="src\Core\AudioTrack.h" />
+    <ClInclude Include="src\Audio\AudioTrack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

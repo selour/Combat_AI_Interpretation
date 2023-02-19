@@ -17,8 +17,6 @@ void TutorialBattle::OnAttach()
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
 	m_Track.addPattern("11111111", m_SoundSources.Get("metronome"));
 
-	m_Texture = Engine::Texture2DArray::Create("assets/textures/battle.png", 1, 1);
-
 	m_BeatShader = Engine::Shader::Create("assets/shaders/BeatShader.glsl") ;
 	//m_BeatShader->SetInteger("u_Texture0", 0, true);
 }
