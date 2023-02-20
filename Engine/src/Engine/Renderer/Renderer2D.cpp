@@ -178,15 +178,23 @@ namespace Engine
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, float texCoordZ)
 	{
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
+	
+		DrawQuad(transform, color, texCoordZ);
+
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, float texCoordZ)
+	{
 		if (s_Data.instanceCount == s_Data.MaxInstance)
 		{
 			StartNewBatch();
 		}
 
 		//载入实例化数据
-		s_Data.instanceData.Tranform[s_Data.instanceCount] = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
+		s_Data.instanceData.Tranform[s_Data.instanceCount] = transform;
 
 		s_Data.instanceData.Color[s_Data.instanceCount] = glm::vec3(color.r, color.g, color.b);
 		s_Data.instanceData.Alpha[s_Data.instanceCount] = color.a;
@@ -195,8 +203,6 @@ namespace Engine
 		s_Data.instanceCount++;
 
 		s_Data.Stats.QuadCount++;
-
-
 	}
 	
 

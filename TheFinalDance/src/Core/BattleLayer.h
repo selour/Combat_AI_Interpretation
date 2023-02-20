@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine.h"
-#include "Audio/AudioTrack.h"
+#include "Timeline.h"
 #include "Object.h"
 #include "BeatCounter.h"
 #include <memory>
@@ -32,10 +32,12 @@ private:
 
 	glm::vec4 m_Color = glm::vec4(1.0f);
 
+
+	std::shared_ptr<Timeline> m_Timeline;
 	BeatCounter m_BeatCounter;
 
 	SoundSourceLibrary m_SoundSources;
-	Track m_Track;
+	
 
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	std::shared_ptr<Engine::Shader> m_BeatShader;

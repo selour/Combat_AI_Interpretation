@@ -107,7 +107,7 @@
     <ClCompile Include="src\Audio\SoundEngine.cpp" />
     <ClCompile Include="src\Core\BattleLayer.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Audio\AudioTrack.cpp" />
+    <ClCompile Include="src\Core\Timeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Object.h" />
@@ -116,7 +116,7 @@
     <ClInclude Include="src\Core\BeatCounter.h" />
     <ClInclude Include="src\Audio\SoundEngine.h" />
     <ClInclude Include="src\Core\BattleLayer.h" />
-    <ClInclude Include="src\Audio\AudioTrack.h" />
+    <ClInclude Include="src\Core\Timeline.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

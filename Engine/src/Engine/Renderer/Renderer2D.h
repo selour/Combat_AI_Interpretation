@@ -16,7 +16,7 @@ namespace Engine
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color = glm::vec4(1.0f), float texCoordZ = 0);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color = glm::vec4(1.0f), float texCoordZ = 0);
-		
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color = glm::vec4(1.0f), float texCoordZ = 0);
 		struct Statistics
 		{
 			unsigned int DrawCalls = 0;

@@ -1,11 +1,12 @@
 #pragma once
-#include "Engine.h"
+#include "Timeline.h"
+#include <memory>
 class BeatCounter
 {
 public:
-	BeatCounter();
+	BeatCounter(std::shared_ptr<Timeline> timeline);
 	void Clear();
-	void Update(Engine::TimeStep ts);
+	void Update(float ts);
 
 	int GetBPM()
 	{
@@ -27,5 +28,6 @@ private:
 	int m_Bpm;
 	float m_Time;
 	int m_BeatCounter;
+	std::shared_ptr<Timeline> m_Timeline;
 };
 
