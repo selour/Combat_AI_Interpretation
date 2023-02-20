@@ -1,12 +1,12 @@
 #include "BattleLayer.h"
+#include "GameInput.h"
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 //-----------------------------------教程战斗----------------------------------------
 
-bool f = true;
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Camera(1280.0f / 720.0f, 5.0f), m_Player(glm::vec2(0, -3.0f))
 {}
 void TutorialBattle::OnAttach()
 {
@@ -27,29 +27,50 @@ void TutorialBattle::OnDetach()
 
 void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 {
+	//时间更新，计算更新节拍数
 	m_BeatCounter.SetBPM(m_Bpm);
+	m_BeatCounter.Update(ts);
+	m_Player.Update(ts);
+	m_Track.Update(m_BeatCounter.GetCounter());
+
+	
 	float bv = 60.0f / m_Bpm;
 	float beatR = m_BeatCounter.GetTime() / bv;
-	//计算节拍数
-	m_BeatCounter.Update(ts);
+	
+	
 	if (m_BeatCounter.GetCounter() >= 8 && !m_Track.IsPlay())
 	{
 		m_Track.SetState(0);
 	}
-	m_Track.Update(m_BeatCounter.GetCounter());
-
-	if (Engine::Input::IsKeyPoressed(ENGINE_KEY_SPACE))
+	
+	if (!m_Player.IsMove())
 	{
-		if (f)
+		if (GameInput::IsUpKeyDown()&&!GameInput::IsDownKeyDown()&& !GameInput::IsLeftKeyDown()&& !GameInput::IsRightKeyDown())
 		{
 			SoundEngine::Play2D(m_SoundSources.Get("hat"));
-			f = false;
+			m_Player.MoveY(1.0f, bv / 3.0f);
+		}
+		if (!GameInput::IsUpKeyDown() && GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
+		{
+			SoundEngine::Play2D(m_SoundSources.Get("hat"));
+			m_Player.MoveY(-1.0f, bv / 3.0f);
+		}
+		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
+		{
+			SoundEngine::Play2D(m_SoundSources.Get("hat"));
+			m_Player.MoveX(-1.0f, bv / 3.0f);
+		}
+		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && GameInput::IsRightKeyDown())
+		{
+			SoundEngine::Play2D(m_SoundSources.Get("hat"));
+			m_Player.MoveX(1.0f, bv / 3.0f);
 		}
 	}
-	else
-	{
-		f = true;
-	}
+	
+
+
+	GameInput::UpdateKeyEvent();
+
 	{
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
@@ -63,7 +84,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 			}
 		}
 		m_BeatShader->SetFloat("u_Radius", beatR, true);
-		Engine::Renderer2D::DrawQuad(glm::vec2(0, 0), glm::vec2(3.0f), 0, glm::vec4(1.0f));
+		Engine::Renderer2D::DrawQuad(m_Player.GetPos(), glm::vec2(3.0f), 0, glm::vec4(1.0f));
 		Engine::Renderer2D::EndScene();
 	}
 
@@ -76,6 +97,7 @@ void TutorialBattle::OnImGuiRender()
 	ImGui::SliderFloat("Volume", &m_Volume, 0, 1.0f);
 	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
 	ImGui::Text("beatCount:%d", m_BeatCounter.GetCounter());
+	ImGui::Text("Pos:%.1f,%.1f", m_Player.GetPos().x, m_Player.GetPos().y);
 	ImGui::End();
 
 }

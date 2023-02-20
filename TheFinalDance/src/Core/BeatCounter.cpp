@@ -14,10 +14,11 @@ void BeatCounter::Clear()
 void BeatCounter::Update(Engine::TimeStep ts)
 {
 	float bv = 60.0f / (float)m_Bpm;
+	m_Time += ts;
 	if (m_Time >= bv)
 	{
 		m_BeatCounter++;
 		m_Time -= bv;
 	}
-	m_Time += ts;
+	
 }

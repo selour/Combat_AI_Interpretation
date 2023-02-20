@@ -1,8 +1,10 @@
 #pragma once
 #include "Engine.h"
 #include "Audio/AudioTrack.h"
+#include "Object.h"
 #include "BeatCounter.h"
 #include <memory>
+
 class BattleLayer :public Engine::Layer
 {
 public:
@@ -23,6 +25,10 @@ public:
 private:
 	int m_Bpm = 100;
 	float m_Volume = 1.0f;
+
+	//player
+	BattlePlayer m_Player;
+
 
 	glm::vec4 m_Color = glm::vec4(1.0f);
 
