@@ -15,8 +15,9 @@ void TutorialBattle::OnAttach()
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_SoundSources.Load("metronome", "assets/audio/metronome.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
+	m_SoundSources.Get("hat")->SetVolume(0.2f);
+	m_Track.addPattern("10101010", m_SoundSources.Get("metronome"));
 	m_Track.addPattern("11111111", m_SoundSources.Get("metronome"));
-
 	m_BeatShader = Engine::Shader::Create("assets/shaders/BeatShader.glsl") ;
 	//m_BeatShader->SetInteger("u_Texture0", 0, true);
 }
@@ -37,33 +38,69 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	float bv = 60.0f / m_Bpm;
 	float beatR = m_BeatCounter.GetTime() / bv;
 	
-	
-	if (m_BeatCounter.GetCounter() >= 8 && !m_Track.IsPlay())
+	if (m_BeatCounter.GetCounter() >= 8)
 	{
-		m_Track.SetState(0);
+		m_Track.SetState(1);
 	}
-	
+	else
+	{ 
+		if (m_BeatCounter.GetCounter() == 5)
+		{
+			m_Track.SetState(0);
+		}
+	}
 	if (!m_Player.IsMove())
 	{
 		if (GameInput::IsUpKeyDown()&&!GameInput::IsDownKeyDown()&& !GameInput::IsLeftKeyDown()&& !GameInput::IsRightKeyDown())
 		{
-			SoundEngine::Play2D(m_SoundSources.Get("hat"));
-			m_Player.MoveY(1.0f, bv / 3.0f);
+			if (m_Player.GetPos().y >= 3.0f)
+			{
+				m_Player.Move(BattlePlayer::MoveMode::ErrorY, 1.0f, bv / 3.0f);
+			}
+			else
+			{
+				SoundEngine::Play2D(m_SoundSources.Get("hat"));
+				m_Player.Move(BattlePlayer::MoveMode::Y, 1.0f, bv / 3.0f);
+			}
+			
 		}
 		if (!GameInput::IsUpKeyDown() && GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
-			SoundEngine::Play2D(m_SoundSources.Get("hat"));
-			m_Player.MoveY(-1.0f, bv / 3.0f);
+			if (m_Player.GetPos().y <= -3.0f)
+			{
+				m_Player.Move(BattlePlayer::MoveMode::ErrorY, -1.0f, bv / 3.0f);
+			}
+			else
+			{ 
+				SoundEngine::Play2D(m_SoundSources.Get("hat"));
+				m_Player.Move(BattlePlayer::MoveMode::Y, -1.0f, bv / 3.0f);
+			}
 		}
 		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
-			SoundEngine::Play2D(m_SoundSources.Get("hat"));
-			m_Player.MoveX(-1.0f, bv / 3.0f);
+			if (m_Player.GetPos().x <= -3.0f)
+			{
+				m_Player.Move(BattlePlayer::MoveMode::ErrorX, -1.0f, bv / 3.0f);
+			}
+			else
+			{
+				SoundEngine::Play2D(m_SoundSources.Get("hat"));
+				m_Player.Move(BattlePlayer::MoveMode::X, -1.0f, bv / 3.0f);
+			}
+			
 		}
 		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && GameInput::IsRightKeyDown())
 		{
-			SoundEngine::Play2D(m_SoundSources.Get("hat"));
-			m_Player.MoveX(1.0f, bv / 3.0f);
+			if (m_Player.GetPos().x >= 3.0f)
+			{
+				m_Player.Move(BattlePlayer::MoveMode::ErrorX, 1.0f, bv / 3.0f);
+			}
+			else
+			{
+				SoundEngine::Play2D(m_SoundSources.Get("hat"));
+				m_Player.Move(BattlePlayer::MoveMode::X, 1.0f, bv / 3.0f);
+			}
+			
 		}
 	}
 	

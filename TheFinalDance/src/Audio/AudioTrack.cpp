@@ -11,6 +11,7 @@ Pattern::Pattern(std::string text, std::shared_ptr<SoundSource> soundSoure)
 
 void Pattern::Activate(int begin)
 {
+	m_IsActivate = true;
 	m_beginBeat = begin;
 	m_CurrentBeat = -1;
 }
@@ -19,20 +20,24 @@ void Pattern::Update(int beat)
 {
 	if (m_CurrentBeat != m_MaxBeatCount)
 	{
-		int current = (beat - m_beginBeat) % m_MaxBeatCount;
+		int current = beat - m_beginBeat;
 		if (current != m_CurrentBeat)
 		{
 			m_CurrentBeat = current;
 			Play();
 		}
 	}
+	else
+	{
+		m_IsActivate = false;
+	}
 
 }
 
-bool Pattern::IsEnd()
+bool Pattern::IsActivate()
 {
 	
-	return m_CurrentBeat == m_MaxBeatCount;
+	return m_IsActivate;
 }
 	
 	
@@ -51,14 +56,13 @@ void Pattern::Play()
 
 //------------------------------Track----------------------------------------
 Track::Track()
-	:m_Change(false), m_State(-1)
+	:m_Change(-1), m_State(-1)
 {
 
 }
 void Track::SetState(int state)
 {
-	m_State = state;
-	m_Change = true;
+	m_Change = state;
 
 }
 
@@ -66,23 +70,42 @@ void Track::Update(int beatCount)
 {
 	if (m_State != -1)
 	{
-		if (m_Change && (!IsPlay()))
+		if (!IsActivate())
 		{
-			m_Patterns[m_State]->Activate(beatCount);
+			if (m_Change != m_State)
+			{
+				m_State = m_Change;
+				m_Patterns[m_State]->Activate(beatCount);
+				m_Patterns[m_State]->Update(beatCount);
+			}
+			else
+			{
+				m_Change = -1;
+				m_State = -1;
+			}
 		}
-		m_Patterns[m_State]->Update(beatCount);
+		else
+		{
+			m_Patterns[m_State]->Update(beatCount);
+		}
+		
+		
 	}
 	else
 	{
-		if (m_Change)
-			m_Change = false;
+		if (m_Change != m_State)
+		{
+			m_State = m_Change;
+			m_Patterns[m_State]->Activate(beatCount);
+			m_Patterns[m_State]->Update(beatCount);
+		}
 	}
 	
 }
 
-bool Track::IsPlay()
+bool Track::IsActivate()
 {
-	return (m_State != -1) && !m_Patterns[m_State]->IsEnd();
+	return (m_State != -1) && m_Patterns[m_State]->IsActivate();
 }
 
 void Track::addPattern(std::string text, std::shared_ptr<SoundSource> soundSoure)
