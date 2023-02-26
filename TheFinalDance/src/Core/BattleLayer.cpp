@@ -11,18 +11,18 @@ TutorialBattle::TutorialBattle()
 }
 void TutorialBattle::OnAttach()
 {
-	m_Bpm = 100;
+	m_Bpm = 100; 
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
-	m_SoundSources.Load("metronome", "assets/audio/metronome.wav");
+	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
+	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
 	m_SoundSources.Get("hat")->SetVolume(0.2f);
 	m_BeatShader = Engine::Shader::Create("assets/shaders/BeatShader.glsl") ;
 	//m_BeatShader->SetInteger("u_Texture0", 0, true);
 
-	auto p = m_Timeline->addPhase();
-	p->AddTracks("1", m_SoundSources.Get("metronome"));
-
+	//auto p = m_Timeline->addPhase();
+	//p->AddTracks("1", m_SoundSources.Get("metronome"));
 
 }
 
@@ -34,7 +34,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 {
 	//时间更新，计算更新节拍数
 	m_BeatCounter.SetBPM(m_Bpm);
-	m_BeatCounter.Update(ts);
+	//m_BeatCounter.Update(ts);
 	m_Player.Update(ts);
 
 	
@@ -47,12 +47,12 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 		{
 			if (m_Player.GetPos().y >= 3.0f)
 			{
-				m_Player.Move(BattlePlayer::MoveMode::ErrorY, 1.0f, bv / 3.0f);
+				m_Player.Move(BattlePlayer::MoveMode::ErrorY, 1.0f, bv / 5.0f);
 			}
 			else
 			{
 				SoundEngine::Play2D(m_SoundSources.Get("hat"));
-				m_Player.Move(BattlePlayer::MoveMode::Y, 1.0f, bv / 3.0f);
+				m_Player.Move(BattlePlayer::MoveMode::Y, 1.0f, bv / 5.0f);
 			}
 			
 		}
@@ -60,24 +60,24 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 		{
 			if (m_Player.GetPos().y <= -3.0f)
 			{
-				m_Player.Move(BattlePlayer::MoveMode::ErrorY, -1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::ErrorY, -1.0f, bv / 5.0f);
 			}
 			else
 			{ 
 				SoundEngine::Play2D(m_SoundSources.Get("hat"));
-				m_Player.Move(BattlePlayer::MoveMode::Y, -1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::Y, -1.0f, bv / 5.0f);
 			}
 		}
 		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
 			if (m_Player.GetPos().x <= -3.0f)
 			{
-				m_Player.Move(BattlePlayer::MoveMode::ErrorX, -1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::ErrorX, -1.0f, bv / 5.0f);
 			}
 			else
 			{
 				SoundEngine::Play2D(m_SoundSources.Get("hat"));
-				m_Player.Move(BattlePlayer::MoveMode::X, -1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::X, -1.0f, bv / 5.0f);
 			}
 			
 		}
@@ -85,12 +85,12 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 		{
 			if (m_Player.GetPos().x >= 3.0f)
 			{
-				m_Player.Move(BattlePlayer::MoveMode::ErrorX, 1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::ErrorX, 1.0f, bv / 5.0f);
 			}
 			else
 			{
 				SoundEngine::Play2D(m_SoundSources.Get("hat"));
-				m_Player.Move(BattlePlayer::MoveMode::X, 1.0f, bv / 4.0f);
+				m_Player.Move(BattlePlayer::MoveMode::X, 1.0f, bv / 5.0f);
 			}
 			
 		}
