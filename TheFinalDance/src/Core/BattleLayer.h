@@ -12,6 +12,15 @@ public:
 		:Layer(name)
 	{}
 };
+
+class Heart : public Object
+{
+public:
+
+private:
+	std::shared_ptr<Engine::Texture2DArray> m_Texture;
+};
+
 class TutorialBattle : public BattleLayer
 {
 public:

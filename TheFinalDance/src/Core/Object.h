@@ -1,6 +1,32 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Delay.h"
+#include "Engine.h"
+class Object
+{
+public:
+	virtual ~Object() = 0;
+	//对象周期函数
+	virtual void Start() = 0;
+	virtual void Awake() = 0;
+	virtual void Update() = 0;
+	virtual void Render() = 0;
+	virtual void Reset() = 0;
+	virtual void Destroy() = 0;
+
+	bool IsAwake() const
+	{
+		return m_IsAwake;
+	}
+	bool IsRender() const
+	{
+		return m_IsRender;
+	}
+private:
+	bool m_IsAwake = false;
+	bool m_IsRender = false;
+
+};
 
 class BattlePlayer
 {
