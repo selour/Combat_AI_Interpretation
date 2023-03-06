@@ -118,6 +118,9 @@
     <ClInclude Include="src\Core\BattleLayer.h" />
     <ClInclude Include="src\Core\Timeline.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\heart.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

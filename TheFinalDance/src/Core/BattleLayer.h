@@ -60,9 +60,9 @@ private:
 	float m_Size = 1.3f;
 
 	DelaySwitch m_Beat;
-
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
+	std::shared_ptr<Engine::Shader> m_Shader;
 	Engine::OrthographicCamera m_Camera;
 	
 };

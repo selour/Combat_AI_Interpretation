@@ -123,7 +123,7 @@ public:
 
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
-		Engine::RendererPostProcessing::Draw(m_FrameBuffer);
+		//Engine::RendererPostProcessing::Draw(m_FrameBuffer);
 
 		/*
 		m_Particle.ColorBegin = m_Color;

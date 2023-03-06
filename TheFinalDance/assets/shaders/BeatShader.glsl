@@ -66,6 +66,5 @@ void main()
     }
     outColor = vec4(v_Color.rgb,outAlpha * v_Alpha);
 	
-		
 
 }

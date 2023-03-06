@@ -14,7 +14,7 @@ namespace Engine
 		virtual void UnUse() const = 0;
 
 		// uniform¹¤¾ßº¯Êý
-		virtual void SetFloat(const char* name, float value, bool useShader) = 0;
+		virtual void SetFloat(const char* name, float value, bool useShader = false) = 0;
 		virtual void SetInteger(const char* name, int value, bool useShader = false) = 0;
 		virtual void SetIntegerArray(const char* name, int* values, unsigned int count, bool useShader = false) = 0;
 		virtual void SetVector2f(const char* name, float x, float y, bool useShader = false) = 0;

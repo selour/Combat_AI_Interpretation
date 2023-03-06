@@ -23,6 +23,8 @@ void Heart::Start()
 	fbSpec.Height = 720;
 
 	m_FBO = Engine::FrameBuffer::Create(fbSpec);
+
+	m_Shader = Engine::Shader::Create("assets/shaders/heart.glsl");
 }
 
 
@@ -41,11 +43,11 @@ void Heart::Render()
 	Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
 	if (m_Beat)
 	{
-		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 1.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 2.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 3.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 4.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 0.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 1.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 2.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 3.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 4.0f);
 	}
 	else
 	{
@@ -57,8 +59,10 @@ void Heart::Render()
 	}
 	Engine::Renderer2D::EndScene();
 	m_FBO->UnBind();
-
-	Engine::RendererPostProcessing::Draw(m_FBO);
+	
+	m_Shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
+	m_Shader->SetFloat("v_Shadow", m_Beat.GetProportion());
+	Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
 }
 
 void Heart::Reset()
@@ -175,9 +179,9 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	GameInput::UpdateKeyEvent();
 	
 	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		Engine::RendererCommand::Clear();
-		
+		Engine::RendererPostProcessing::Draw(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		m_Heart.Render();
 		Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_BeatShader);
 		for (int i = 0; i < 7; i++)
