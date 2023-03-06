@@ -10,13 +10,19 @@
 
 
 Heart::Heart()
-	:m_Texture(Engine::Texture2DArray::Create("assets/textures/heart.png", 5, 1)),m_Camera(1280.0f / 720.0f, 5.0f)
+	:m_Camera(1280.0f / 720.0f, 5.0f)
 {
 
 }
 
 void Heart::Start()
 {
+	m_Texture = Engine::Texture2DArray::Create("assets/textures/heart.png", 5, 1);
+	Engine::FrameBufferSpecification fbSpec;
+	fbSpec.Width = 1280;
+	fbSpec.Height = 720;
+
+	m_FBO = Engine::FrameBuffer::Create(fbSpec);
 }
 
 
@@ -28,8 +34,11 @@ void Heart::Update(float ts)
 
 void Heart::Render()
 {
-	Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
 	
+	m_FBO->Bind();
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	Engine::RendererCommand::Clear();
+	Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
 	if (m_Beat)
 	{
 		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0.0f);
@@ -46,10 +55,10 @@ void Heart::Render()
 		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size), 0, glm::vec4(1.0f), 3.0f);
 		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size), 0, glm::vec4(1.0f), 4.0f);
 	}
-	
-
 	Engine::Renderer2D::EndScene();
-	
+	m_FBO->UnBind();
+
+	Engine::RendererPostProcessing::Draw(m_FBO);
 }
 
 void Heart::Reset()
@@ -75,7 +84,7 @@ void TutorialBattle::OnAttach()
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.AddObject(&m_Heart);
-
+	m_Heart.Start();
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
@@ -165,9 +174,9 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	GameInput::UpdateKeyEvent();
 	
 	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1));
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		Engine::RendererCommand::Clear();
-
+		
 		m_Heart.Render();
 		Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_BeatShader);
 		for (int i = 0; i < 7; i++)
@@ -180,6 +189,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 		m_BeatShader->SetFloat("u_Radius", beatR, true);
 		Engine::Renderer2D::DrawQuad(m_Player.GetPos(), glm::vec2(3.0f), 0, glm::vec4(1.0f));
 		Engine::Renderer2D::EndScene();
+		
 	}
 	
 

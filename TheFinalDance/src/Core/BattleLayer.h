@@ -62,7 +62,9 @@ private:
 	DelaySwitch m_Beat;
 
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
+	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 	Engine::OrthographicCamera m_Camera;
+	
 };
 
 class TutorialBattle : public BattleLayer
