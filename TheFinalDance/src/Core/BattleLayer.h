@@ -80,6 +80,7 @@ public:
 private:
 	int m_Bpm = 100;
 	float m_Volume = 1.0f;
+	int m_FPS;
 	//±³¾°°å
 	Heart m_Heart;
 	

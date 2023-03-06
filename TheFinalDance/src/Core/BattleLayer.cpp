@@ -105,6 +105,7 @@ void TutorialBattle::OnDetach()
 
 void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 {
+	m_FPS = int(1.0f / ts);
 	//时间更新，计算更新节拍数
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.Update(ts);
@@ -174,7 +175,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	GameInput::UpdateKeyEvent();
 	
 	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		Engine::RendererCommand::Clear();
 		
 		m_Heart.Render();
@@ -198,13 +199,14 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
+	ImGui::Text("%dFPS", m_FPS);
 	ImGui::SliderInt("BPM", &m_Bpm, 50, 1000);
 	ImGui::SliderFloat("Volume", &m_Volume, 0, 1.0f);
 	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
 	ImGui::Text("beatCount:%d", m_BeatCounter.GetCounter());
 	ImGui::Text("Pos:%.1f,%.1f", m_Player.GetPos().x, m_Player.GetPos().y);
 	ImGui::End();
-
+	/*
 	ImGui::Begin("Heart Settings");
 	ImGui::SliderFloat2("Postion1", m_Heart.GetPos1(), -2.0f, 2.0f);
 	ImGui::SliderFloat2("Postion2", m_Heart.GetPos2(), -2.0f, 2.0f);
@@ -213,7 +215,7 @@ void TutorialBattle::OnImGuiRender()
 	ImGui::SliderFloat2("Postion5", m_Heart.GetPos5(), -2.0f, 2.0f);
 	ImGui::SliderFloat("Size", m_Heart.GetSize(), 0.0f, 5.0f);
 	ImGui::End();
-
+	*/
 }
 
 void TutorialBattle::OnEvent(Engine::Event& event)
