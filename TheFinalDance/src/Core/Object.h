@@ -5,14 +5,15 @@
 class Object
 {
 public:
-	virtual ~Object() = 0;
+	virtual ~Object() {};
 	//对象周期函数
 	virtual void Start() = 0;
-	virtual void Awake() = 0;
-	virtual void Update() = 0;
+	virtual void Update(float ts) = 0;
 	virtual void Render() = 0;
 	virtual void Reset() = 0;
 	virtual void Destroy() = 0;
+
+	virtual void OnBeat() = 0;
 
 	bool IsAwake() const
 	{

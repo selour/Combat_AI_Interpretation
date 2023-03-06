@@ -1,10 +1,11 @@
 #pragma once
-#include "Timeline.h"
+#include "Object.h"
 #include <memory>
+#include <vector>
 class BeatCounter
 {
 public:
-	BeatCounter(std::shared_ptr<Timeline> timeline);
+	BeatCounter();
 	void Clear();
 	void Update(float ts);
 
@@ -24,10 +25,16 @@ public:
 	{
 		return m_Time;
 	}
+
+	void AddObject(Object* object)
+	{
+		m_Objects.push_back(object);
+	}
+
 private:
 	int m_Bpm;
 	float m_Time;
 	int m_BeatCounter;
-	std::shared_ptr<Timeline> m_Timeline;
+	std::vector<Object*> m_Objects;
 };
 

@@ -1,8 +1,8 @@
 #include "BeatCounter.h"
 
 
-BeatCounter::BeatCounter(std::shared_ptr<Timeline> timeline)
-	:m_Bpm(100),m_Time(0),m_BeatCounter(0),m_Timeline(timeline)
+BeatCounter::BeatCounter()
+	:m_Bpm(100),m_Time(0),m_BeatCounter(0)
 {
 }
 
@@ -18,7 +18,10 @@ void BeatCounter::Update(float ts)
 	m_Time += ts;
 	if (m_Time >= bv)
 	{
-		m_Timeline->BeatUpdate();
+		for (int i = 0; i < m_Objects.size(); i++)
+		{
+			m_Objects[i]->OnBeat();
+		}
 		m_BeatCounter++;
 		m_Time -= bv;
 	}

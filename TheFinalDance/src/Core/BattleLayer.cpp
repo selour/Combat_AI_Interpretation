@@ -2,11 +2,71 @@
 #include "GameInput.h"
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+
+
+
+
 //-----------------------------------教程战斗----------------------------------------
 
 
+Heart::Heart()
+	:m_Texture(Engine::Texture2DArray::Create("assets/textures/heart.png", 5, 1)),m_Camera(1280.0f / 720.0f, 5.0f)
+{
+
+}
+
+void Heart::Start()
+{
+}
+
+
+void Heart::Update(float ts)
+{
+	m_Beat.Update(ts);
+}
+
+
+void Heart::Render()
+{
+	Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
+	
+	if (m_Beat)
+	{
+		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 1.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 2.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 3.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 4.0f);
+	}
+	else
+	{
+		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size), 0, glm::vec4(1.0f), 0.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size), 0, glm::vec4(1.0f), 1.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size), 0, glm::vec4(1.0f), 2.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size), 0, glm::vec4(1.0f), 3.0f);
+		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size), 0, glm::vec4(1.0f), 4.0f);
+	}
+	
+
+	Engine::Renderer2D::EndScene();
+	
+}
+
+void Heart::Reset()
+{
+}
+
+void Heart::Destroy()
+{
+}
+
+void Heart::OnBeat()
+{
+	m_Beat.SetDelay(0.15f);
+}
+
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Player(glm::vec2(0, -3.0f)), m_Timeline(std::make_shared<Timeline>()),m_BeatCounter(m_Timeline), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Player(glm::vec2(0, -3.0f)),m_BeatCounter(), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 void TutorialBattle::OnAttach()
@@ -14,6 +74,8 @@ void TutorialBattle::OnAttach()
 	m_Bpm = 100; 
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
+	m_BeatCounter.AddObject(&m_Heart);
+
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
@@ -23,6 +85,8 @@ void TutorialBattle::OnAttach()
 
 	//auto p = m_Timeline->addPhase();
 	//p->AddTracks("1", m_SoundSources.Get("metronome"));
+
+	SoundEngine::Play2D(m_SoundSources.Get("tutorial_metronome_loop"), true);
 
 }
 
@@ -34,10 +98,10 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 {
 	//时间更新，计算更新节拍数
 	m_BeatCounter.SetBPM(m_Bpm);
-	//m_BeatCounter.Update(ts);
+	m_BeatCounter.Update(ts);
 	m_Player.Update(ts);
 
-	
+	m_Heart.Update(ts);
 	float bv = 60.0f / m_Bpm;
 	float beatR = m_BeatCounter.GetTime() / bv;
 	
@@ -99,11 +163,12 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 
 
 	GameInput::UpdateKeyEvent();
-
+	
 	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1));
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1));
 		Engine::RendererCommand::Clear();
 
+		m_Heart.Render();
 		Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_BeatShader);
 		for (int i = 0; i < 7; i++)
 		{
@@ -116,6 +181,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 		Engine::Renderer2D::DrawQuad(m_Player.GetPos(), glm::vec2(3.0f), 0, glm::vec4(1.0f));
 		Engine::Renderer2D::EndScene();
 	}
+	
 
 }
 
@@ -129,8 +195,18 @@ void TutorialBattle::OnImGuiRender()
 	ImGui::Text("Pos:%.1f,%.1f", m_Player.GetPos().x, m_Player.GetPos().y);
 	ImGui::End();
 
+	ImGui::Begin("Heart Settings");
+	ImGui::SliderFloat2("Postion1", m_Heart.GetPos1(), -2.0f, 2.0f);
+	ImGui::SliderFloat2("Postion2", m_Heart.GetPos2(), -2.0f, 2.0f);
+	ImGui::SliderFloat2("Postion3", m_Heart.GetPos3(), -2.0f, 2.0f);
+	ImGui::SliderFloat2("Postion4", m_Heart.GetPos4(), -2.0f, 2.0f);
+	ImGui::SliderFloat2("Postion5", m_Heart.GetPos5(), -2.0f, 2.0f);
+	ImGui::SliderFloat("Size", m_Heart.GetSize(), 0.0f, 5.0f);
+	ImGui::End();
+
 }
 
 void TutorialBattle::OnEvent(Engine::Event& event)
 {
 }
+
