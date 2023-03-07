@@ -16,8 +16,9 @@ public:
 class Heart : public Object
 {
 public:
-	Heart();
+	Heart(SoundSourceLibrary* ss);
 	virtual void Start() override;
+	virtual void Awake() override;
 	virtual void Update(float ts) override;
 	virtual void Render()override;
 	virtual void Reset() override;
@@ -64,6 +65,7 @@ private:
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 	std::shared_ptr<Engine::Shader> m_Shader;
 	Engine::OrthographicCamera m_Camera;
+	SoundSourceLibrary* m_SoundSources;
 	
 };
 

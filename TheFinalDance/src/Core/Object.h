@@ -8,6 +8,7 @@ public:
 	virtual ~Object() {};
 	//对象周期函数
 	virtual void Start() = 0;
+	virtual void Awake() = 0;
 	virtual void Update(float ts) = 0;
 	virtual void Render() = 0;
 	virtual void Reset() = 0;
@@ -23,7 +24,7 @@ public:
 	{
 		return m_IsRender;
 	}
-private:
+protected:
 	bool m_IsAwake = false;
 	bool m_IsRender = false;
 

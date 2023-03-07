@@ -9,10 +9,11 @@
 //-----------------------------------½Ì³ÌÕ½¶·----------------------------------------
 
 
-Heart::Heart()
-	:m_Camera(1280.0f / 720.0f, 5.0f)
-{
 
+
+Heart::Heart(SoundSourceLibrary* ss)
+	:m_Camera(1280.0f / 720.0f, 5.0f),m_SoundSources(ss)
+{
 }
 
 void Heart::Start()
@@ -27,42 +28,56 @@ void Heart::Start()
 	m_Shader = Engine::Shader::Create("assets/shaders/heart.glsl");
 }
 
+void Heart::Awake()
+{
+	m_IsAwake = true;
+	m_IsRender = true;
+	SoundEngine::Play2D(m_SoundSources->Get("tutorial_metronome_loop"), true);
+}
+
 
 void Heart::Update(float ts)
 {
-	m_Beat.Update(ts);
+	if (m_IsAwake)
+	{
+		m_Beat.Update(ts);
+	}
+	
 }
 
 
 void Heart::Render()
 {
-	
-	m_FBO->Bind();
-	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-	Engine::RendererCommand::Clear();
-	Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
-	if (m_Beat)
+	if (m_IsRender)
 	{
-		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 0.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 1.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 2.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 3.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 4.0f);
+		m_FBO->Bind();
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		Engine::RendererCommand::Clear();
+		Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
+		if (m_Beat)
+		{
+			Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 0.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 1.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 2.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 3.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 4.0f);
+		}
+		else
+		{
+			Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size), 0, glm::vec4(1.0f), 0.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size), 0, glm::vec4(1.0f), 1.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size), 0, glm::vec4(1.0f), 2.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size), 0, glm::vec4(1.0f), 3.0f);
+			Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size), 0, glm::vec4(1.0f), 4.0f);
+		}
+		Engine::Renderer2D::EndScene();
+		m_FBO->UnBind();
+		
+		m_Shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
+		m_Shader->SetFloat("v_Shadow", m_Beat.GetProportion());
+		Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
 	}
-	else
-	{
-		Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size), 0, glm::vec4(1.0f), 0.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion2, glm::vec2(m_Size), 0, glm::vec4(1.0f), 1.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion3, glm::vec2(m_Size), 0, glm::vec4(1.0f), 2.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion4, glm::vec2(m_Size), 0, glm::vec4(1.0f), 3.0f);
-		Engine::Renderer2D::DrawQuad(m_Postion5, glm::vec2(m_Size), 0, glm::vec4(1.0f), 4.0f);
-	}
-	Engine::Renderer2D::EndScene();
-	m_FBO->UnBind();
 	
-	m_Shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
-	m_Shader->SetFloat("v_Shadow", m_Beat.GetProportion());
-	Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
 }
 
 void Heart::Reset()
@@ -79,7 +94,7 @@ void Heart::OnBeat()
 }
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Player(glm::vec2(0, -3.0f)),m_BeatCounter(), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Heart(&m_SoundSources), m_Player(glm::vec2(0, -3.0f)), m_BeatCounter(), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 void TutorialBattle::OnAttach()
@@ -88,6 +103,9 @@ void TutorialBattle::OnAttach()
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.AddObject(&m_Heart);
+	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
+	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
+
 	m_Heart.Start();
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
@@ -98,8 +116,7 @@ void TutorialBattle::OnAttach()
 
 	//auto p = m_Timeline->addPhase();
 	//p->AddTracks("1", m_SoundSources.Get("metronome"));
-
-	SoundEngine::Play2D(m_SoundSources.Get("tutorial_metronome_loop"), true);
+	SoundEngine::Play2D(m_SoundSources.Get("tutorial_metronome_start"));
 
 }
 
@@ -207,7 +224,7 @@ void TutorialBattle::OnImGuiRender()
 	ImGui::SliderInt("BPM", &m_Bpm, 50, 1000);
 	ImGui::SliderFloat("Volume", &m_Volume, 0, 1.0f);
 	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
-	ImGui::Text("beatCount:%d", m_BeatCounter.GetCounter());
+	ImGui::Text("beatCount:%d", int(m_BeatCounter.GetTimeLine()->GetCounter()));
 	ImGui::Text("Pos:%.1f,%.1f", m_Player.GetPos().x, m_Player.GetPos().y);
 	ImGui::End();
 	/*
