@@ -9,7 +9,6 @@ namespace Engine
 		static void Init();
 		static void Shutdown();
 		static void Draw(const std::shared_ptr<FrameBuffer> frameBuffer, const std::shared_ptr<Shader> shader);
-		static void Draw(const glm::vec4 color);
 	};
 }
 

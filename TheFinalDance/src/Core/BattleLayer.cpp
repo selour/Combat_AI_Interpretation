@@ -8,9 +8,6 @@
 
 //-----------------------------------½Ì³ÌÕ½¶·----------------------------------------
 
-
-
-
 Heart::Heart(SoundSourceLibrary* ss)
 	:m_Camera(1280.0f / 720.0f, 5.0f),m_SoundSources(ss)
 {
@@ -26,6 +23,8 @@ void Heart::Start()
 	m_FBO = Engine::FrameBuffer::Create(fbSpec);
 
 	m_Shader = Engine::Shader::Create("assets/shaders/heart.glsl");
+	m_Shader->SetInteger("u_Texture0", 0, true);
+
 }
 
 void Heart::Awake()
@@ -45,8 +44,7 @@ void Heart::Update(float ts)
 	
 }
 
-
-void Heart::Render()
+void Heart::BufferRender()
 {
 	if (m_IsRender)
 	{
@@ -72,7 +70,15 @@ void Heart::Render()
 		}
 		Engine::Renderer2D::EndScene();
 		m_FBO->UnBind();
-		
+
+	}
+}
+
+
+void Heart::Render()
+{
+	if (m_IsRender)
+	{
 		m_Shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
 		m_Shader->SetFloat("v_Shadow", m_Beat.GetProportion());
 		Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
@@ -93,8 +99,81 @@ void Heart::OnBeat()
 	m_Beat.SetDelay(0.15f);
 }
 
+
+
+TutorialPost::TutorialPost()
+{
+}
+
+void TutorialPost::Start()
+{
+	Engine::FrameBufferSpecification fbSpec;
+	fbSpec.Width = 1280;
+	fbSpec.Height = 720;
+
+	m_FBO = Engine::FrameBuffer::Create(fbSpec);
+
+	m_Shader = Engine::Shader::Create("assets/shaders/Post.glsl");
+	m_Shader->SetInteger("u_Texture0", 0, true);
+}
+
+void TutorialPost::Awake()
+{
+	m_IsAwake = true;
+	m_Noise.SetDelay(60.0f / 100.0f);
+}
+
+void TutorialPost::Update(float ts)
+{
+	m_Time += ts;
+	m_Noise.Update(ts);
+}
+
+void TutorialPost::BufferRender()
+{
+
+}
+
+void TutorialPost::Render()
+{
+	m_Shader->SetFloat("u_Time", m_Time, true);
+	m_Shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
+	
+	if (m_Noise)
+	{
+		m_Shader->SetInteger("u_State", 1);
+	}
+	else
+	{
+		if (m_IsAwake)
+		{
+			m_Shader->SetInteger("u_State", 2);
+		}
+		else
+		{
+			m_Shader->SetInteger("u_State", 0);
+		}
+			
+	}
+	Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
+}
+
+void TutorialPost::Reset()
+{
+}
+
+void TutorialPost::Destroy()
+{
+}
+
+void TutorialPost::OnBeat()
+{
+}
+
+
+
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Heart(&m_SoundSources), m_Player(glm::vec2(0, -3.0f)), m_BeatCounter(), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Heart(&m_SoundSources), m_Player(glm::vec2(0, -3.0f)), m_BeatCounter(), m_Post(), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 void TutorialBattle::OnAttach()
@@ -104,7 +183,10 @@ void TutorialBattle::OnAttach()
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.AddObject(&m_Heart);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
+	m_BeatCounter.GetTimeLine()->AddObject(&m_Post);
+	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
+
 
 	m_Heart.Start();
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
@@ -112,11 +194,13 @@ void TutorialBattle::OnAttach()
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
 	m_SoundSources.Get("hat")->SetVolume(0.2f);
 	m_BeatShader = Engine::Shader::Create("assets/shaders/BeatShader.glsl") ;
-	//m_BeatShader->SetInteger("u_Texture0", 0, true);
 
-	//auto p = m_Timeline->addPhase();
-	//p->AddTracks("1", m_SoundSources.Get("metronome"));
+
+	m_Post.Start();
+
 	SoundEngine::Play2D(m_SoundSources.Get("tutorial_metronome_start"));
+
+
 
 }
 
@@ -133,6 +217,9 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	m_Player.Update(ts);
 
 	m_Heart.Update(ts);
+
+	m_Post.Update(ts);
+
 	float bv = 60.0f / m_Bpm;
 	float beatR = m_BeatCounter.GetTime() / bv;
 	
@@ -194,27 +281,35 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 
 
 	GameInput::UpdateKeyEvent();
-	
-	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-		Engine::RendererCommand::Clear();
-		Engine::RendererPostProcessing::Draw(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-		m_Heart.Render();
-		Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_BeatShader);
-		for (int i = 0; i < 7; i++)
-		{
-			for (int j = 0; j < 7; j++)
-			{
-				Engine::Renderer2D::DrawQuad(glm::vec2(i-3, j-3), glm::vec2(0.95f), 0, m_Color, 1.0f);
-			}
-		}
-		m_BeatShader->SetFloat("u_Radius", beatR, true);
-		Engine::Renderer2D::DrawQuad(m_Player.GetPos(), glm::vec2(3.0f), 0, glm::vec4(1.0f));
-		Engine::Renderer2D::EndScene();
-		
-	}
-	
 
+
+
+	m_Heart.BufferRender();
+
+	m_Post.GetFBO()->Bind();
+	
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	Engine::RendererCommand::Clear();
+	
+	m_Heart.Render();
+	
+	Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_BeatShader);
+	for (int i = 0; i < 7; i++)
+	{
+		for (int j = 0; j < 7; j++)
+		{
+			Engine::Renderer2D::DrawQuad(glm::vec2(i-3, j-3), glm::vec2(0.95f), 0, m_Color, 1.0f);
+		}
+	}
+	m_BeatShader->SetFloat("u_Radius", beatR, true);
+	Engine::Renderer2D::DrawQuad(m_Player.GetPos(), glm::vec2(3.0f), 0, glm::vec4(1.0f));
+	Engine::Renderer2D::EndScene();
+	
+	m_Post.GetFBO()->UnBind();
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	Engine::RendererCommand::Clear();
+
+	m_Post.Render();
 }
 
 void TutorialBattle::OnImGuiRender()

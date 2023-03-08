@@ -20,6 +20,7 @@ public:
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
+	virtual void BufferRender() override;
 	virtual void Render()override;
 	virtual void Reset() override;
 	virtual void Destroy() override;
@@ -68,7 +69,36 @@ private:
 	SoundSourceLibrary* m_SoundSources;
 	
 };
+class TutorialPost : public Object
+{
+public:
+	TutorialPost();
+	virtual void Start() override;
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+	virtual void BufferRender() override;
+	virtual void Render()override;
+	virtual void Reset() override;
+	virtual void Destroy() override;
 
+
+	virtual void OnBeat() override;
+
+	std::shared_ptr<Engine::FrameBuffer> GetFBO()
+	{
+		return m_FBO;
+	}
+	std::shared_ptr<Engine::Shader> GetShader()
+	{
+		return m_Shader;
+	}
+private:
+	float m_Time = 0.0f;
+	DelaySwitch m_Noise;
+	std::shared_ptr<Engine::FrameBuffer> m_FBO;
+	std::shared_ptr<Engine::Shader> m_Shader;
+
+};
 class TutorialBattle : public BattleLayer
 {
 public:
@@ -96,12 +126,11 @@ private:
 	BeatCounter m_BeatCounter;
 
 	SoundSourceLibrary m_SoundSources;
-	
+	TutorialPost m_Post;
 
-	//std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	std::shared_ptr<Engine::Shader> m_BeatShader;
 	
 	Engine::OrthographicCamera m_Camera;
-	Engine::ShaderLibrary m_ShaderLibrary;
+	
 	
 };

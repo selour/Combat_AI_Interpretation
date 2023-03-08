@@ -14,9 +14,6 @@ namespace Engine
 	static ScreenQuad s_Data;
 	void RendererPostProcessing::Init()
 	{
-		//×ÅÉ«Æ÷ÔØÈë
-		s_Data.Shader = Shader::Create("assets/shaders/purity.glsl");
-		s_Data.Shader->SetInteger("u_Texture0", 0, true);
 		//VAO
 		s_Data.VAO = Engine::VertexArray::Create();
 		//QuadVBO
@@ -52,12 +49,6 @@ namespace Engine
 		
 		shader->Use();
 		
-		RendererCommand::Draw(s_Data.VAO);
-	}
-	void RendererPostProcessing::Draw(const glm::vec4 color)
-	{
-		s_Data.Shader->Use();
-		s_Data.Shader->SetVector4f("v_Color", color);
 		RendererCommand::Draw(s_Data.VAO);
 	}
 }
