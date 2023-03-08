@@ -94,7 +94,8 @@ public:
 	}
 private:
 	float m_Time = 0.0f;
-	DelaySwitch m_Noise;
+	int m_BeatCount = 0;
+	DelaySwitch m_Noise, m_Rhythm;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 	std::shared_ptr<Engine::Shader> m_Shader;
 

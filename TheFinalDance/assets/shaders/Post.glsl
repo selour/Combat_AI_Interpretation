@@ -19,8 +19,10 @@ out vec4 FragColor;
 in vec2 v_TexCoords;
 uniform vec2 u_Resolution;
 uniform float u_Time;
-uniform sampler2D u_Texture0;
 uniform int u_State;
+uniform float u_Rhythm;
+
+uniform sampler2D u_Texture0;
 float random (vec2 st, float seed)
 {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * (43758.5453123 * seed));
@@ -33,12 +35,12 @@ vec4 RGBAnoise(vec2 uv)
 vec4 MpegGlitch(vec2 uv)
 {
 	vec2 fragCoord = uv.xy * u_Resolution.xy;
-	vec2 block = floor(fragCoord.xy / vec2(16.));
-	vec2 uv_noise = block / vec2(64.);
+	vec2 block = floor(fragCoord.xy / vec2(32.));
+	vec2 uv_noise = block / vec2(32.);
 	uv_noise += floor(vec2(fract(u_Time)*1.0) * vec2(1234.0, 3543.0)) / vec2(64.);
 	
-	float block_thresh = pow(fract(u_Time * 1236.0453), 2.0) * 0.005;
-	float line_thresh = pow(fract(u_Time * 2236.0453), 3.0) * 0.005;
+	float block_thresh = pow(fract(u_Time * 1236.0453), 2.0) * 0.001;
+	float line_thresh = pow(fract(u_Time * 2236.0453), 3.0) * 0.007;
 	
 	vec2 uv_r = uv, uv_g = uv, uv_b = uv;
 
@@ -81,9 +83,9 @@ void main()
 { 
     switch(u_State)
     {
-    case 0:FragColor = texture(u_Texture0,v_TexCoords);break;
+    case 0:FragColor = vec4(vec3(texture(u_Texture0,v_TexCoords).rgb),1.);break;
     case 1:FragColor = RGBAnoise(v_TexCoords);break;
-	case 2:FragColor = mix(MpegGlitch(v_TexCoords), RGBAnoise(v_TexCoords),0.2);break;
+	case 2:FragColor = mix(MpegGlitch(v_TexCoords), RGBAnoise(v_TexCoords),0.2 + (1. - u_Rhythm)*0.3);break;
     }
     
 }

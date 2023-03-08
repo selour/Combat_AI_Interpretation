@@ -127,6 +127,7 @@ void TutorialPost::Update(float ts)
 {
 	m_Time += ts;
 	m_Noise.Update(ts);
+	m_Rhythm.Update(ts);
 }
 
 void TutorialPost::BufferRender()
@@ -138,6 +139,7 @@ void TutorialPost::Render()
 {
 	m_Shader->SetFloat("u_Time", m_Time, true);
 	m_Shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
+	m_Shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
 	
 	if (m_Noise)
 	{
@@ -168,6 +170,15 @@ void TutorialPost::Destroy()
 
 void TutorialPost::OnBeat()
 {
+	if (m_IsAwake)
+	{
+		if (m_BeatCount == 0)
+		{
+			m_Rhythm.SetDelay(60.0f * 8 / 100.0f);
+		}
+		m_BeatCount++;
+		m_BeatCount %= 8;
+	}
 }
 
 
@@ -182,6 +193,7 @@ void TutorialBattle::OnAttach()
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.AddObject(&m_Heart);
+	m_BeatCounter.AddObject(&m_Post);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Post);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
@@ -288,7 +300,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 
 	m_Post.GetFBO()->Bind();
 	
-	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
 	
 	m_Heart.Render();
