@@ -33,3 +33,15 @@ private:
 	static GameInput* s_Instance;
 };
 
+class InputLayer : public Engine::Layer
+{
+public:
+	InputLayer()
+		:Layer("Input")
+	{
+	}
+	void OnUpdate(Engine::TimeStep ts) override
+	{
+		GameInput::UpdateKeyEvent();
+	}
+};

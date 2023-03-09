@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Core/BattleLayer.h"
+#include "Core/GameInput.h"
 static float timer = 0.0f;
 class TestLayer : public Engine::Layer
 {
@@ -205,6 +206,7 @@ public:
 	{
 		//AppPushLayer(new TestLayer());
 		AppPushLayer(new TutorialBattle());
+		AppPushLayer(new InputLayer());
 	}
 
 	~Game()

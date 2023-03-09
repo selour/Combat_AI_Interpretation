@@ -12,6 +12,76 @@ public:
 		:Layer(name)
 	{}
 };
+struct Block
+{
+	glm::vec2 Position = { 0.0f, 0.0f };
+	bool Awake = false;
+	bool Danger = false;
+	bool Render = false;
+	Block* Link[4] = { nullptr, nullptr, nullptr, nullptr };
+};
+//-------Link----------
+//       [3]
+//    [0]   [1]
+//       [2]
+
+class BattleStage : public Object
+{
+public:
+	BattleStage();
+	virtual void Start() override;
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+	virtual void BufferRender() override;
+	virtual void Render()override;
+	virtual void Reset() override;
+	virtual void Destroy() override;
+
+
+	virtual void OnBeat() override;
+
+
+	std::vector<Block>* GetStage()
+	{
+		return &m_Stage;
+	}
+private:
+	std::vector<Block> m_Stage;
+	std::shared_ptr<Engine::Shader> m_Shader;
+	Engine::OrthographicCamera m_Camera;
+};
+
+
+class BattlePlayer : public Object
+{
+public:
+	BattlePlayer(SoundSourceLibrary* ss);
+
+	virtual void Start() override;
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+	virtual void BufferRender() override;
+	virtual void Render()override;
+	virtual void Reset() override;
+	virtual void Destroy() override;
+
+
+	virtual void OnBeat() override;
+	
+
+	void SetBlock(Block* block);
+
+private:
+	glm::vec2 m_Position;
+	DelaySwitch m_MoveFlag;
+	DelaySwitch m_IsInteractive;
+	Block* m_Current = nullptr;
+	Block* m_Next = nullptr;
+	std::shared_ptr<Engine::Shader> m_Shader;
+	Engine::OrthographicCamera m_Camera;
+	SoundSourceLibrary* m_SoundSources;
+
+};
 
 class Heart : public Object
 {
@@ -125,6 +195,7 @@ private:
 
 
 	BeatCounter m_BeatCounter;
+	BattleStage m_BattleStage;
 
 	SoundSourceLibrary m_SoundSources;
 	TutorialPost m_Post;
