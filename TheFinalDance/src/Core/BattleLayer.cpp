@@ -63,13 +63,13 @@ void BattleStage::BufferRender()
 
 void BattleStage::Render()
 {
-	auto shader = m_Shaders->Get("BeatShader");
+	auto shader = m_Shaders->Get("Block");
 	Engine::Renderer2D::BeginScene(m_Camera, nullptr, shader);
 	for (int i = 0; i < m_Stage.size(); i++)
 	{
 		if (m_Stage[i].Awake && m_Stage[i].Render)
 		{
-			Engine::Renderer2D::DrawQuad(m_Stage[i].Position, glm::vec2(0.95f), 0, glm::vec4(1.0f), 1.0f);
+			Engine::Renderer2D::DrawQuad(m_Stage[i].Position, glm::vec2(0.95f), 0, glm::vec4(1.0f));
 		}
 		
 	}
@@ -97,6 +97,8 @@ BattlePlayer::BattlePlayer(Engine::ShaderLibrary* shaders, SoundSourceLibrary* s
 
 void BattlePlayer::Start()
 {
+	m_State = Free;
+	m_Texture = Engine::Texture2DArray::Create("assets/textures/player.png", 3, 1);
 }
 
 void BattlePlayer::Awake()
@@ -105,93 +107,216 @@ void BattlePlayer::Awake()
 
 void BattlePlayer::Update(float ts)
 {
+	m_Time += ts;
 	m_Position = m_Current->Position;
 	m_MoveFlag.Update(ts);
-	if (!m_MoveFlag)
+	m_ErrorFlag.Update(ts);
+	m_BeatFlag.Update(ts);
+	
+	if (!m_ErrorFlag)
 	{
-		if (GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
+		switch (m_State)
 		{
-			
-				if(m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
+		case Free:
+			if (GameInput::IsInteractiveKeyDown())
+			{
+				m_MoveFlag.SetDelay(60.0f / 400.0f - 0.02f);
+				m_State = Beat;
+				SoundEngine::Play2D(m_SoundSources->Get("clap"));
+			}
+			if (GameInput::IsUpKeyDown())
+			{
+
+				if (m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
 				{
 					m_Next = m_Current->Link[3];
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
 				}
 				else
 				{
+					m_ErrorDirection = { 0.0 , 1.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
 					SoundEngine::Play2D(m_SoundSources->Get("error"));
 				}
-			
 
-		}
-		if (!GameInput::IsUpKeyDown() && GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
-		{
-			
+
+			}
+			if ( GameInput::IsDownKeyDown())
+			{
+
 				if (m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
 				{
 					m_Next = m_Current->Link[2];
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
 				}
 				else
 				{
+					m_ErrorDirection = { 0.0 , -1.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
 					SoundEngine::Play2D(m_SoundSources->Get("error"));
 				}
-			
-		}
-		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
-		{
-		
+
+			}
+			if ( GameInput::IsLeftKeyDown() )
+			{
+
 				if (m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
 				{
 					m_Next = m_Current->Link[0];
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
 				}
 				else
 				{
+					m_ErrorDirection = { -1.0f , 0.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
 					SoundEngine::Play2D(m_SoundSources->Get("error"));
 				}
-			
 
-		}
-		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && GameInput::IsRightKeyDown())
-		{
-			
+
+			}
+			if (GameInput::IsRightKeyDown())
+			{
+
 				if (m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
 				{
 					m_Next = m_Current->Link[1];
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
 				}
 				else
 				{
+					m_ErrorDirection = { 1.0f , 0.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
 					SoundEngine::Play2D(m_SoundSources->Get("error"));
 				}
-			
 
+
+			}
+			break;
+		case Move:
+			if (GameInput::IsInteractiveKeyDown())
+			{
+				m_ErrorDirection = { 0.0 , 0.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+			}
+			if (GameInput::IsUpKeyDown())
+			{
+					m_ErrorDirection = { 0.0 , 1.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+			}
+			if (GameInput::IsDownKeyDown())
+			{
+					m_ErrorDirection = { 0.0 , -1.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+				
+			}
+			if (GameInput::IsLeftKeyDown())
+			{
+
+				
+					m_ErrorDirection = { -1.0f , 0.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+
+			}
+			if (GameInput::IsRightKeyDown())
+			{
+
+					m_ErrorDirection = { 1.0f , 0.0f };
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+			}
+			if (m_MoveFlag.GetProportion() == 1)
+			{
+				m_Current = m_Next;
+				m_Position = m_Current->Position;
+				m_State = Free;
+			}
+			else
+			{
+				m_Position = m_Current->Position + m_MoveFlag.GetProportion()*(m_Next->Position - m_Current->Position);
+			}
+			break;
+		case Beat:
+			if (GameInput::IsInteractiveKeyDown())
+			{
+				m_ErrorDirection = { 0.0 , 0.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+			}
+			if (GameInput::IsUpKeyDown())
+			{
+				m_ErrorDirection = { 0.0 , 1.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+			}
+			if (GameInput::IsDownKeyDown())
+			{
+				m_ErrorDirection = { 0.0 , -1.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+			}
+			if (GameInput::IsLeftKeyDown())
+			{
+
+
+				m_ErrorDirection = { -1.0f , 0.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+
+			}
+			if (GameInput::IsRightKeyDown())
+			{
+
+				m_ErrorDirection = { 1.0f , 0.0f };
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				SoundEngine::Play2D(m_SoundSources->Get("error"));
+
+			}
+			if (m_MoveFlag.GetProportion() == 1)
+			{
+				m_State = Free;
+			}
+			break;
 		}
-
 	}
 	else
 	{
-		if (GameInput::IsUpKeyDown() || GameInput::IsDownKeyDown() || GameInput::IsLeftKeyDown() || GameInput::IsRightKeyDown())
+		
+		if (m_State == Move)
 		{
-			SoundEngine::Play2D(m_SoundSources->Get("error"));
-		}
-		if (m_MoveFlag.GetProportion() == 1)
-		{
-			m_Current = m_Next;
-			m_Position = m_Current->Position;
-		}
-		else
-		{
-			m_Position = m_Current->Position + m_MoveFlag.GetProportion()*(m_Next->Position - m_Current->Position);
+			if (m_MoveFlag.GetProportion() == 1)
+			{
+				m_Current = m_Next;
+				m_Position = m_Current->Position;
+				m_State = Free;
+			}
+			else
+			{
+				m_Position = m_Current->Position + m_MoveFlag.GetProportion() * (m_Next->Position - m_Current->Position);
+			}
 		}
 		
 	}
 
+		
+		
 }
 
 void BattlePlayer::BufferRender()
@@ -201,10 +326,33 @@ void BattlePlayer::BufferRender()
 void BattlePlayer::Render()
 {
 	auto shader = m_Shaders->Get("BeatShader");
-	
-	Engine::Renderer2D::BeginScene(m_Camera, nullptr, shader);
+	float size = 1.0f;
+	if (m_BeatFlag)
+	{
+		size += 0.15f * sin(glm::radians(m_BeatFlag.GetProportion() * 180.0f));
+	}
+	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
 	shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
-	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f));
+	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), 3.0f);
+	if (m_State == Beat)
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, m_Color, 4.0f);
+	}
+	if (m_ErrorFlag)
+	{
+		glm::vec2 pos = sin(glm::radians(m_ErrorFlag.GetProportion() * 180.0f)) * m_ErrorDirection * 0.2f;
+		Engine::Renderer2D::DrawQuad(m_Position + pos, glm::vec2(size), 0, m_Color, 0.0f);
+		
+	}
+	else
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(size), 0, m_Color, 0.0f);
+	}
+
+	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(0.25f), m_Time * 4, glm::vec4(1.0f, 1.0f, 1.0f, 0.8f), 1.0f);
+	if (m_ErrorFlag)
+		Engine::Renderer2D::DrawQuad(m_Position , glm::vec2(1.5f), 0, glm::vec4(1.0f), 2.0f);
+	
 	Engine::Renderer2D::EndScene();
 }
 
@@ -218,6 +366,7 @@ void BattlePlayer::Destroy()
 
 void BattlePlayer::OnBeat()
 {
+	m_BeatFlag.SetDelay(0.15f);
 }
 
 void BattlePlayer::SetBlock(Block* block)
@@ -427,12 +576,16 @@ void TutorialBattle::OnAttach()
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
+	m_SoundSources.Load("clap", "assets/audio/clap.wav");
 	m_SoundSources.Load("error", "assets/audio/error.wav");
 	m_SoundSources.Get("hat")->SetVolume(0.2f);
-
+	m_SoundSources.Get("clap")->SetVolume(0.3f);
+	m_SoundSources.Get("error")->SetVolume(0.5f);
 	m_Shaders.Load("BeatShader", "assets/shaders/BeatShader.glsl");
+	m_Shaders.Load("Block", "assets/shaders/Block.glsl");
 	m_Shaders.Load("heart", "assets/shaders/heart.glsl");
 	m_Shaders.Load("Post","assets/shaders/Post.glsl");
+
 	m_Shaders.Get("heart")->SetInteger("u_Texture0", 0, true);
 	m_Shaders.Get("Post")->SetInteger("u_Texture0", 0, true);
 

@@ -51,7 +51,6 @@ private:
 	Engine::OrthographicCamera m_Camera;
 };
 
-
 class BattlePlayer : public Object
 {
 public:
@@ -70,15 +69,31 @@ public:
 	
 
 	void SetBlock(Block* block);
+	
+	
+	enum State
+	{
+		Free = 0, Move = 1, Beat = 2
+	};
 
 private:
+	float m_Time = 0.0f;
+	State m_State;
 	glm::vec2 m_Position;
+	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
 	DelaySwitch m_MoveFlag;
-	DelaySwitch m_IsInteractive;
+	DelaySwitch m_ErrorFlag;
+	DelaySwitch m_BeatFlag;
+
+	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
+	
+	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	Engine::ShaderLibrary* m_Shaders;
 	SoundSourceLibrary* m_SoundSources;
+	
+	
 	Engine::OrthographicCamera m_Camera;
 	
 
