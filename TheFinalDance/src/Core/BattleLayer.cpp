@@ -12,15 +12,14 @@
 // 
 // 
 //------------------------------------战斗场地-------------------------------------
-BattleStage::BattleStage()
-	:m_Camera(1280.0f / 720.0f, 5.0f)
+BattleStage::BattleStage(Engine::ShaderLibrary* shaders)
+	:m_Shaders(shaders), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 
 }
 
 void BattleStage::Start()
 {
-	m_Shader = Engine::Shader::Create("assets/shaders/BeatShader.glsl");
 	m_Stage.resize(7*7);
 	for (int i = 0; i < 7; i++)
 	{
@@ -64,7 +63,8 @@ void BattleStage::BufferRender()
 
 void BattleStage::Render()
 {
-	Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_Shader);
+	auto shader = m_Shaders->Get("BeatShader");
+	Engine::Renderer2D::BeginScene(m_Camera, nullptr, shader);
 	for (int i = 0; i < m_Stage.size(); i++)
 	{
 		if (m_Stage[i].Awake && m_Stage[i].Render)
@@ -90,14 +90,13 @@ void BattleStage::OnBeat()
 
 //------------------------------------玩家对象-------------------------------------
 
-BattlePlayer::BattlePlayer(SoundSourceLibrary* ss)
-	:m_Camera(1280.0f / 720.0f, 5.0f), m_SoundSources(ss)
+BattlePlayer::BattlePlayer(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
+	:m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
 void BattlePlayer::Start()
 {
-	m_Shader = Engine::Shader::Create("assets/shaders/BeatShader.glsl");
 }
 
 void BattlePlayer::Awake()
@@ -112,46 +111,75 @@ void BattlePlayer::Update(float ts)
 	{
 		if (GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
-			if(m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
-			{
-				m_Next = m_Current->Link[3];
-				m_MoveFlag.SetDelay(60.0f / 400.0f);
-				SoundEngine::Play2D(m_SoundSources->Get("hat"));
-			}
+			
+				if(m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
+				{
+					m_Next = m_Current->Link[3];
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+				}
+				else
+				{
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+				}
+			
 
 		}
 		if (!GameInput::IsUpKeyDown() && GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
-			if (m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
-			{
-				m_Next = m_Current->Link[2];
-				m_MoveFlag.SetDelay(60.0f / 400.0f);
-				SoundEngine::Play2D(m_SoundSources->Get("hat"));
-			}
+			
+				if (m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
+				{
+					m_Next = m_Current->Link[2];
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+				}
+				else
+				{
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+				}
+			
 		}
 		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && GameInput::IsLeftKeyDown() && !GameInput::IsRightKeyDown())
 		{
-			if (m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
-			{
-				m_Next = m_Current->Link[0];
-				m_MoveFlag.SetDelay(60.0f / 400.0f);
-				SoundEngine::Play2D(m_SoundSources->Get("hat"));
-			}
+		
+				if (m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
+				{
+					m_Next = m_Current->Link[0];
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+				}
+				else
+				{
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+				}
+			
 
 		}
 		if (!GameInput::IsUpKeyDown() && !GameInput::IsDownKeyDown() && !GameInput::IsLeftKeyDown() && GameInput::IsRightKeyDown())
 		{
-			if (m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
-			{
-				m_Next = m_Current->Link[1];
-				m_MoveFlag.SetDelay(60.0f / 400.0f);
-				SoundEngine::Play2D(m_SoundSources->Get("hat"));
-			}
+			
+				if (m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
+				{
+					m_Next = m_Current->Link[1];
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+				}
+				else
+				{
+					SoundEngine::Play2D(m_SoundSources->Get("error"));
+				}
+			
 
 		}
+
 	}
 	else
 	{
+		if (GameInput::IsUpKeyDown() || GameInput::IsDownKeyDown() || GameInput::IsLeftKeyDown() || GameInput::IsRightKeyDown())
+		{
+			SoundEngine::Play2D(m_SoundSources->Get("error"));
+		}
 		if (m_MoveFlag.GetProportion() == 1)
 		{
 			m_Current = m_Next;
@@ -172,8 +200,10 @@ void BattlePlayer::BufferRender()
 
 void BattlePlayer::Render()
 {
-	Engine::Renderer2D::BeginScene(m_Camera, nullptr, m_Shader);
-	m_Shader->SetFloat("u_Radius", 0, true);
+	auto shader = m_Shaders->Get("BeatShader");
+	
+	Engine::Renderer2D::BeginScene(m_Camera, nullptr, shader);
+	shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
 	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f));
 	Engine::Renderer2D::EndScene();
 }
@@ -196,8 +226,8 @@ void BattlePlayer::SetBlock(Block* block)
 }
 
 //------------------------------------背景-------------------------------------
-Heart::Heart(SoundSourceLibrary* ss)
-	:m_Camera(1280.0f / 720.0f, 5.0f),m_SoundSources(ss)
+Heart::Heart(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
+	:m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
@@ -210,8 +240,7 @@ void Heart::Start()
 
 	m_FBO = Engine::FrameBuffer::Create(fbSpec);
 
-	m_Shader = Engine::Shader::Create("assets/shaders/heart.glsl");
-	m_Shader->SetInteger("u_Texture0", 0, true);
+	
 
 }
 
@@ -267,9 +296,10 @@ void Heart::Render()
 {
 	if (m_IsRender)
 	{
-		m_Shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
-		m_Shader->SetFloat("v_Shadow", m_Beat.GetProportion());
-		Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
+		auto shader = m_Shaders->Get("heart");
+		shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
+		shader->SetFloat("v_Shadow", m_Beat.GetProportion());
+		Engine::RendererPostProcessing::Draw(m_FBO, shader);
 	}
 	
 }
@@ -289,7 +319,8 @@ void Heart::OnBeat()
 
 
 //------------------------------------后期处理-------------------------------------
-TutorialPost::TutorialPost()
+TutorialPost::TutorialPost(Engine::ShaderLibrary* shaders)
+	:m_Shaders(shaders)
 {
 }
 
@@ -300,9 +331,6 @@ void TutorialPost::Start()
 	fbSpec.Height = 720;
 
 	m_FBO = Engine::FrameBuffer::Create(fbSpec);
-
-	m_Shader = Engine::Shader::Create("assets/shaders/Post.glsl");
-	m_Shader->SetInteger("u_Texture0", 0, true);
 }
 
 void TutorialPost::Awake()
@@ -325,27 +353,28 @@ void TutorialPost::BufferRender()
 
 void TutorialPost::Render()
 {
-	m_Shader->SetFloat("u_Time", m_Time, true);
-	m_Shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
-	m_Shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
+	auto shader = m_Shaders->Get("Post");
+	shader->SetFloat("u_Time", m_Time, true);
+	shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
+	shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
 	
 	if (m_Noise)
 	{
-		m_Shader->SetInteger("u_State", 1);
+		shader->SetInteger("u_State", 1);
 	}
 	else
 	{
 		if (m_IsAwake)
 		{
-			m_Shader->SetInteger("u_State", 2);
+			shader->SetInteger("u_State", 2);
 		}
 		else
 		{
-			m_Shader->SetInteger("u_State", 0);
+			shader->SetInteger("u_State", 0);
 		}
 			
 	}
-	Engine::RendererPostProcessing::Draw(m_FBO, m_Shader);
+	Engine::RendererPostProcessing::Draw(m_FBO, shader);
 }
 
 void TutorialPost::Reset()
@@ -373,7 +402,7 @@ void TutorialPost::OnBeat()
 //------------------------------------战斗主程序-------------------------------------
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Heart(&m_SoundSources), m_Player(&m_SoundSources), m_BeatCounter(), m_Post(), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Heart(&m_Shaders, &m_SoundSources), m_Player(&m_Shaders,&m_SoundSources), m_BeatCounter(), m_BattleStage(&m_Shaders), m_Post(&m_Shaders), m_Shaders(), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 void TutorialBattle::OnAttach()
@@ -383,6 +412,7 @@ void TutorialBattle::OnAttach()
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.AddObject(&m_Heart);
 	m_BeatCounter.AddObject(&m_Post);
+	m_BeatCounter.AddObject(&m_Player);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Post);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
@@ -392,13 +422,19 @@ void TutorialBattle::OnAttach()
 	m_Heart.Start();
 	m_BattleStage.Start();
 	m_Player.Start();
-	m_Player.SetBlock(&m_BattleStage.GetStage()->at(3 * 7 + 6));
+	m_Player.SetBlock(&m_BattleStage.GetStage()->at(3 * 7));
 
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
+	m_SoundSources.Load("error", "assets/audio/error.wav");
 	m_SoundSources.Get("hat")->SetVolume(0.2f);
-	m_BeatShader = Engine::Shader::Create("assets/shaders/BeatShader.glsl") ;
+
+	m_Shaders.Load("BeatShader", "assets/shaders/BeatShader.glsl");
+	m_Shaders.Load("heart", "assets/shaders/heart.glsl");
+	m_Shaders.Load("Post","assets/shaders/Post.glsl");
+	m_Shaders.Get("heart")->SetInteger("u_Texture0", 0, true);
+	m_Shaders.Get("Post")->SetInteger("u_Texture0", 0, true);
 
 
 	m_Post.Start();
@@ -425,12 +461,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 
 	m_Post.Update(ts);
 
-	float bv = 60.0f / m_Bpm;
-	
-	
-	m_Player.Update(ts);
-	
-	
+
 
 
 	m_Heart.BufferRender();

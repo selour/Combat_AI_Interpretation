@@ -31,20 +31,19 @@ in vec3 v_Color;
 in float v_Alpha;
 
 uniform sampler2DArray u_Texture0;
+uniform float u_Proportion;
 
-uniform float u_Radius;
-
-float beatCircle(vec2 uv)
+float beatCircle(vec2 uv, float radius)
 {
     float d = length(uv);
-    float R =.5 - u_Radius*(1./3.);
-    return smoothstep(R , R - .04, d)*(1.-smoothstep(R - .04 , R - .05 , d)) * 0.5;
+    float R =.5 - (1. - radius) *(1./3.);
+    return smoothstep(R , R - .04, d)*(1.-smoothstep(R - .04 , R - .05 , d)) * 0.4;
 }
 float determineCircle(vec2 uv)
 {
     float col = 1.0;
     float d = length(uv);
-    col = smoothstep(.5/3., .5/3. -.01, d) * smoothstep(.5/3. -.05, .5/3. -.01, d) * 0.5;
+    col = smoothstep(.5/3., .5/3. -.01, d) * smoothstep(.5/3. -.05, .5/3. -.01, d) * 0.4;
     return col;
 }
 float roundrectTile(vec2 position, vec2 size, float radius)
@@ -61,7 +60,7 @@ void main()
     float outAlpha = 0.0;
     switch(int(v_TexCoord.z))
     {
-    case 0:outAlpha = (determineCircle(uv)+ beatCircle(uv));break;
+    case 0:outAlpha = max(determineCircle(uv)*(1. + u_Proportion) , beatCircle(uv, u_Proportion)+ beatCircle(uv, 1));break;
     case 1:outAlpha= roundrectTile(uv,vec2(0.5),0.05);break;
     }
     outColor = vec4(v_Color.rgb,outAlpha * v_Alpha);

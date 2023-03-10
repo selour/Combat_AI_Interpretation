@@ -28,7 +28,7 @@ struct Block
 class BattleStage : public Object
 {
 public:
-	BattleStage();
+	BattleStage(Engine::ShaderLibrary* shaders);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -47,7 +47,7 @@ public:
 	}
 private:
 	std::vector<Block> m_Stage;
-	std::shared_ptr<Engine::Shader> m_Shader;
+	Engine::ShaderLibrary* m_Shaders;
 	Engine::OrthographicCamera m_Camera;
 };
 
@@ -55,7 +55,7 @@ private:
 class BattlePlayer : public Object
 {
 public:
-	BattlePlayer(SoundSourceLibrary* ss);
+	BattlePlayer(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
 
 	virtual void Start() override;
 	virtual void Awake() override;
@@ -77,16 +77,17 @@ private:
 	DelaySwitch m_IsInteractive;
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
-	std::shared_ptr<Engine::Shader> m_Shader;
-	Engine::OrthographicCamera m_Camera;
+	Engine::ShaderLibrary* m_Shaders;
 	SoundSourceLibrary* m_SoundSources;
+	Engine::OrthographicCamera m_Camera;
+	
 
 };
 
 class Heart : public Object
 {
 public:
-	Heart(SoundSourceLibrary* ss);
+	Heart(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -134,15 +135,15 @@ private:
 	DelaySwitch m_Beat;
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	std::shared_ptr<Engine::Shader> m_Shader;
-	Engine::OrthographicCamera m_Camera;
+	Engine::ShaderLibrary* m_Shaders;
 	SoundSourceLibrary* m_SoundSources;
+	Engine::OrthographicCamera m_Camera;
 	
 };
 class TutorialPost : public Object
 {
 public:
-	TutorialPost();
+	TutorialPost(Engine::ShaderLibrary* shaders);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -158,16 +159,13 @@ public:
 	{
 		return m_FBO;
 	}
-	std::shared_ptr<Engine::Shader> GetShader()
-	{
-		return m_Shader;
-	}
+
 private:
 	float m_Time = 0.0f;
 	int m_BeatCount = 0;
 	DelaySwitch m_Noise, m_Rhythm;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	std::shared_ptr<Engine::Shader> m_Shader;
+	Engine::ShaderLibrary* m_Shaders;
 
 };
 class TutorialBattle : public BattleLayer
@@ -200,7 +198,7 @@ private:
 	SoundSourceLibrary m_SoundSources;
 	TutorialPost m_Post;
 
-	std::shared_ptr<Engine::Shader> m_BeatShader;
+	Engine::ShaderLibrary m_Shaders;
 	
 	Engine::OrthographicCamera m_Camera;
 	
