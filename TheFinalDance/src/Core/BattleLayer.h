@@ -15,6 +15,7 @@ public:
 struct Block
 {
 	glm::vec2 Position = { 0.0f, 0.0f };
+	int Step = 0;
 	bool Awake = false;
 	bool Danger = false;
 	bool Render = false;
@@ -41,12 +42,15 @@ public:
 	virtual void OnBeat() override;
 
 
+	void ClearStep();
+
 	std::vector<Block>* GetStage()
 	{
 		return &m_Stage;
 	}
 private:
 	std::vector<Block> m_Stage;
+	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	Engine::ShaderLibrary* m_Shaders;
 	Engine::OrthographicCamera m_Camera;
 };
@@ -54,7 +58,7 @@ private:
 class BattlePlayer : public Object
 {
 public:
-	BattlePlayer(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	BattlePlayer(BattleStage* stage, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
 
 	virtual void Start() override;
 	virtual void Awake() override;
@@ -81,6 +85,8 @@ private:
 	State m_State;
 	glm::vec2 m_Position;
 	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
+	int m_Step  = 0;
+
 	DelaySwitch m_MoveFlag;
 	DelaySwitch m_ErrorFlag;
 	DelaySwitch m_BeatFlag;
@@ -88,6 +94,7 @@ private:
 	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
+	BattleStage* m_Stage;
 
 	Engine::ParticleSystem m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
