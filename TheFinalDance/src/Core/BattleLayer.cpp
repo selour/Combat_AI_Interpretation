@@ -68,7 +68,7 @@ void BattleStage::Render()
 	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
 	for (int i = 0; i < m_Stage.size(); i++)
 	{
-		if (m_Stage[i].Awake && m_Stage[i].Render)
+		if (m_Stage[i].Render)
 		{
 			
 			if (m_Stage[i].Step != 0)
@@ -118,11 +118,129 @@ void BattleStage::ClearStep()
 
 	}
 }
+//-----------------------------------节拍器boss-------------------------------------
+
+
+TutorialBoss::TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
+	:m_Stage(stage),m_ParticleSystem(particleSystem), m_Shaders(shaders),m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+{
+}
+
+void TutorialBoss::Start()
+{
+	m_Current = &m_Stage->GetStage()->at(3 * 7 + 3);
+	m_Current->Awake = false;
+	m_Texture = Engine::Texture2DArray::Create("assets/textures/metronome.png", 1, 1);
+	//设置粒子
+	m_Particle.SizeBegin = 0.2f;
+	m_Particle.SizeEnd = 0.0f;
+	m_Particle.LifeTime = 0.5f;
+	m_Particle.Velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_Particle.VelocityVariation = glm::vec3(2.0f, 2.0f, 0.0f);
+}
+
+void TutorialBoss::Awake()
+{
+}
+
+void TutorialBoss::Update(float ts)
+{
+	m_Position = m_Current->Position;
+	m_BeatFlag.Update(ts);
+	m_HitFlag.Update(ts);
+	m_BeatTip.Update(ts);
+	m_BeatCheck.Update(ts);
+	if (m_BeatTip && m_BeatTip.GetProportion() == 1.0f)
+	{
+		m_BeatCheck.SetDelay(60.0f / 400.0f);
+	}
+}
+
+void TutorialBoss::BufferRender()
+{
+}
+
+void TutorialBoss::Render()
+{
+	auto shader = m_Shaders->Get("BeatShader");
+	float size = 0.9f;
+	if (m_BeatFlag)
+	{
+		size += 0.15f * sin(glm::radians(m_BeatFlag.GetProportion() * 180.0f));
+	}
+	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
+	shader->SetFloat("u_Hit", sin(glm::radians(m_HitFlag.GetProportion()*180.0f)));
+	shader->SetFloat("u_Proportion", m_BeatTip.GetProportion());
+	if (m_BeatTip)
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.4f), 0, m_Color, -2.0f);
+	}
+	if (m_BeatCheck)
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, m_Color, -1.0f);
+	}
+	else
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), -1.0f);
+	}
+	
+	if(m_HitFlag)
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(size), 0, m_Color, 0.0f);
+	else
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(size), 0, glm::vec4(1.0f), 0.0f);
+	
+	Engine::Renderer2D::EndScene();
+}
+
+void TutorialBoss::Reset()
+{
+}
+
+void TutorialBoss::Destroy()
+{
+}
+
+void TutorialBoss::OnBeat()
+{
+	
+	m_BeatFlag.SetDelay(0.15f);
+	
+	if (m_BeatCount == 0)
+	{
+		m_BeatTip.SetDelay(60.0f / 100.f * 3.0f - 0.04f);
+	}
+	m_BeatCount++;
+	m_BeatCount %= 4;
+}
+
+void TutorialBoss::OnHit(int step)
+{
+	if (m_BeatCheck)
+	{
+		m_HitFlag.SetDelay(60.0f / 400.0f);
+		m_Particle.ColorBegin = m_Color;
+		m_Particle.ColorEnd = glm::vec4(m_Color.r, m_Color.g, m_Color.b, 0.0f);
+		m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+
+		for (int i = 0; i < 3; i++)
+			m_ParticleSystem->Emit(m_Particle);
+		SoundEngine::Play2D(m_SoundSources->Get("clap"));
+	}
+	else
+	{
+		SoundEngine::Play2D(m_SoundSources->Get("solid"));
+		
+	}
+	
+	
+}
+
+
 
 //------------------------------------玩家对象-------------------------------------
 
-BattlePlayer::BattlePlayer(BattleStage* stage, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
-	:m_Stage(stage), m_ParticleSystem(200),m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+BattlePlayer::BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
+	:m_Stage(stage),m_Boss(boss), m_ParticleSystem(particleSystem),m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
@@ -130,6 +248,7 @@ void BattlePlayer::Start()
 {
 	m_State = Free;
 	m_Texture = Engine::Texture2DArray::Create("assets/textures/player.png", 3, 1);
+	m_Current = &m_Stage->GetStage()->at(3 * 7);
 	//设置粒子
 	m_Particle.SizeBegin = 0.2f;
 	m_Particle.SizeEnd = 0.0f;
@@ -149,7 +268,7 @@ void BattlePlayer::Update(float ts)
 	m_MoveFlag.Update(ts);
 	m_ErrorFlag.Update(ts);
 	m_BeatFlag.Update(ts);
-	m_ParticleSystem.OnUpdate(ts);
+	
 	if (!m_ErrorFlag)
 	{
 		switch (m_State)
@@ -162,12 +281,30 @@ void BattlePlayer::Update(float ts)
 				m_Step = 0;
 				m_Stage->ClearStep();
 
-				SoundEngine::Play2D(m_SoundSources->Get("clap"));
+
+				Block* boss = m_Boss->GetCurrent();
+				bool flag = false;
+		
+				if (boss == m_Current->Link[0] || boss == m_Current->Link[1] || 
+					boss == m_Current->Link[2] || boss == m_Current->Link[3] ||
+					m_Current->Link[0] != nullptr && boss == m_Current->Link[0]->Link[3] ||
+					m_Current->Link[1] != nullptr && boss == m_Current->Link[1]->Link[2] ||
+					m_Current->Link[2] != nullptr && boss == m_Current->Link[2]->Link[0] ||
+					m_Current->Link[3] != nullptr && boss == m_Current->Link[3]->Link[1])
+				{
+					m_Boss->OnHit(m_Step);
+				}
+				else
+				{
+					SoundEngine::Play2D(m_SoundSources->Get("swoosh"));
+				}
+
+				
 				m_Particle.ColorBegin = m_Color;
 				m_Particle.ColorEnd = glm::vec4(m_Color.r, m_Color.g, m_Color.b, 0.0f);
 				m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
 				for(int i = 0; i < 10; i++)
-					m_ParticleSystem.Emit(m_Particle);
+					m_ParticleSystem->Emit(m_Particle);
 			}
 			if (GameInput::IsUpKeyDown())
 			{
@@ -176,7 +313,7 @@ void BattlePlayer::Update(float ts)
 				{
 					m_Next = m_Current->Link[3];
 					
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_MoveFlag.SetDelay(60.0f / 100.0f -0.04f);
 					m_State = Move;
 					if (m_Current->Step == 0)
 					{
@@ -189,12 +326,12 @@ void BattlePlayer::Update(float ts)
 					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
 					for (int i = 0; i < 3; i++)
-						m_ParticleSystem.Emit(m_Particle);
+						m_ParticleSystem->Emit(m_Particle);
 				}
 				else
 				{
 					m_ErrorDirection = { 0.0 , 1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -210,7 +347,7 @@ void BattlePlayer::Update(float ts)
 				if (m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
 				{
 					m_Next = m_Current->Link[2];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
 					m_State = Move;
 					if (m_Current->Step == 0)
 					{
@@ -223,12 +360,12 @@ void BattlePlayer::Update(float ts)
 					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
 					for (int i = 0; i < 3; i++)
-						m_ParticleSystem.Emit(m_Particle);
+						m_ParticleSystem->Emit(m_Particle);
 				}
 				else
 				{
 					m_ErrorDirection = { 0.0 , -1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -244,7 +381,7 @@ void BattlePlayer::Update(float ts)
 				if (m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
 				{
 					m_Next = m_Current->Link[0];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
 					m_State = Move;
 					if (m_Current->Step == 0)
 					{
@@ -257,7 +394,7 @@ void BattlePlayer::Update(float ts)
 					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
 					for (int i = 0; i < 3; i++)
-						m_ParticleSystem.Emit(m_Particle);
+						m_ParticleSystem->Emit(m_Particle);
 				}
 				else
 				{
@@ -278,7 +415,7 @@ void BattlePlayer::Update(float ts)
 				if (m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
 				{
 					m_Next = m_Current->Link[1];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
+					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
 					m_State = Move;
 					if (m_Current->Step == 0)
 					{
@@ -291,12 +428,12 @@ void BattlePlayer::Update(float ts)
 					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
 					for (int i = 0; i < 3; i++)
-						m_ParticleSystem.Emit(m_Particle);
+						m_ParticleSystem->Emit(m_Particle);
 				}
 				else
 				{
 					m_ErrorDirection = { 1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -311,7 +448,7 @@ void BattlePlayer::Update(float ts)
 			if (GameInput::IsInteractiveKeyDown())
 			{
 				m_ErrorDirection = { 0.0 , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 				m_Step = 0;
 				m_Stage->ClearStep();
@@ -321,7 +458,7 @@ void BattlePlayer::Update(float ts)
 			if (GameInput::IsUpKeyDown())
 			{
 					m_ErrorDirection = { 0.0 , 1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -332,7 +469,7 @@ void BattlePlayer::Update(float ts)
 			if (GameInput::IsDownKeyDown())
 			{
 					m_ErrorDirection = { 0.0 , -1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -345,7 +482,7 @@ void BattlePlayer::Update(float ts)
 
 				
 					m_ErrorDirection = { -1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -358,7 +495,7 @@ void BattlePlayer::Update(float ts)
 			{
 
 					m_ErrorDirection = { 1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 
 					m_Step = 0;
 					m_Stage->ClearStep();
@@ -381,20 +518,20 @@ void BattlePlayer::Update(float ts)
 			if (GameInput::IsInteractiveKeyDown())
 			{
 				m_ErrorDirection = { 0.0 , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 				SoundEngine::Play2D(m_SoundSources->Get("error"));
 			}
 			if (GameInput::IsUpKeyDown())
 			{
 				m_ErrorDirection = { 0.0 , 1.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 				SoundEngine::Play2D(m_SoundSources->Get("error"));
 
 			}
 			if (GameInput::IsDownKeyDown())
 			{
 				m_ErrorDirection = { 0.0 , -1.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 				SoundEngine::Play2D(m_SoundSources->Get("error"));
 
 			}
@@ -403,7 +540,7 @@ void BattlePlayer::Update(float ts)
 
 
 				m_ErrorDirection = { -1.0f , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 				SoundEngine::Play2D(m_SoundSources->Get("error"));
 
 
@@ -412,7 +549,7 @@ void BattlePlayer::Update(float ts)
 			{
 
 				m_ErrorDirection = { 1.0f , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
+				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
 				SoundEngine::Play2D(m_SoundSources->Get("error"));
 
 			}
@@ -452,7 +589,7 @@ void BattlePlayer::BufferRender()
 
 void BattlePlayer::Render()
 {
-	m_ParticleSystem.OnRender(m_Camera);
+	
 	auto shader = m_Shaders->Get("BeatShader");
 	float size = 1.0f;
 	if (m_BeatFlag)
@@ -461,6 +598,7 @@ void BattlePlayer::Render()
 	}
 	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
 	shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
+	shader->SetFloat("u_Hit", 0.0f);
 	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), 3.0f);
 	if (m_State == Beat)
 	{
@@ -497,10 +635,6 @@ void BattlePlayer::OnBeat()
 	m_BeatFlag.SetDelay(0.15f);
 }
 
-void BattlePlayer::SetBlock(Block* block)
-{
-	m_Current = block;
-}
 
 //------------------------------------背景-------------------------------------
 Heart::Heart(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
@@ -679,7 +813,7 @@ void TutorialPost::OnBeat()
 //------------------------------------战斗主程序-------------------------------------
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Heart(&m_Shaders, &m_SoundSources), m_Player(&m_BattleStage, &m_Shaders, &m_SoundSources), m_BeatCounter(), m_BattleStage(&m_Shaders), m_Post(&m_Shaders), m_Shaders(), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Heart(&m_Shaders, &m_SoundSources), m_Player(&m_BattleStage, &m_Boss, &m_ParticleSystem, &m_Shaders, &m_SoundSources), m_Boss(&m_BattleStage, &m_ParticleSystem, &m_Shaders, &m_SoundSources), m_BeatCounter(), m_BattleStage(&m_Shaders), m_ParticleSystem(500), m_Post(&m_Shaders), m_Shaders(), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 void TutorialBattle::OnAttach()
@@ -690,25 +824,28 @@ void TutorialBattle::OnAttach()
 	m_BeatCounter.AddObject(&m_Heart);
 	m_BeatCounter.AddObject(&m_Post);
 	m_BeatCounter.AddObject(&m_Player);
+	m_BeatCounter.AddObject(&m_Boss);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
 	m_BeatCounter.GetTimeLine()->AddObject(&m_Post);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
 
-
 	m_Heart.Start();
 	m_BattleStage.Start();
 	m_Player.Start();
-	m_Player.SetBlock(&m_BattleStage.GetStage()->at(3 * 7));
+	m_Boss.Start();
 
 	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
 	m_SoundSources.Load("hat", "assets/audio/hat.wav");
 	m_SoundSources.Load("clap", "assets/audio/clap.wav");
+	m_SoundSources.Load("swoosh", "assets/audio/swoosh.wav");
+	m_SoundSources.Load("solid", "assets/audio/solid.wav");
 	m_SoundSources.Load("error", "assets/audio/error.wav");
 	m_SoundSources.Get("hat")->SetVolume(0.2f);
 	m_SoundSources.Get("clap")->SetVolume(0.3f);
 	m_SoundSources.Get("error")->SetVolume(0.5f);
+
 	m_Shaders.Load("BeatShader", "assets/shaders/BeatShader.glsl");
 	m_Shaders.Load("Block", "assets/shaders/Block.glsl");
 	m_Shaders.Load("heart", "assets/shaders/heart.glsl");
@@ -737,12 +874,12 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.Update(ts);
 	m_Player.Update(ts);
-
+	m_Boss.Update(ts);
 	m_Heart.Update(ts);
 
 	m_Post.Update(ts);
 
-
+	m_ParticleSystem.OnUpdate(ts);
 
 
 	m_Heart.BufferRender();
@@ -756,6 +893,8 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	
 	m_BattleStage.Render();
 
+	m_Boss.Render();
+	m_ParticleSystem.OnRender(m_Camera);
 	m_Player.Render();
 	
 	m_Post.GetFBO()->UnBind();

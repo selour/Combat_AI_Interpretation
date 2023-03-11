@@ -10,7 +10,7 @@ public:
 
 	const float GetProportion() const { return m_Time / m_DelayTime; }
 	void SetDelay(float delayTime);
-
+	void Clear();
 	void Update(float ts);
 private:
 	bool m_Switch;

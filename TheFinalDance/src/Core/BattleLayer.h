@@ -54,11 +54,56 @@ private:
 	Engine::ShaderLibrary* m_Shaders;
 	Engine::OrthographicCamera m_Camera;
 };
+class TutorialBoss : public Object
+{
+public:
+	TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	virtual void Start() override;
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+	virtual void BufferRender() override;
+	virtual void Render()override;
+	virtual void Reset() override;
+	virtual void Destroy() override;
 
+
+	virtual void OnBeat() override;
+
+	void OnHit(int step);
+	
+	Block* GetCurrent()
+	{
+		return m_Current;
+	}
+private:
+	glm::vec2 m_Position;
+	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+	Block* m_Current = nullptr;
+	BattleStage* m_Stage;
+
+	DelaySwitch m_BeatFlag;
+	DelaySwitch m_HitFlag;
+
+	int m_BeatCount = 0;
+	DelaySwitch m_BeatTip;
+	DelaySwitch m_BeatCheck;
+
+	Engine::ParticleSystem* m_ParticleSystem;
+	Engine::ParticleProps m_Particle;
+
+	std::shared_ptr<Engine::Texture2DArray> m_Texture;
+	Engine::ShaderLibrary* m_Shaders;
+	SoundSourceLibrary* m_SoundSources;
+
+
+	Engine::OrthographicCamera m_Camera;
+
+};
 class BattlePlayer : public Object
 {
 public:
-	BattlePlayer(BattleStage* stage, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
 
 	virtual void Start() override;
 	virtual void Awake() override;
@@ -70,10 +115,7 @@ public:
 
 
 	virtual void OnBeat() override;
-	
 
-	void SetBlock(Block* block);
-	
 	
 	enum State
 	{
@@ -95,11 +137,13 @@ private:
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
 	BattleStage* m_Stage;
+	TutorialBoss* m_Boss;
 
-	Engine::ParticleSystem m_ParticleSystem;
+	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
 
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
+
 	Engine::ShaderLibrary* m_Shaders;
 	SoundSourceLibrary* m_SoundSources;
 	
@@ -213,13 +257,14 @@ private:
 
 	//player
 	BattlePlayer m_Player;
-
+	TutorialBoss m_Boss;
 	glm::vec4 m_Color = glm::vec4(1.0f);
 
 
 	BeatCounter m_BeatCounter;
 	BattleStage m_BattleStage;
 
+	Engine::ParticleSystem m_ParticleSystem;
 	SoundSourceLibrary m_SoundSources;
 	TutorialPost m_Post;
 

@@ -32,6 +32,7 @@ in float v_Alpha;
 
 uniform sampler2DArray u_Texture0;
 uniform float u_Proportion;
+uniform float u_Hit;
 vec2 hash( vec2 x )
 {
     const vec2 k = vec2( 0.3183099, 0.3678794 );
@@ -90,12 +91,19 @@ void main()
 {
 	vec2 uv = v_TexCoord.xy;
 	uv -= 0.5;
-    //outColor = vec4(v_TexCoord.xy, 0.0, v_Alpha);
     float outAlpha = 0.0;
     switch(int(v_TexCoord.z))
     {
+    case -2: 
+        outAlpha = beatCircle(uv, 1.-u_Proportion);
+        outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
+        break;
+    case -1:
+        outAlpha = determineCircle(uv)*2;
+        outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
+        break;
     case 0:
-        outColor = texture(u_Texture0, v_TexCoord)* vec4(v_Color, v_Alpha);
+        outColor = vec4(mix(texture(u_Texture0, v_TexCoord).rgb, vec3(1.0f), u_Hit).rgb, texture(u_Texture0, v_TexCoord).a)* vec4(v_Color, v_Alpha);
         break;
     case 1:
         outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color, v_Alpha);
