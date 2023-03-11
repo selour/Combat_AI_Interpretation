@@ -908,9 +908,9 @@ void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("%dFPS", m_FPS);
-	ImGui::SliderInt("BPM", &m_Bpm, 50, 1000);
-	ImGui::SliderFloat("Volume", &m_Volume, 0, 1.0f);
-	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
+	//ImGui::SliderInt("BPM", &m_Bpm, 50, 1000);
+	//ImGui::SliderFloat("Volume", &m_Volume, 0, 1.0f);
+	//ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
 	ImGui::Text("beatCount:%d", int(m_BeatCounter.GetTimeLine()->GetCounter()));
 	ImGui::End();
 	/*
