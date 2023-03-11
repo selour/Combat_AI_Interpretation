@@ -91,7 +91,7 @@ void BattleStage::OnBeat()
 //------------------------------------玩家对象-------------------------------------
 
 BattlePlayer::BattlePlayer(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
-	:m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+	:m_ParticleSystem(200),m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
@@ -99,6 +99,12 @@ void BattlePlayer::Start()
 {
 	m_State = Free;
 	m_Texture = Engine::Texture2DArray::Create("assets/textures/player.png", 3, 1);
+	//设置粒子
+	m_Particle.SizeBegin = 0.2f;
+	m_Particle.SizeEnd = 0.0f;
+	m_Particle.LifeTime = 0.5f;
+	m_Particle.Velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_Particle.VelocityVariation = glm::vec3(8.0f, 8.0f, 0.0f);
 }
 
 void BattlePlayer::Awake()
@@ -112,7 +118,7 @@ void BattlePlayer::Update(float ts)
 	m_MoveFlag.Update(ts);
 	m_ErrorFlag.Update(ts);
 	m_BeatFlag.Update(ts);
-	
+	m_ParticleSystem.OnUpdate(ts);
 	if (!m_ErrorFlag)
 	{
 		switch (m_State)
@@ -123,6 +129,11 @@ void BattlePlayer::Update(float ts)
 				m_MoveFlag.SetDelay(60.0f / 400.0f - 0.02f);
 				m_State = Beat;
 				SoundEngine::Play2D(m_SoundSources->Get("clap"));
+				m_Particle.ColorBegin = m_Color;
+				m_Particle.ColorEnd = glm::vec4(m_Color.r, m_Color.g, m_Color.b, 0.0f);
+				m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+				for(int i = 0; i < 10; i++)
+					m_ParticleSystem.Emit(m_Particle);
 			}
 			if (GameInput::IsUpKeyDown())
 			{
@@ -133,6 +144,11 @@ void BattlePlayer::Update(float ts)
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
 					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+					m_Particle.ColorBegin = glm::vec4(1.0f);
+					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+					for (int i = 0; i < 3; i++)
+						m_ParticleSystem.Emit(m_Particle);
 				}
 				else
 				{
@@ -152,12 +168,18 @@ void BattlePlayer::Update(float ts)
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
 					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+					m_Particle.ColorBegin = glm::vec4(1.0f);
+					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+					for (int i = 0; i < 3; i++)
+						m_ParticleSystem.Emit(m_Particle);
 				}
 				else
 				{
 					m_ErrorDirection = { 0.0 , -1.0f };
 					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
 					SoundEngine::Play2D(m_SoundSources->Get("error"));
+
 				}
 
 			}
@@ -170,6 +192,11 @@ void BattlePlayer::Update(float ts)
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
 					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+					m_Particle.ColorBegin = glm::vec4(1.0f);
+					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+					for (int i = 0; i < 3; i++)
+						m_ParticleSystem.Emit(m_Particle);
 				}
 				else
 				{
@@ -189,6 +216,11 @@ void BattlePlayer::Update(float ts)
 					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.08f);
 					m_State = Move;
 					SoundEngine::Play2D(m_SoundSources->Get("hat"));
+					m_Particle.ColorBegin = glm::vec4(1.0f);
+					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+					for (int i = 0; i < 3; i++)
+						m_ParticleSystem.Emit(m_Particle);
 				}
 				else
 				{
@@ -325,6 +357,7 @@ void BattlePlayer::BufferRender()
 
 void BattlePlayer::Render()
 {
+	m_ParticleSystem.OnRender(m_Camera);
 	auto shader = m_Shaders->Get("BeatShader");
 	float size = 1.0f;
 	if (m_BeatFlag)

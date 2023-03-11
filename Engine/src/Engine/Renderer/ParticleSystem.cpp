@@ -9,9 +9,9 @@ namespace Engine
 	std::mt19937 Random::s_RandomEngine;
 	std::uniform_int_distribution<std::mt19937::result_type> Random::s_Distribution;
 
-	ParticleSystem::ParticleSystem()
+	ParticleSystem::ParticleSystem(int value)
 	{
-		m_ParticlePool.resize(1000);
+		m_ParticlePool.resize(value);
 	}
 
 	void ParticleSystem::OnUpdate(TimeStep ts)
@@ -61,7 +61,7 @@ namespace Engine
 		particle.Position.x = particleProps.Position.x;
 		particle.Position.y = particleProps.Position.y;
 		particle.Position.z = particleProps.Position.z;
-		particle.Rotation = 0;//Random::Float() * 2.0f * glm::pi<float>();
+		particle.Rotation = Random::Float() * 2.0f * glm::pi<float>();
 
 		particle.Velocity = particleProps.Velocity;
 		particle.Velocity.x += particleProps.VelocityVariation.x * (Random::Float() - 0.5f);

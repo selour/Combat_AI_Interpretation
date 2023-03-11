@@ -19,7 +19,7 @@ namespace Engine
 	class ParticleSystem
 	{
 	public:
-		ParticleSystem();
+		ParticleSystem(int value);
 
 		void OnUpdate(TimeStep ts);
 

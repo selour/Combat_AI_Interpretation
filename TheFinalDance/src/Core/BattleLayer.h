@@ -88,7 +88,10 @@ private:
 	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
-	
+
+	Engine::ParticleSystem m_ParticleSystem;
+	Engine::ParticleProps m_Particle;
+
 	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	Engine::ShaderLibrary* m_Shaders;
 	SoundSourceLibrary* m_SoundSources;
