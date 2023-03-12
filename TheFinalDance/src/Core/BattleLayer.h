@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "Audio/SoundEngine.h"
+#include "ResourceManager.h"
 #include "Object.h"
 #include "BeatCounter.h"
 #include <memory>
@@ -12,6 +13,8 @@ public:
 		:Layer(name)
 	{}
 };
+
+
 struct Block
 {
 	glm::vec2 Position = { 0.0f, 0.0f };
@@ -29,7 +32,7 @@ struct Block
 class BattleStage : public Object
 {
 public:
-	BattleStage(Engine::ShaderLibrary* shaders);
+	BattleStage(ResourceManager* resourceManager);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -50,14 +53,13 @@ public:
 	}
 private:
 	std::vector<Block> m_Stage;
-	std::shared_ptr<Engine::Texture2DArray> m_Texture;
-	Engine::ShaderLibrary* m_Shaders;
+	ResourceManager* m_ResourceManager;
 	Engine::OrthographicCamera m_Camera;
 };
 class TutorialBoss : public Object
 {
 public:
-	TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -92,9 +94,7 @@ private:
 	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
 
-	std::shared_ptr<Engine::Texture2DArray> m_Texture;
-	Engine::ShaderLibrary* m_Shaders;
-	SoundSourceLibrary* m_SoundSources;
+	ResourceManager* m_ResourceManager;
 
 
 	Engine::OrthographicCamera m_Camera;
@@ -103,7 +103,7 @@ private:
 class BattlePlayer : public Object
 {
 public:
-	BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
 
 	virtual void Start() override;
 	virtual void Awake() override;
@@ -113,16 +113,23 @@ public:
 	virtual void Reset() override;
 	virtual void Destroy() override;
 
-
 	virtual void OnBeat() override;
 
 	
+
 	enum State
 	{
 		Free = 0, Move = 1, Beat = 2
 	};
 
 private:
+	void InputCheck();
+//-------Link----------
+//       [3]
+//    [0]   [1]
+//       [2]
+	void MoveTo(int forward);
+	void MoveError(const glm::vec2 direction);
 	float m_Time = 0.0f;
 	State m_State;
 	glm::vec2 m_Position;
@@ -142,10 +149,7 @@ private:
 	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
 
-	std::shared_ptr<Engine::Texture2DArray> m_Texture;
-
-	Engine::ShaderLibrary* m_Shaders;
-	SoundSourceLibrary* m_SoundSources;
+	ResourceManager* m_ResourceManager;
 	
 	
 	Engine::OrthographicCamera m_Camera;
@@ -156,7 +160,7 @@ private:
 class Heart : public Object
 {
 public:
-	Heart(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss);
+	Heart(ResourceManager* resourceManager);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -202,17 +206,15 @@ private:
 	float m_Size = 1.3f;
 
 	DelaySwitch m_Beat;
-	std::shared_ptr<Engine::Texture2DArray> m_Texture;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	Engine::ShaderLibrary* m_Shaders;
-	SoundSourceLibrary* m_SoundSources;
+	ResourceManager* m_ResourceManager;
 	Engine::OrthographicCamera m_Camera;
 	
 };
 class TutorialPost : public Object
 {
 public:
-	TutorialPost(Engine::ShaderLibrary* shaders);
+	TutorialPost(ResourceManager* resourceManager);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -220,7 +222,6 @@ public:
 	virtual void Render()override;
 	virtual void Reset() override;
 	virtual void Destroy() override;
-
 
 	virtual void OnBeat() override;
 
@@ -234,8 +235,14 @@ private:
 	int m_BeatCount = 0;
 	DelaySwitch m_Noise, m_Rhythm;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	Engine::ShaderLibrary* m_Shaders;
+	ResourceManager* m_ResourceManager;
 
+};
+
+class TutorialResourceManager : public ResourceManager
+{
+public:
+	virtual void Init() override;
 };
 class TutorialBattle : public BattleLayer
 {
@@ -263,12 +270,10 @@ private:
 
 	BeatCounter m_BeatCounter;
 	BattleStage m_BattleStage;
-
-	Engine::ParticleSystem m_ParticleSystem;
-	SoundSourceLibrary m_SoundSources;
 	TutorialPost m_Post;
-
-	Engine::ShaderLibrary m_Shaders;
+	Engine::ParticleSystem m_ParticleSystem;
+	
+	TutorialResourceManager m_ResourceManager;
 	
 	Engine::OrthographicCamera m_Camera;
 	

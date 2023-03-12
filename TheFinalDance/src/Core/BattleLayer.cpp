@@ -12,15 +12,14 @@
 // 
 // 
 //------------------------------------战斗场地-------------------------------------
-BattleStage::BattleStage(Engine::ShaderLibrary* shaders)
-	:m_Shaders(shaders), m_Camera(1280.0f / 720.0f, 5.0f)
+BattleStage::BattleStage(ResourceManager* resourceManager)
+	:m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 
 }
 
 void BattleStage::Start()
 {
-	m_Texture = Engine::Texture2DArray::Create("assets/textures/number.png", 10, 1);
 	m_Stage.resize(7*7);
 	for (int i = 0; i < 7; i++)
 	{
@@ -64,8 +63,9 @@ void BattleStage::BufferRender()
 
 void BattleStage::Render()
 {
-	auto shader = m_Shaders->Get("Block");
-	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("Block");
+	auto texture = m_ResourceManager->GetTextureLibrary()->Get("number");
+	Engine::Renderer2D::BeginScene(m_Camera, texture, shader);
 	for (int i = 0; i < m_Stage.size(); i++)
 	{
 		if (m_Stage[i].Render)
@@ -121,8 +121,8 @@ void BattleStage::ClearStep()
 //-----------------------------------节拍器boss-------------------------------------
 
 
-TutorialBoss::TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
-	:m_Stage(stage),m_ParticleSystem(particleSystem), m_Shaders(shaders),m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+TutorialBoss::TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
+	:m_Stage(stage),m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
@@ -130,7 +130,6 @@ void TutorialBoss::Start()
 {
 	m_Current = &m_Stage->GetStage()->at(3 * 7 + 3);
 	m_Current->Awake = false;
-	m_Texture = Engine::Texture2DArray::Create("assets/textures/metronome.png", 1, 1);
 	//设置粒子
 	m_Particle.SizeBegin = 0.2f;
 	m_Particle.SizeEnd = 0.0f;
@@ -142,7 +141,6 @@ void TutorialBoss::Start()
 void TutorialBoss::Awake()
 {
 }
-
 void TutorialBoss::Update(float ts)
 {
 	m_Position = m_Current->Position;
@@ -162,13 +160,14 @@ void TutorialBoss::BufferRender()
 
 void TutorialBoss::Render()
 {
-	auto shader = m_Shaders->Get("BeatShader");
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("BeatShader");
+	auto texture = m_ResourceManager->GetTextureLibrary()->Get("metronome");
 	float size = 0.9f;
 	if (m_BeatFlag)
 	{
 		size += 0.15f * sin(glm::radians(m_BeatFlag.GetProportion() * 180.0f));
 	}
-	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
+	Engine::Renderer2D::BeginScene(m_Camera, texture, shader);
 	shader->SetFloat("u_Hit", sin(glm::radians(m_HitFlag.GetProportion()*180.0f)));
 	shader->SetFloat("u_Proportion", m_BeatTip.GetProportion());
 	if (m_BeatTip)
@@ -207,10 +206,10 @@ void TutorialBoss::OnBeat()
 	
 	if (m_BeatCount == 0)
 	{
-		m_BeatTip.SetDelay(60.0f / 100.f * 3.0f - 0.04f);
+		m_BeatTip.SetDelay(60.0f / 100.f * 7.0f - 0.04f);
 	}
 	m_BeatCount++;
-	m_BeatCount %= 4;
+	m_BeatCount %= 8;
 }
 
 void TutorialBoss::OnHit(int step)
@@ -224,11 +223,11 @@ void TutorialBoss::OnHit(int step)
 
 		for (int i = 0; i < 3; i++)
 			m_ParticleSystem->Emit(m_Particle);
-		SoundEngine::Play2D(m_SoundSources->Get("clap"));
+		SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("clap"));
 	}
 	else
 	{
-		SoundEngine::Play2D(m_SoundSources->Get("solid"));
+		SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("solid"));
 		
 	}
 	
@@ -239,15 +238,15 @@ void TutorialBoss::OnHit(int step)
 
 //------------------------------------玩家对象-------------------------------------
 
-BattlePlayer::BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
-	:m_Stage(stage),m_Boss(boss), m_ParticleSystem(particleSystem),m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+BattlePlayer::BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
+	:m_Stage(stage),m_Boss(boss), m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
+
 }
 
 void BattlePlayer::Start()
 {
 	m_State = Free;
-	m_Texture = Engine::Texture2DArray::Create("assets/textures/player.png", 3, 1);
 	m_Current = &m_Stage->GetStage()->at(3 * 7);
 	//设置粒子
 	m_Particle.SizeBegin = 0.2f;
@@ -269,316 +268,29 @@ void BattlePlayer::Update(float ts)
 	m_ErrorFlag.Update(ts);
 	m_BeatFlag.Update(ts);
 	
-	if (!m_ErrorFlag)
+	switch (m_State)
 	{
-		switch (m_State)
+	case Move:
+		if (m_MoveFlag.GetProportion() == 1)
 		{
-		case Free:
-			if (GameInput::IsInteractiveKeyDown())
-			{
-				m_MoveFlag.SetDelay(60.0f / 400.0f - 0.02f);
-				m_State = Beat;
-				m_Step = 0;
-				m_Stage->ClearStep();
-
-
-				Block* boss = m_Boss->GetCurrent();
-				bool flag = false;
-		
-				if (boss == m_Current->Link[0] || boss == m_Current->Link[1] || 
-					boss == m_Current->Link[2] || boss == m_Current->Link[3] ||
-					m_Current->Link[0] != nullptr && boss == m_Current->Link[0]->Link[3] ||
-					m_Current->Link[1] != nullptr && boss == m_Current->Link[1]->Link[2] ||
-					m_Current->Link[2] != nullptr && boss == m_Current->Link[2]->Link[0] ||
-					m_Current->Link[3] != nullptr && boss == m_Current->Link[3]->Link[1])
-				{
-					m_Boss->OnHit(m_Step);
-				}
-				else
-				{
-					SoundEngine::Play2D(m_SoundSources->Get("swoosh"));
-				}
-
-				
-				m_Particle.ColorBegin = m_Color;
-				m_Particle.ColorEnd = glm::vec4(m_Color.r, m_Color.g, m_Color.b, 0.0f);
-				m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
-				for(int i = 0; i < 10; i++)
-					m_ParticleSystem->Emit(m_Particle);
-			}
-			if (GameInput::IsUpKeyDown())
-			{
-
-				if (m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
-				{
-					m_Next = m_Current->Link[3];
-					
-					m_MoveFlag.SetDelay(60.0f / 100.0f -0.04f);
-					m_State = Move;
-					if (m_Current->Step == 0)
-					{
-						m_Step++;
-						m_Current->Step = m_Step;
-					}
-					
-					SoundEngine::Play2D(m_SoundSources->Get("hat"));
-					m_Particle.ColorBegin = glm::vec4(1.0f);
-					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
-					for (int i = 0; i < 3; i++)
-						m_ParticleSystem->Emit(m_Particle);
-				}
-				else
-				{
-					m_ErrorDirection = { 0.0 , 1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-				}
-
-
-			}
-			if ( GameInput::IsDownKeyDown())
-			{
-
-				if (m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
-				{
-					m_Next = m_Current->Link[2];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
-					m_State = Move;
-					if (m_Current->Step == 0)
-					{
-						m_Step++;
-						m_Current->Step = m_Step;
-					}
-
-					SoundEngine::Play2D(m_SoundSources->Get("hat"));
-					m_Particle.ColorBegin = glm::vec4(1.0f);
-					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
-					for (int i = 0; i < 3; i++)
-						m_ParticleSystem->Emit(m_Particle);
-				}
-				else
-				{
-					m_ErrorDirection = { 0.0 , -1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-				}
-
-			}
-			if ( GameInput::IsLeftKeyDown() )
-			{
-
-				if (m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
-				{
-					m_Next = m_Current->Link[0];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
-					m_State = Move;
-					if (m_Current->Step == 0)
-					{
-						m_Step++;
-						m_Current->Step = m_Step;
-					}
-
-					SoundEngine::Play2D(m_SoundSources->Get("hat"));
-					m_Particle.ColorBegin = glm::vec4(1.0f);
-					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
-					for (int i = 0; i < 3; i++)
-						m_ParticleSystem->Emit(m_Particle);
-				}
-				else
-				{
-					m_ErrorDirection = { -1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.08f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-				}
-
-
-			}
-			if (GameInput::IsRightKeyDown())
-			{
-
-				if (m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
-				{
-					m_Next = m_Current->Link[1];
-					m_MoveFlag.SetDelay(60.0f / 100.0f - 0.04f);
-					m_State = Move;
-					if (m_Current->Step == 0)
-					{
-						m_Step++;
-						m_Current->Step = m_Step;
-					}
-
-					SoundEngine::Play2D(m_SoundSources->Get("hat"));
-					m_Particle.ColorBegin = glm::vec4(1.0f);
-					m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-					m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
-					for (int i = 0; i < 3; i++)
-						m_ParticleSystem->Emit(m_Particle);
-				}
-				else
-				{
-					m_ErrorDirection = { 1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-				}
-
-
-			}
-			break;
-		case Move:
-			if (GameInput::IsInteractiveKeyDown())
-			{
-				m_ErrorDirection = { 0.0 , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-				m_Step = 0;
-				m_Stage->ClearStep();
-
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-			}
-			if (GameInput::IsUpKeyDown())
-			{
-					m_ErrorDirection = { 0.0 , 1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-			}
-			if (GameInput::IsDownKeyDown())
-			{
-					m_ErrorDirection = { 0.0 , -1.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-				
-			}
-			if (GameInput::IsLeftKeyDown())
-			{
-
-				
-					m_ErrorDirection = { -1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-
-			}
-			if (GameInput::IsRightKeyDown())
-			{
-
-					m_ErrorDirection = { 1.0f , 0.0f };
-					m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-
-					m_Step = 0;
-					m_Stage->ClearStep();
-
-					SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-			}
-			if (m_MoveFlag.GetProportion() == 1)
-			{
-				m_Current = m_Next;
-				m_Position = m_Current->Position;
-				m_State = Free;
-			}
-			else
-			{
-				m_Position = m_Current->Position + m_MoveFlag.GetProportion()*(m_Next->Position - m_Current->Position);
-			}
-			break;
-		case Beat:
-			if (GameInput::IsInteractiveKeyDown())
-			{
-				m_ErrorDirection = { 0.0 , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-			}
-			if (GameInput::IsUpKeyDown())
-			{
-				m_ErrorDirection = { 0.0 , 1.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-			}
-			if (GameInput::IsDownKeyDown())
-			{
-				m_ErrorDirection = { 0.0 , -1.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-			}
-			if (GameInput::IsLeftKeyDown())
-			{
-
-
-				m_ErrorDirection = { -1.0f , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-
-			}
-			if (GameInput::IsRightKeyDown())
-			{
-
-				m_ErrorDirection = { 1.0f , 0.0f };
-				m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
-				SoundEngine::Play2D(m_SoundSources->Get("error"));
-
-			}
-			if (m_MoveFlag.GetProportion() == 1)
-			{
-				m_State = Free;
-			}
-			break;
+			m_Current = m_Next;
+			m_Position = m_Current->Position;
+			m_State = Free;
 		}
-	}
-	else
-	{
-		
-		if (m_State == Move)
+		else
 		{
-			if (m_MoveFlag.GetProportion() == 1)
-			{
-				m_Current = m_Next;
-				m_Position = m_Current->Position;
-				m_State = Free;
-			}
-			else
-			{
-				m_Position = m_Current->Position + m_MoveFlag.GetProportion() * (m_Next->Position - m_Current->Position);
-			}
+			m_Position = m_Current->Position + m_MoveFlag.GetProportion() * (m_Next->Position - m_Current->Position);
 		}
-		
+		break;
+	case Beat:
+		if (m_MoveFlag.GetProportion() == 1)
+		{
+			m_State = Free;
+		}
+		break;
 	}
 
+	InputCheck();
 		
 		
 }
@@ -590,13 +302,14 @@ void BattlePlayer::BufferRender()
 void BattlePlayer::Render()
 {
 	
-	auto shader = m_Shaders->Get("BeatShader");
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("BeatShader");
+	auto texuture = m_ResourceManager->GetTextureLibrary()->Get("player");
 	float size = 1.0f;
 	if (m_BeatFlag)
 	{
 		size += 0.15f * sin(glm::radians(m_BeatFlag.GetProportion() * 180.0f));
 	}
-	Engine::Renderer2D::BeginScene(m_Camera, m_Texture, shader);
+	Engine::Renderer2D::BeginScene(m_Camera, texuture, shader);
 	shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
 	shader->SetFloat("u_Hit", 0.0f);
 	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), 3.0f);
@@ -629,29 +342,166 @@ void BattlePlayer::Reset()
 void BattlePlayer::Destroy()
 {
 }
-
 void BattlePlayer::OnBeat()
 {
 	m_BeatFlag.SetDelay(0.15f);
 }
 
 
-//------------------------------------背景-------------------------------------
-Heart::Heart(Engine::ShaderLibrary* shaders, SoundSourceLibrary* ss)
-	:m_Shaders(shaders), m_SoundSources(ss), m_Camera(1280.0f / 720.0f, 5.0f)
+void BattlePlayer::InputCheck()
 {
+	if (!m_ErrorFlag)
+	{
+	
+		if (GameInput::IsInteractiveKeyDown())
+		{
+			if (m_State == Free)
+			{
+				m_MoveFlag.SetDelay(60.0f / 400.0f - 0.02f);
+				m_State = Beat;
+				m_Step = 0;
+				m_Stage->ClearStep();
+
+
+				Block* boss = m_Boss->GetCurrent();
+				bool flag = false;
+
+				if (boss == m_Current->Link[0] || boss == m_Current->Link[1] ||
+					boss == m_Current->Link[2] || boss == m_Current->Link[3] ||
+					m_Current->Link[0] != nullptr && boss == m_Current->Link[0]->Link[3] ||
+					m_Current->Link[1] != nullptr && boss == m_Current->Link[1]->Link[2] ||
+					m_Current->Link[2] != nullptr && boss == m_Current->Link[2]->Link[0] ||
+					m_Current->Link[3] != nullptr && boss == m_Current->Link[3]->Link[1])
+				{
+					m_Boss->OnHit(m_Step);
+				}
+				else
+				{
+					SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("swoosh"));
+				}
+
+
+				m_Particle.ColorBegin = m_Color;
+				m_Particle.ColorEnd = glm::vec4(m_Color.r, m_Color.g, m_Color.b, 0.0f);
+				m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+				for (int i = 0; i < 10; i++)
+					m_ParticleSystem->Emit(m_Particle);
+			}
+			else
+			{
+				MoveError({ 0.0f , 0.0f });
+			}
+			
+		}
+		if (GameInput::IsUpKeyDown())
+		{
+			if (m_State == Free && m_Current->Link[3] != nullptr && m_Current->Link[3]->Awake)
+			{
+				MoveTo(3);
+			}
+			else
+			{
+				MoveError({ 0.0 , 1.0f });
+			}
+			
+
+
+		}
+		if (GameInput::IsDownKeyDown())
+		{
+
+			if (m_State == Free && m_Current->Link[2] != nullptr && m_Current->Link[2]->Awake)
+			{
+				MoveTo(2);
+			}
+			else
+			{
+				MoveError({ 0.0 , -1.0f });
+			}
+
+		}
+		if (GameInput::IsLeftKeyDown())
+		{
+
+			if (m_State == Free && m_Current->Link[0] != nullptr && m_Current->Link[0]->Awake)
+			{
+				MoveTo(0);
+			}
+			else
+			{
+				MoveError({ -1.0f , 0.0f });
+			}
+
+
+		}
+		if (GameInput::IsRightKeyDown())
+		{
+
+			if (m_State == Free && m_Current->Link[1] != nullptr && m_Current->Link[1]->Awake)
+			{
+				MoveTo(1);
+			}
+			else
+			{
+				MoveError({ 1.0f , 0.0f });
+			}
+
+
+		}
+		
+	}
 }
 
-void Heart::Start()
+void BattlePlayer::MoveTo(int forward)
 {
-	m_Texture = Engine::Texture2DArray::Create("assets/textures/heart.png", 5, 1);
+	SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("hat"));
+	m_Next = m_Current->Link[forward];
+	m_MoveFlag.SetDelay(60.0f / 100.0f - 0.06f);
+	m_State = Move;
+	if (m_Current->Step == 0)
+	{
+		m_Step++;
+		m_Current->Step = m_Step;
+	}
+
+	m_Particle.ColorBegin = glm::vec4(1.0f);
+	m_Particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+	m_Particle.Position = glm::vec3(m_Position.x, m_Position.y, 0.0f);
+	for (int i = 0; i < 3; i++)
+		m_ParticleSystem->Emit(m_Particle);
+}
+
+void BattlePlayer::MoveError(const glm::vec2 direction)
+{
+	SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("error"));
+	m_ErrorDirection = direction;
+	m_ErrorFlag.SetDelay(60.0f / 200.0f - 0.04f);
+
+	m_Step = 0;
+	m_Stage->ClearStep();
+
+
+}
+
+
+
+
+
+//------------------------------------背景-------------------------------------
+Heart::Heart(ResourceManager* resourceManager)
+	:m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
+{
 	Engine::FrameBufferSpecification fbSpec;
 	fbSpec.Width = 1280;
 	fbSpec.Height = 720;
 
 	m_FBO = Engine::FrameBuffer::Create(fbSpec);
+}
 
-	
+void Heart::Start()
+{
+	m_IsAwake = false;
+	m_IsRender = false;
 
 }
 
@@ -659,7 +509,7 @@ void Heart::Awake()
 {
 	m_IsAwake = true;
 	m_IsRender = true;
-	SoundEngine::Play2D(m_SoundSources->Get("tutorial_metronome_loop"), true);
+	SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_loop"), true);
 }
 
 
@@ -674,12 +524,13 @@ void Heart::Update(float ts)
 
 void Heart::BufferRender()
 {
+	auto texture = m_ResourceManager->GetTextureLibrary()->Get("heart");
 	if (m_IsRender)
 	{
 		m_FBO->Bind();
 		Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		Engine::RendererCommand::Clear();
-		Engine::Renderer2D::BeginScene(m_Camera, m_Texture);
+		Engine::Renderer2D::BeginScene(m_Camera, texture);
 		if (m_Beat)
 		{
 			Engine::Renderer2D::DrawQuad(m_Postion1, glm::vec2(m_Size + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f))), 0, glm::vec4(1.0f), 0.0f);
@@ -707,7 +558,7 @@ void Heart::Render()
 {
 	if (m_IsRender)
 	{
-		auto shader = m_Shaders->Get("heart");
+		auto shader = m_ResourceManager->GetShaderLibrary()->Get("heart");
 		shader->SetFloat("v_Color", 0.5f + 0.15f * sin(glm::radians(m_Beat.GetProportion() * 180.0f)), true);
 		shader->SetFloat("v_Shadow", m_Beat.GetProportion());
 		Engine::RendererPostProcessing::Draw(m_FBO, shader);
@@ -730,8 +581,8 @@ void Heart::OnBeat()
 
 
 //------------------------------------后期处理-------------------------------------
-TutorialPost::TutorialPost(Engine::ShaderLibrary* shaders)
-	:m_Shaders(shaders)
+TutorialPost::TutorialPost(ResourceManager* resourceManager)
+	:m_ResourceManager(resourceManager)
 {
 }
 
@@ -764,7 +615,7 @@ void TutorialPost::BufferRender()
 
 void TutorialPost::Render()
 {
-	auto shader = m_Shaders->Get("Post");
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("Post");
 	shader->SetFloat("u_Time", m_Time, true);
 	shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
 	shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
@@ -813,8 +664,9 @@ void TutorialPost::OnBeat()
 //------------------------------------战斗主程序-------------------------------------
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Heart(&m_Shaders, &m_SoundSources), m_Player(&m_BattleStage, &m_Boss, &m_ParticleSystem, &m_Shaders, &m_SoundSources), m_Boss(&m_BattleStage, &m_ParticleSystem, &m_Shaders, &m_SoundSources), m_BeatCounter(), m_BattleStage(&m_Shaders), m_ParticleSystem(500), m_Post(&m_Shaders), m_Shaders(), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_Heart(&m_ResourceManager), m_Player(&m_BattleStage, &m_Boss, &m_ParticleSystem, &m_ResourceManager), m_Boss(&m_BattleStage, &m_ParticleSystem, &m_ResourceManager), m_BeatCounter(), m_BattleStage(&m_ResourceManager), m_Post(&m_ResourceManager), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f)
 {
+	
 }
 void TutorialBattle::OnAttach()
 {
@@ -830,34 +682,14 @@ void TutorialBattle::OnAttach()
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
 	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
 
+	m_ResourceManager.Init();
 	m_Heart.Start();
 	m_BattleStage.Start();
 	m_Player.Start();
 	m_Boss.Start();
-
-	m_SoundSources.Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
-	m_SoundSources.Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
-	m_SoundSources.Load("hat", "assets/audio/hat.wav");
-	m_SoundSources.Load("clap", "assets/audio/clap.wav");
-	m_SoundSources.Load("swoosh", "assets/audio/swoosh.wav");
-	m_SoundSources.Load("solid", "assets/audio/solid.wav");
-	m_SoundSources.Load("error", "assets/audio/error.wav");
-	m_SoundSources.Get("hat")->SetVolume(0.2f);
-	m_SoundSources.Get("clap")->SetVolume(0.3f);
-	m_SoundSources.Get("error")->SetVolume(0.5f);
-
-	m_Shaders.Load("BeatShader", "assets/shaders/BeatShader.glsl");
-	m_Shaders.Load("Block", "assets/shaders/Block.glsl");
-	m_Shaders.Load("heart", "assets/shaders/heart.glsl");
-	m_Shaders.Load("Post","assets/shaders/Post.glsl");
-
-	m_Shaders.Get("heart")->SetInteger("u_Texture0", 0, true);
-	m_Shaders.Get("Post")->SetInteger("u_Texture0", 0, true);
-
-
 	m_Post.Start();
 
-	SoundEngine::Play2D(m_SoundSources.Get("tutorial_metronome_start"));
+	SoundEngine::Play2D( m_ResourceManager.GetSoundSourceLibrary()->Get("tutorial_metronome_start"));
 
 
 
@@ -929,3 +761,32 @@ void TutorialBattle::OnEvent(Engine::Event& event)
 {
 }
 
+//----------------------------------资源列表读入-------------------------------------
+void TutorialResourceManager::Init()
+{
+	auto shaders = GetShaderLibrary();
+	auto soundSources = GetSoundSourceLibrary();
+	auto textures = GetTextureLibrary();
+	shaders->Load("BeatShader", "assets/shaders/BeatShader.glsl");
+	shaders->Load("Block", "assets/shaders/Block.glsl");
+	shaders->Load("heart", "assets/shaders/heart.glsl");
+	shaders->Load("Post", "assets/shaders/Post.glsl");
+	shaders->Get("heart")->SetInteger("u_Texture0", 0, true);
+	shaders->Get("Post")->SetInteger("u_Texture0", 0, true);
+
+	soundSources->Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
+	soundSources->Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
+	soundSources->Load("hat", "assets/audio/hat.wav");
+	soundSources->Load("clap", "assets/audio/clap.wav");
+	soundSources->Load("swoosh", "assets/audio/swoosh.wav");
+	soundSources->Load("solid", "assets/audio/solid.wav");
+	soundSources->Load("error", "assets/audio/error.wav");
+	soundSources->Get("hat")->SetVolume(0.2f);
+	soundSources->Get("clap")->SetVolume(0.3f);
+	soundSources->Get("error")->SetVolume(0.5f);
+
+	textures->Load("number", "assets/textures/number.png", 10, 1);
+	textures->Load("metronome", "assets/textures/metronome.png", 1, 1);
+	textures->Load("heart", "assets/textures/heart.png", 5, 1);
+	textures->Load("player", "assets/textures/player.png", 3, 1);
+}

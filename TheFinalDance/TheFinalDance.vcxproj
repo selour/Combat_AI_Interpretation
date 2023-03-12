@@ -100,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\ResourceManager.cpp" />
     <ClCompile Include="src\Core\Object.cpp" />
     <ClCompile Include="src\Core\Delay.cpp" />
     <ClCompile Include="src\Core\GameInput.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="src\Game.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\ResourceManager.h" />
     <ClInclude Include="src\Core\Object.h" />
     <ClInclude Include="src\Core\Delay.h" />
     <ClInclude Include="src\Core\GameInput.h" />

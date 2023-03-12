@@ -36,6 +36,16 @@ namespace Engine
 
 
     };
+    class Texture2DArrayLibrary
+    {
+    public:
+        void Add(const std::shared_ptr<Texture2DArray>& texture, const std::string& name);
+        std::shared_ptr<Texture2DArray> Load(const std::string& name, const std::string& filePath, unsigned int xIndex, unsigned int yIndex);
+        std::shared_ptr<Texture2DArray> Get(const std::string& name);
+        bool IsExists(const std::string& name) const;
+    private:
+        std::unordered_map<std::string, std::shared_ptr<Texture2DArray>> m_Textures;
+    };
 
 }
 
