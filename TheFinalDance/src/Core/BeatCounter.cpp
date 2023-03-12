@@ -1,8 +1,8 @@
 #include "BeatCounter.h"
 
 //------------------½ÚÅÄ¼ÆËãÆ÷---------------------
-BeatCounter::BeatCounter()
-	:m_Bpm(100),m_Time(0)
+BeatCounter::BeatCounter(ObjectManager* objects)
+	:m_Bpm(100),m_Time(0), m_Objects(objects)
 {
 }
 
@@ -18,10 +18,7 @@ void BeatCounter::Update(float ts)
 	if (m_Time >= bv)
 	{
 		m_TimeLine.OnBeat();
-		for (int i = 0; i < m_Objects.size(); i++)
-		{
-			m_Objects[i]->OnBeat();
-		}
+		m_Objects->AllObjectOnBeat();
 		m_Time -= bv;
 	}
 	m_TimeLine.Update();

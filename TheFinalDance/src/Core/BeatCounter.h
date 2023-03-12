@@ -44,7 +44,7 @@ private:
 class BeatCounter
 {
 public:
-	BeatCounter();
+	BeatCounter(ObjectManager* objects);
 	void Clear();
 	void Update(float ts);
 
@@ -62,10 +62,6 @@ public:
 		return m_Time;
 	}
 
-	void AddObject(Object* object)
-	{
-		m_Objects.push_back(object);
-	}
 
 	TimeLine* GetTimeLine()
 	{
@@ -74,6 +70,6 @@ public:
 private:
 	int m_Bpm;
 	float m_Time;
-	std::vector<Object*> m_Objects;
+	ObjectManager* m_Objects;
 	TimeLine m_TimeLine;
 };

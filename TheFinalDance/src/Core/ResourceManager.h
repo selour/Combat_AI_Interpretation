@@ -17,8 +17,6 @@ public:
 	{
 		return &m_Textures;
 	}
-protected:
-	
 	
 private:
 	SoundSourceLibrary m_SoundSources;

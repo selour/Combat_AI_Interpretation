@@ -12,22 +12,22 @@
 // 
 // 
 //------------------------------------战斗场地-------------------------------------
+
 BattleStage::BattleStage(ResourceManager* resourceManager)
 	:m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
-
+	m_Stage.resize(7*7);
 }
 
 void BattleStage::Start()
 {
-	m_Stage.resize(7*7);
 	for (int i = 0; i < 7; i++)
 	{
 		for (int j = 0; j < 7; j++)
 		{
 			m_Stage[i * 7 + j].Position = { i - 3, j - 3 };
-			m_Stage[i * 7 + j].Awake = true;
-			m_Stage[i * 7 + j].Render = true;
+			m_Stage[i * 7 + j].Awake = false;
+			m_Stage[i * 7 + j].Render = false;
 			if (j > 0)
 			{
 				m_Stage[i * 7 + j].Link[2] = &m_Stage[i * 7 + j - 1];
@@ -93,7 +93,7 @@ void BattleStage::Render()
 			}
 			
 		}
-		
+			
 	}
 	Engine::Renderer2D::EndScene();
 }
@@ -118,17 +118,16 @@ void BattleStage::ClearStep()
 
 	}
 }
+
 //-----------------------------------节拍器boss-------------------------------------
-
-
-TutorialBoss::TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
-	:m_Stage(stage),m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
+TutorialBoss::TutorialBoss(const std::shared_ptr<BattleStage> stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
+	:m_Stage(stage), m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 }
 
 void TutorialBoss::Start()
 {
-	m_Current = &m_Stage->GetStage()->at(3 * 7 + 3);
+	m_Current = &m_Stage->GetStage()->at(3 * 7 + 1);
 	m_Current->Awake = false;
 	//设置粒子
 	m_Particle.SizeBegin = 0.2f;
@@ -172,7 +171,7 @@ void TutorialBoss::Render()
 	shader->SetFloat("u_Proportion", m_BeatTip.GetProportion());
 	if (m_BeatTip)
 	{
-		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.4f), 0, m_Color, -2.0f);
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.8f), 0, m_Color, -2.0f);
 	}
 	if (m_BeatCheck)
 	{
@@ -201,8 +200,11 @@ void TutorialBoss::Destroy()
 
 void TutorialBoss::OnBeat()
 {
+	if (m_IsAwake)
+	{
+		m_BeatFlag.SetDelay(0.15f);
+	}
 	
-	m_BeatFlag.SetDelay(0.15f);
 	
 	if (m_BeatCount == 0)
 	{
@@ -214,6 +216,7 @@ void TutorialBoss::OnBeat()
 
 void TutorialBoss::OnHit(int step)
 {
+
 	if (m_BeatCheck)
 	{
 		m_HitFlag.SetDelay(60.0f / 400.0f);
@@ -238,8 +241,8 @@ void TutorialBoss::OnHit(int step)
 
 //------------------------------------玩家对象-------------------------------------
 
-BattlePlayer::BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
-	:m_Stage(stage),m_Boss(boss), m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
+BattlePlayer::BattlePlayer(std::shared_ptr<BattleStage> stage, std::shared_ptr<TutorialBoss> boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager)
+	:m_Stage(stage), m_Boss(boss), m_ParticleSystem(particleSystem), m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 
 }
@@ -312,11 +315,17 @@ void BattlePlayer::Render()
 	Engine::Renderer2D::BeginScene(m_Camera, texuture, shader);
 	shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
 	shader->SetFloat("u_Hit", 0.0f);
-	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), 3.0f);
+	//判定圈
+	if (m_IsRender)
+	{
+		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f), 3.0f);
+	}
+	//终末拍
 	if (m_State == Beat)
 	{
 		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, m_Color, 4.0f);
 	}
+	//玩家图标
 	if (m_ErrorFlag)
 	{
 		glm::vec2 pos = sin(glm::radians(m_ErrorFlag.GetProportion() * 180.0f)) * m_ErrorDirection * 0.2f;
@@ -327,8 +336,9 @@ void BattlePlayer::Render()
 	{
 		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(size), 0, m_Color, 0.0f);
 	}
-
+	//判定点
 	Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(0.25f), m_Time * 4, glm::vec4(1.0f, 1.0f, 1.0f, 0.8f), 1.0f);
+	//错误提示
 	if (m_ErrorFlag)
 		Engine::Renderer2D::DrawQuad(m_Position , glm::vec2(1.5f), 0, glm::vec4(1.0f), 2.0f);
 	
@@ -344,9 +354,11 @@ void BattlePlayer::Destroy()
 }
 void BattlePlayer::OnBeat()
 {
-	m_BeatFlag.SetDelay(0.15f);
+	if (m_IsAwake)
+	{
+		m_BeatFlag.SetDelay(0.15f);
+	}
 }
-
 
 void BattlePlayer::InputCheck()
 {
@@ -361,7 +373,6 @@ void BattlePlayer::InputCheck()
 				m_State = Beat;
 				m_Step = 0;
 				m_Stage->ClearStep();
-
 
 				Block* boss = m_Boss->GetCurrent();
 				bool flag = false;
@@ -404,7 +415,6 @@ void BattlePlayer::InputCheck()
 				MoveError({ 0.0 , 1.0f });
 			}
 			
-
 
 		}
 		if (GameInput::IsDownKeyDown())
@@ -486,7 +496,6 @@ void BattlePlayer::MoveError(const glm::vec2 direction)
 
 
 
-
 //------------------------------------背景-------------------------------------
 Heart::Heart(ResourceManager* resourceManager)
 	:m_ResourceManager(resourceManager), m_Camera(1280.0f / 720.0f, 5.0f)
@@ -552,7 +561,6 @@ void Heart::BufferRender()
 
 	}
 }
-
 
 void Heart::Render()
 {
@@ -664,7 +672,7 @@ void TutorialPost::OnBeat()
 //------------------------------------战斗主程序-------------------------------------
 
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_Heart(&m_ResourceManager), m_Player(&m_BattleStage, &m_Boss, &m_ParticleSystem, &m_ResourceManager), m_Boss(&m_BattleStage, &m_ParticleSystem, &m_ResourceManager), m_BeatCounter(), m_BattleStage(&m_ResourceManager), m_Post(&m_ResourceManager), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_BeatCounter(&m_Objects), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f)
 {
 	
 }
@@ -673,25 +681,24 @@ void TutorialBattle::OnAttach()
 	m_Bpm = 100; 
 	m_Volume = 1.0f;
 	m_BeatCounter.SetBPM(m_Bpm);
-	m_BeatCounter.AddObject(&m_Heart);
-	m_BeatCounter.AddObject(&m_Post);
-	m_BeatCounter.AddObject(&m_Player);
-	m_BeatCounter.AddObject(&m_Boss);
-	m_BeatCounter.GetTimeLine()->AddObject(&m_Heart);
-	m_BeatCounter.GetTimeLine()->AddObject(&m_Post);
-	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
-	m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
+	//m_BeatCounter.GetTimeLine()->AddEvent(Awake, 7, 1);
+	//m_BeatCounter.GetTimeLine()->AddEvent(Awake, 8, 0);
+	m_Stage = std::make_shared<BattleStage>(&m_ResourceManager);
+	m_Boss = std::make_shared<TutorialBoss>(m_Stage, &m_ParticleSystem,&m_ResourceManager);
+	m_Player = std::make_shared<BattlePlayer>(m_Stage, m_Boss, &m_ParticleSystem, &m_ResourceManager);
+
+	m_Objects.Add("Player", m_Player);
+	m_Objects.Add("Boss", m_Boss);
+	m_Objects.Add("Stage", m_Stage);
+
+	m_Objects.Add("Heart", std::make_shared<Heart>(&m_ResourceManager));
+	m_Objects.Add("Post", std::make_shared<TutorialPost>(&m_ResourceManager));
+
 
 	m_ResourceManager.Init();
-	m_Heart.Start();
-	m_BattleStage.Start();
-	m_Player.Start();
-	m_Boss.Start();
-	m_Post.Start();
+	m_Objects.AllObjectStart();
 
-	SoundEngine::Play2D( m_ResourceManager.GetSoundSourceLibrary()->Get("tutorial_metronome_start"));
-
-
+	//SoundEngine::Play2D( m_ResourceManager.GetSoundSourceLibrary()->Get("tutorial_metronome_start"));
 
 }
 
@@ -705,35 +712,31 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	//时间更新，计算更新节拍数
 	m_BeatCounter.SetBPM(m_Bpm);
 	m_BeatCounter.Update(ts);
-	m_Player.Update(ts);
-	m_Boss.Update(ts);
-	m_Heart.Update(ts);
-
-	m_Post.Update(ts);
+	m_Objects.AllObjectUpdate(ts);
 
 	m_ParticleSystem.OnUpdate(ts);
 
 
-	m_Heart.BufferRender();
+	m_Objects.AllObjectBufferRender();
 
-	m_Post.GetFBO()->Bind();
+	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->Bind();
 	
 	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
 	
-	m_Heart.Render();
+	m_Objects.Get("Heart")->Render();
 	
-	m_BattleStage.Render();
+	m_Objects.Get("Stage")->Render();
 
-	m_Boss.Render();
+	m_Objects.Get("Boss")->Render();
 	m_ParticleSystem.OnRender(m_Camera);
-	m_Player.Render();
+	m_Objects.Get("Player")->Render();
 	
-	m_Post.GetFBO()->UnBind();
+	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->UnBind();
 	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
 
-	m_Post.Render();
+	m_Objects.Get("Post")->Render();
 }
 
 void TutorialBattle::OnImGuiRender()

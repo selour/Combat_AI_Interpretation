@@ -52,7 +52,11 @@ float noise( in vec2 p )
                 mix( dot( hash( i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), 
                      dot( hash( i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
 }
-
+float FlashLight(vec2 uv, float proportion)
+{
+    float d = length(uv-vec2(0));
+    return smoothstep(-1.*proportion * 0.5+.5, -1.*proportion * 0.5+.5 - .8, d);
+}
 float FinalBeat(vec2 uv, float proportion)
 {
     float noiseboi = 0.0;
@@ -70,7 +74,7 @@ float FinalBeat(vec2 uv, float proportion)
 	c =  smoothstep(r, r - 0.04, d) - smoothstep(r, r - ir, d);
     noiseboi *= c; 
     c += noiseboi;
-    c += smoothstep(-1.*proportion * 0.5+.5, -1.*proportion * 0.5+.5 - .8, d);
+    c += FlashLight(uv, proportion);
     return c;
 }
 float beatCircle(vec2 uv, float radius)
@@ -99,7 +103,7 @@ void main()
         outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
         break;
     case -1:
-        outAlpha = determineCircle(uv)*2;
+        outAlpha = determineCircle(uv) * 2;
         outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
         break;
     case 0:

@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "Audio/SoundEngine.h"
+#include "Delay.h"
 #include "ResourceManager.h"
 #include "Object.h"
 #include "BeatCounter.h"
@@ -59,7 +60,7 @@ private:
 class TutorialBoss : public Object
 {
 public:
-	TutorialBoss(BattleStage* stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
+	TutorialBoss(const std::shared_ptr<BattleStage> stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
 	virtual void Start() override;
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
@@ -82,14 +83,14 @@ private:
 	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
 	Block* m_Current = nullptr;
-	BattleStage* m_Stage;
-
 	DelaySwitch m_BeatFlag;
 	DelaySwitch m_HitFlag;
 
 	int m_BeatCount = 0;
 	DelaySwitch m_BeatTip;
 	DelaySwitch m_BeatCheck;
+
+	std::shared_ptr<BattleStage> m_Stage;
 
 	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
@@ -100,10 +101,11 @@ private:
 	Engine::OrthographicCamera m_Camera;
 
 };
+
 class BattlePlayer : public Object
 {
 public:
-	BattlePlayer(BattleStage* stage, TutorialBoss* boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
+	BattlePlayer(std::shared_ptr<BattleStage> stage, std::shared_ptr<TutorialBoss> boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
 
 	virtual void Start() override;
 	virtual void Awake() override;
@@ -136,6 +138,7 @@ private:
 	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
 	int m_Step  = 0;
 
+
 	DelaySwitch m_MoveFlag;
 	DelaySwitch m_ErrorFlag;
 	DelaySwitch m_BeatFlag;
@@ -143,8 +146,9 @@ private:
 	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
 	Block* m_Current = nullptr;
 	Block* m_Next = nullptr;
-	BattleStage* m_Stage;
-	TutorialBoss* m_Boss;
+
+	std::shared_ptr<BattleStage> m_Stage;
+	std::shared_ptr<TutorialBoss> m_Boss;
 
 	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
@@ -258,21 +262,15 @@ private:
 	int m_Bpm = 100;
 	float m_Volume = 1.0f;
 	int m_FPS;
-	//背景板
-	Heart m_Heart;
 	
-
-	//player
-	BattlePlayer m_Player;
-	TutorialBoss m_Boss;
-	glm::vec4 m_Color = glm::vec4(1.0f);
-
-
 	BeatCounter m_BeatCounter;
-	BattleStage m_BattleStage;
-	TutorialPost m_Post;
-	Engine::ParticleSystem m_ParticleSystem;
+	//物体列表
+	std::shared_ptr<BattlePlayer> m_Player;
+	std::shared_ptr<TutorialBoss> m_Boss;
+	std::shared_ptr<BattleStage> m_Stage;
 	
+	ObjectManager m_Objects;
+	Engine::ParticleSystem m_ParticleSystem;
 	TutorialResourceManager m_ResourceManager;
 	
 	Engine::OrthographicCamera m_Camera;
