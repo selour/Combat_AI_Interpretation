@@ -107,6 +107,7 @@ void main()
         outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
         break;
     case 0:
+        uv.y += u_Hit*0.01;
         outColor = vec4(mix(texture(u_Texture0, v_TexCoord).rgb, vec3(1.0f), u_Hit).rgb, texture(u_Texture0, v_TexCoord).a)* vec4(v_Color, v_Alpha);
         break;
     case 1:

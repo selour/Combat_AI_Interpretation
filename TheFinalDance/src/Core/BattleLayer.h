@@ -23,7 +23,7 @@ public:
 //*																			*
 //---------------------------------------------------------------------------
 // 
-//----------------------------地砖------------------------------------------
+//----------------------------------地砖------------------------------------------
 struct Block
 {
 	glm::vec2 Position = { 0.0f, 0.0f };
@@ -44,38 +44,50 @@ class BattleStage : public GameObject
 {
 public:
 	BattleStage()
-		:m_Camera(1280.0f / 720.0f, 5.0f)
 	{
 		m_Stage.resize(7 * 7);
 	}
 
 	virtual void Init() override;
 
+	virtual void Awake() override;
 
+
+	virtual void Update(float ts) override;
 	//渲染
 	virtual void Render()override;
 
 	//清空舞台
 	void ClearStep();
 
+	
+
+
 	std::vector<Block>* GetStage()
 	{
 		return &m_Stage;
 	}
+	
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 private:
 	std::vector<Block> m_Stage;
-	Engine::OrthographicCamera m_Camera;
+	Engine::OrthographicCamera* m_Camera;
+
+
+	DelaySwitch m_AwakeFlag;
 };
 //--------------------------------Boss:<节拍器>---------------------------------------
 class TutorialBoss : public GameObject
 {
 public:
 	TutorialBoss()
-		:m_Camera(1280.0f / 720.0f, 5.0f)
 	{
 	}
 	virtual void Init() override;
-
+	virtual void Awake() override;
 	virtual void Trigger() override;
 
 	//更新
@@ -96,6 +108,10 @@ public:
 	{
 		return m_Current;
 	}
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 private:
 	glm::vec2 m_Position;
 	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -114,7 +130,8 @@ private:
 
 	Engine::ParticleProps m_Particle;
 
-	Engine::OrthographicCamera m_Camera;
+	Engine::OrthographicCamera* m_Camera;
+
 
 };
 //-------------------------------战斗玩家----------------------------------------------
@@ -122,10 +139,17 @@ class BattlePlayer : public GameObject
 {
 public:
 	BattlePlayer()
-		:m_Camera(1280.0f / 720.0f, 5.0f)
 	{
 	}
 	virtual void Init() override;
+
+	virtual void Awake() override;
+
+	virtual void Enable() override;
+	virtual void DisEnable() override;
+
+	virtual void Change() override;
+
 	//更新
 	virtual void OnBeat() override;
 	virtual void Update(float ts) override;
@@ -140,12 +164,16 @@ public:
 	{
 		m_Boss = boss;
 	}
-
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 
 	enum State
 	{
 		Free = 0, Move = 1, Beat = 2
 	};
+
 
 private:
 	void InputCheck();
@@ -155,6 +183,9 @@ private:
 //       [2]
 	void MoveTo(int forward);
 	void MoveError(const glm::vec2 direction);
+
+	bool m_Enable = true;
+
 	float m_Time = 0.0f;
 	State m_State;
 	glm::vec2 m_Position;
@@ -175,7 +206,9 @@ private:
 
 	Engine::ParticleProps m_Particle;
 	
-	Engine::OrthographicCamera m_Camera;
+	Engine::OrthographicCamera* m_Camera;
+
+	DelaySwitch m_AwakeFlag;
 	
 
 };
@@ -184,7 +217,6 @@ class Heart : public GameObject
 {
 public:
 	Heart()
-		:m_Camera(1280.0f / 720.0f, 5.0f)
 	{
 		Engine::FrameBufferSpecification fbSpec;
 		fbSpec.Width = 1280;
@@ -203,6 +235,10 @@ public:
 	virtual void BufferRender() override;
 	virtual void Render()override;
 
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 
 private:
 	glm::vec2 m_Postion[5] = { 
@@ -216,7 +252,7 @@ private:
 	DelaySwitch m_Beat;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 
-	Engine::OrthographicCamera m_Camera;
+	Engine::OrthographicCamera* m_Camera;
 	
 };
 //----------------------------------后期特效处理------------------------------
@@ -247,18 +283,60 @@ private:
 
 
 };
+//--------------------------舞台摄像机控制-------------------------
+class TutorialCameraControl : public GameObject
+{
+public:
+	virtual void Trigger() override;
+	virtual void Update(float ts) override;
+
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
+private:
+	DelaySwitch m_Focus;
+	DelaySwitch m_DelayIn;
+	DelaySwitch m_DelayOut;
+
+	const glm::vec2 m_Pos = { 0.0f, 0.0f };
+	const float m_ZoomLevel = 5.0f;
+
+	const glm::vec2 m_FocusPos = {0.0f, -2.0f};
+	const float m_FocusZoomLevel = 2.0f;
+
+	Engine::OrthographicCamera* m_Camera;
+};
 //--------------------------判定圈控制-------------------------
 class TutorialBeatControl : public GameObject
 {
 public:
+	virtual void Change() override;
 	virtual void OnBeat() override;
 private:
+	int m_State = 0;
 	int m_BeatCount = 0;
 };
-//-------------------------背景音乐控制--------------------------------------------
+//--------------------------开场-------------------------
+class TutorialStartUp : public GameObject
+{
+public:
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+private:
+	DelaySwitch m_Delay;
+};
+//-------------------------音乐控制--------------------------------------------
 class TutorialMusic : public GameObject
 {
 public:
+	virtual void Awake() override;
+	virtual void Update(float ts) override;
+	virtual void OnBeat() override;
+private:
+	int m_BeatCount = 0;
+	DelaySwitch m_Delay;
+
 
 };
 //-------------------------资源管理器--------------------------------------------
@@ -281,6 +359,9 @@ public:
 private:
 
 	int m_FPS = 0;
+
+	glm::vec2 m_Position = glm::vec2(0.0f);
+	float m_ZoomLevel = 5.0f;
 
 	ObjectManager m_Objects;
 	EventQueue m_EventQueue;

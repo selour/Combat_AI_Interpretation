@@ -19,6 +19,7 @@ public:
 	EventQueue(ObjectManager* objects);
 	void OnUpdate();
 	void Emit(ObjectEvent event);
+	void Emit(std::string objectName, EventType type);
 private:
 	std::stack<ObjectEvent> m_EventQueue;
 	ObjectManager* m_Objects;

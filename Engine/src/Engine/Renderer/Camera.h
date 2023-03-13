@@ -18,6 +18,7 @@ namespace Engine
 		const glm::vec3& GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix(); }
 		const float GetRotation() const { return m_Rotation; }
+
 		void SetRotation(float rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
 		const glm::mat4 GetProjectionMatrix() const { return m_ProjectionMatrix; }

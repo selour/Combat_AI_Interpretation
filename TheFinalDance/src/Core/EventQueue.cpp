@@ -44,3 +44,8 @@ void EventQueue::Emit(ObjectEvent event)
 {
 	m_EventQueue.push(event);
 }
+
+void EventQueue::Emit(std::string objectName, EventType type)
+{
+	m_EventQueue.push(ObjectEvent(objectName, type));
+}
