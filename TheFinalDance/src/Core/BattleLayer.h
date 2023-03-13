@@ -3,7 +3,7 @@
 #include "Audio/SoundEngine.h"
 #include "Delay.h"
 #include "ResourceManager.h"
-#include "Object.h"
+#include "EventQueue.h"
 #include "BeatCounter.h"
 #include <memory>
 
@@ -16,6 +16,14 @@ public:
 };
 
 
+
+//---------------------------------------------------------------------------
+//*																			*
+//*								教程战斗 节拍器								*
+//*																			*
+//---------------------------------------------------------------------------
+// 
+//----------------------------地砖------------------------------------------
 struct Block
 {
 	glm::vec2 Position = { 0.0f, 0.0f };
@@ -29,23 +37,25 @@ struct Block
 //       [3]
 //    [0]   [1]
 //       [2]
+//---------------------
 
-class BattleStage : public Object
+//-----------------------------------舞台---------------------------------------
+class BattleStage : public GameObject
 {
 public:
-	BattleStage(ResourceManager* resourceManager);
-	virtual void Start() override;
-	virtual void Awake() override;
-	virtual void Update(float ts) override;
-	virtual void BufferRender() override;
+	BattleStage()
+		:m_Camera(1280.0f / 720.0f, 5.0f)
+	{
+		m_Stage.resize(7 * 7);
+	}
+
+	virtual void Init() override;
+
+
+	//渲染
 	virtual void Render()override;
-	virtual void Reset() override;
-	virtual void Destroy() override;
 
-
-	virtual void OnBeat() override;
-
-
+	//清空舞台
 	void ClearStep();
 
 	std::vector<Block>* GetStage()
@@ -54,26 +64,34 @@ public:
 	}
 private:
 	std::vector<Block> m_Stage;
-	ResourceManager* m_ResourceManager;
 	Engine::OrthographicCamera m_Camera;
 };
-class TutorialBoss : public Object
+//--------------------------------Boss:<节拍器>---------------------------------------
+class TutorialBoss : public GameObject
 {
 public:
-	TutorialBoss(const std::shared_ptr<BattleStage> stage, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
-	virtual void Start() override;
-	virtual void Awake() override;
+	TutorialBoss()
+		:m_Camera(1280.0f / 720.0f, 5.0f)
+	{
+	}
+	virtual void Init() override;
+
+	virtual void Trigger() override;
+
+	//更新
 	virtual void Update(float ts) override;
-	virtual void BufferRender() override;
-	virtual void Render()override;
-	virtual void Reset() override;
-	virtual void Destroy() override;
-
-
 	virtual void OnBeat() override;
+	//渲染
+	virtual void Render()override;
 
+	//被击中
 	void OnHit(int step);
 	
+	void SetStage(const std::shared_ptr<BattleStage> stage)
+	{
+		m_Stage = stage;
+	}
+
 	Block* GetCurrent()
 	{
 		return m_Current;
@@ -81,6 +99,8 @@ public:
 private:
 	glm::vec2 m_Position;
 	glm::vec4 m_Color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+	bool m_FirstHit = false;
 
 	Block* m_Current = nullptr;
 	DelaySwitch m_BeatFlag;
@@ -92,32 +112,35 @@ private:
 
 	std::shared_ptr<BattleStage> m_Stage;
 
-	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
-
-	ResourceManager* m_ResourceManager;
-
 
 	Engine::OrthographicCamera m_Camera;
 
 };
-
-class BattlePlayer : public Object
+//-------------------------------战斗玩家----------------------------------------------
+class BattlePlayer : public GameObject
 {
 public:
-	BattlePlayer(std::shared_ptr<BattleStage> stage, std::shared_ptr<TutorialBoss> boss, Engine::ParticleSystem* particleSystem, ResourceManager* resourceManager);
-
-	virtual void Start() override;
-	virtual void Awake() override;
-	virtual void Update(float ts) override;
-	virtual void BufferRender() override;
-	virtual void Render()override;
-	virtual void Reset() override;
-	virtual void Destroy() override;
-
+	BattlePlayer()
+		:m_Camera(1280.0f / 720.0f, 5.0f)
+	{
+	}
+	virtual void Init() override;
+	//更新
 	virtual void OnBeat() override;
+	virtual void Update(float ts) override;
+	//渲染
+	virtual void Render()override;
 
-	
+	void SetStage(std::shared_ptr<BattleStage> stage)
+	{
+		m_Stage = stage;
+	}
+	void SetBoss(std::shared_ptr<TutorialBoss> boss)
+	{
+		m_Boss = boss;
+	}
+
 
 	enum State
 	{
@@ -150,84 +173,66 @@ private:
 	std::shared_ptr<BattleStage> m_Stage;
 	std::shared_ptr<TutorialBoss> m_Boss;
 
-	Engine::ParticleSystem* m_ParticleSystem;
 	Engine::ParticleProps m_Particle;
-
-	ResourceManager* m_ResourceManager;
-	
 	
 	Engine::OrthographicCamera m_Camera;
 	
 
 };
-
-class Heart : public Object
+//-----------------------------------背景的心脏-------------------------------------------
+class Heart : public GameObject
 {
 public:
-	Heart(ResourceManager* resourceManager);
-	virtual void Start() override;
+	Heart()
+		:m_Camera(1280.0f / 720.0f, 5.0f)
+	{
+		Engine::FrameBufferSpecification fbSpec;
+		fbSpec.Width = 1280;
+		fbSpec.Height = 720;
+
+		m_FBO = Engine::FrameBuffer::Create(fbSpec);
+	}
+	virtual void Init() override;
+	//出现
 	virtual void Awake() override;
+
 	virtual void Update(float ts) override;
-	virtual void BufferRender() override;
-	virtual void Render()override;
-	virtual void Reset() override;
-	virtual void Destroy() override;
-
-
 	virtual void OnBeat() override;
 
-	float* GetPos1()
-	{
-		return &m_Postion1.x;
-	}
-	float* GetPos2()
-	{
-		return &m_Postion2.x;
-	}
-	float* GetPos3()
-	{
-		return &m_Postion3.x;
-	}
-	float* GetPos4()
-	{
-		return &m_Postion4.x;
-	}
-	float* GetPos5()
-	{
-		return &m_Postion5.x;
-	}
-	float* GetSize()
-	{
-		return &m_Size;
-	}
+
+	virtual void BufferRender() override;
+	virtual void Render()override;
+
 
 private:
-	glm::vec2 m_Postion1 = { 0.045f, -0.571f };
-	glm::vec2 m_Postion2 = { -0.711f, 0.044f };
-	glm::vec2 m_Postion3 = { 0.4f, 0.22f };
-	glm::vec2 m_Postion4 = { 0.177f, 0.7f };
-	glm::vec2 m_Postion5 = { -0.356f, 0.747f };
+	glm::vec2 m_Postion[5] = { 
+		{0.045f, -0.571f},
+		{ -0.711f, 0.044f },
+		{ 0.4f, 0.22f },
+		{ 0.177f, 0.7f },
+		{ -0.356f, 0.747f } };
 	float m_Size = 1.3f;
 
 	DelaySwitch m_Beat;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	ResourceManager* m_ResourceManager;
+
 	Engine::OrthographicCamera m_Camera;
 	
 };
-class TutorialPost : public Object
+//----------------------------------后期特效处理------------------------------
+class TutorialPost : public GameObject
 {
 public:
-	TutorialPost(ResourceManager* resourceManager);
-	virtual void Start() override;
+	TutorialPost()
+	{
+	}
+	virtual void Init() override;
+	//闪烁后进入故障特效
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
-	virtual void BufferRender() override;
-	virtual void Render()override;
-	virtual void Reset() override;
-	virtual void Destroy() override;
-
 	virtual void OnBeat() override;
+	virtual void Render()override;
+
 
 	std::shared_ptr<Engine::FrameBuffer> GetFBO()
 	{
@@ -239,15 +244,30 @@ private:
 	int m_BeatCount = 0;
 	DelaySwitch m_Noise, m_Rhythm;
 	std::shared_ptr<Engine::FrameBuffer> m_FBO;
-	ResourceManager* m_ResourceManager;
+
 
 };
+//--------------------------判定圈控制-------------------------
+class TutorialBeatControl : public GameObject
+{
+public:
+	virtual void OnBeat() override;
+private:
+	int m_BeatCount = 0;
+};
+//-------------------------背景音乐控制--------------------------------------------
+class TutorialMusic : public GameObject
+{
+public:
 
+};
+//-------------------------资源管理器--------------------------------------------
 class TutorialResourceManager : public ResourceManager
 {
 public:
 	virtual void Init() override;
 };
+//-------------------------关卡主程序--------------------------------------------
 class TutorialBattle : public BattleLayer
 {
 public:
@@ -259,17 +279,11 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Engine::Event& event) override;
 private:
-	int m_Bpm = 100;
-	float m_Volume = 1.0f;
-	int m_FPS;
-	
-	BeatCounter m_BeatCounter;
-	//物体列表
-	std::shared_ptr<BattlePlayer> m_Player;
-	std::shared_ptr<TutorialBoss> m_Boss;
-	std::shared_ptr<BattleStage> m_Stage;
-	
+
+	int m_FPS = 0;
+
 	ObjectManager m_Objects;
+	EventQueue m_EventQueue;
 	Engine::ParticleSystem m_ParticleSystem;
 	TutorialResourceManager m_ResourceManager;
 	
