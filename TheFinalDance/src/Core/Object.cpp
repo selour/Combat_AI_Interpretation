@@ -1,5 +1,25 @@
 #include "Object.h"
+//------------------节拍计算器---------------------
+void BeatCounter::Reset(int bpm)
+{
+	m_Time = 0;
+	m_Bpm = bpm;
+}
 
+void BeatCounter::Update(float ts)
+{
+
+	float bv = 60.0f / (float)m_Bpm;
+	m_Time += ts;
+	if (m_Time >= bv)
+	{
+		m_Objects->AllObjectOnBeat();
+		m_Time -= bv;
+	}
+
+}
+
+//----------------------游戏对象管理器-----------------------------
 void ObjectManager::Add(const std::string& name, const std::shared_ptr<GameObject>& object)
 {
 	ENGINE_ASSERT(!IsExists(name), "Object already exists!");
@@ -17,6 +37,7 @@ bool ObjectManager::IsExists(const std::string& name) const
 	return m_Objects.find(name) != m_Objects.end() && !m_Objects.empty();
 }
 
+
 void ObjectManager::AllObjectInit()
 {
 	for (auto& [_, object] : m_Objects)
@@ -27,6 +48,7 @@ void ObjectManager::AllObjectInit()
 
 void ObjectManager::AllObjectUpdate(float ts)
 {
+	m_BeatCounter->Update(ts);
 	for (auto& [_, object] : m_Objects)
 	{
 		object->Update(ts);

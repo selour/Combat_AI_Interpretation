@@ -52,6 +52,7 @@ public:
 
 	virtual void Awake() override;
 
+	virtual void Reset() override;
 
 	virtual void Update(float ts) override;
 	//渲染
@@ -89,7 +90,8 @@ public:
 	virtual void Init() override;
 	virtual void Awake() override;
 	virtual void Trigger() override;
-
+	virtual void Change() override;
+	virtual void Reset() override;
 	//更新
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
@@ -149,7 +151,7 @@ public:
 	virtual void DisEnable() override;
 
 	virtual void Change() override;
-
+	virtual void Reset() override;
 	//更新
 	virtual void OnBeat() override;
 	virtual void Update(float ts) override;
@@ -265,6 +267,7 @@ public:
 	virtual void Init() override;
 	//闪烁后进入故障特效
 	virtual void Awake() override;
+	virtual void Trigger() override;
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
 	virtual void Render()override;
@@ -307,16 +310,6 @@ private:
 
 	Engine::OrthographicCamera* m_Camera;
 };
-//--------------------------判定圈控制-------------------------
-class TutorialBeatControl : public GameObject
-{
-public:
-	virtual void Change() override;
-	virtual void OnBeat() override;
-private:
-	int m_State = 0;
-	int m_BeatCount = 0;
-};
 //--------------------------开场-------------------------
 class TutorialStartUp : public GameObject
 {
@@ -326,18 +319,17 @@ public:
 private:
 	DelaySwitch m_Delay;
 };
-//-------------------------音乐控制--------------------------------------------
+//-------------------------音乐和判定圈控制--------------------------------------------
 class TutorialMusic : public GameObject
 {
 public:
-	virtual void Awake() override;
+	virtual void Change() override;
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
 private:
 	int m_BeatCount = 0;
+	int m_State = 0;
 	DelaySwitch m_Delay;
-
-
 };
 //-------------------------资源管理器--------------------------------------------
 class TutorialResourceManager : public ResourceManager
@@ -363,11 +355,14 @@ private:
 	glm::vec2 m_Position = glm::vec2(0.0f);
 	float m_ZoomLevel = 5.0f;
 
+	BeatCounter m_BeatCounter;
 	ObjectManager m_Objects;
 	EventQueue m_EventQueue;
+
 	Engine::ParticleSystem m_ParticleSystem;
 	TutorialResourceManager m_ResourceManager;
 	
+
 	Engine::OrthographicCamera m_Camera;
 	
 	

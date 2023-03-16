@@ -35,6 +35,8 @@ void EventQueue::OnUpdate()
 		case Destroy:
 			m_Objects->Get(event.ObjectName)->Destroy();
 			break;
+		case BeatCounterReset:
+			m_Objects->GetBeatCounter()->Reset(atoi(event.ObjectName.c_str()));
 		}
 	}
 		

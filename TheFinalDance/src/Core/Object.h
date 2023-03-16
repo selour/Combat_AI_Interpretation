@@ -1,11 +1,15 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Engine.h"
+#include "BeatCounter.h"
 #include "ResourceManager.h"
 #include <unordered_map>
 #include <memory>
+#include <vector>
 
 class EventQueue;
+
+class ObjectManager;
 
 class Object
 {
@@ -80,6 +84,46 @@ protected:
 
 	Engine::ParticleSystem* m_ParticleSystem = nullptr;
 };
+
+
+
+class BeatCounter
+{
+public:
+	BeatCounter()
+	{}
+	void Reset(int bpm);
+	void Update(float ts);
+
+	int GetBPM()
+	{
+		return m_Bpm;
+	}
+	void SetBPM(int bpm)
+	{
+		m_Bpm = bpm;
+	}
+
+	float GetTime()
+	{
+		return m_Time;
+	}
+	void SetObjects(ObjectManager* objects)
+	{
+		m_Objects = objects;
+	}
+private:
+	int m_Bpm = 100;
+	float m_Time = 0;
+	ObjectManager* m_Objects;
+};
+
+
+
+
+
+
+
 class ObjectManager
 {
 public:
@@ -96,7 +140,16 @@ public:
 	void AllObjectSetResourceManager(ResourceManager* resourceManager);
 	void AllObjectSetParticleSystem(Engine::ParticleSystem* particleSystem);
 
+	void SetBeatCounter(BeatCounter* beatCounter)
+	{
+		m_BeatCounter = beatCounter;
+	}
+	BeatCounter* GetBeatCounter()
+	{
+		return m_BeatCounter;
+	}
 private:
+	BeatCounter* m_BeatCounter;
 	std::unordered_map<std::string, std::shared_ptr<GameObject>> m_Objects;
 };
 
