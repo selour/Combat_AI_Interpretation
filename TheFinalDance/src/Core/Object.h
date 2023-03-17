@@ -1,7 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Engine.h"
-#include "BeatCounter.h"
 #include "ResourceManager.h"
 #include <unordered_map>
 #include <memory>

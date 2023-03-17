@@ -1,2 +1,0 @@
-#include "BeatCounter.h"
-

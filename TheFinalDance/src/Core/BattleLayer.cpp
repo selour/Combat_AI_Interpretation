@@ -201,7 +201,6 @@ void TutorialBoss::Awake()
 }
 void TutorialBoss::Trigger()
 {
-	ENGINE_INFO("OnEvent");
 	m_BeatTip.SetDelay(60.0f / 100.0f * 6.0f - 0.04f);
 }
 
@@ -232,7 +231,7 @@ void TutorialBoss::Update(float ts)
 
 	if (m_BeatTip.IsEnd())
 	{
-		ENGINE_INFO("OnCheck");
+		
 		m_BeatCheck.SetDelay(60.0f / 400.0f);
 	}
 }
@@ -291,7 +290,7 @@ void TutorialBoss::OnHit(int step)
 
 	if (m_BeatCheck)
 	{
-		if (!m_FirstHit)
+		if (!m_FirstHit&&!m_IsAwake)
 		{
 			StartUp(m_EventQueue);
 			m_FirstHit = true;
@@ -695,7 +694,6 @@ void TutorialPost::Init()
 
 void TutorialPost::Awake()
 {
-	ENGINE_INFO("PostAwake");
 	m_IsAwake = true;
 	m_Noise.SetDelay(60.0f / 100.0f);
 }
@@ -814,12 +812,112 @@ void TutorialStartUp::Update(float ts)
 	if (m_IsAwake)
 	{
 		m_Delay.Update(ts);
-		if (m_Delay.IsEnd())
+		m_Time.Update(ts);
+		switch (m_State)
 		{
-			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("ddddance"));
+		case 0:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.13f);
+				SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("ddddance"));
+			}
+			break;
+		case 1:
+		case 2:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.13f);
+			}
+			break;
+		case 3:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.4f);
+			}
+			break;
+		case 4:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.26f);
+			}
+			break;
+		case 5:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.13f);
+				m_Time.SetDelay(0.33f);
+			}
+			break;
+		case 6:
+			if (m_Time.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.6f);
+			}
+			break;
+		case 7:
+			if (m_Delay.IsEnd())
+			{
+				m_State++;
+				m_Delay.SetDelay(0.4f);
+			}
+			break;
 		}
+		
 	}
 }
+
+void TutorialStartUp::Render()
+{
+	if (m_IsAwake)
+	{
+		auto texture = m_ResourceManager->GetTextureLibrary()->Get("dancetime");
+		Engine::Renderer2D::BeginScene(*m_Camera, texture);
+		switch (m_State)
+		{
+		case 2:
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 1], glm::vec2(2.54f, 0.64f) * m_Size[1], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[1]), 0.0f);
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 2], glm::vec2(2.54f, 0.64f) * m_Size[0], glm::radians(-90.0f), glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			break;
+		case 3:	
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 1], glm::vec2(2.54f, 0.64f) * m_Size[1], glm::radians(-90.0f), glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[1]), 0.0f);
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 2], glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			break;
+		case 1:
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 1], glm::vec2(2.54f,0.64f) * m_Size[1], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[1]), 0.0f);
+			Engine::Renderer2D::DrawQuad(m_Position[m_State * 2 - 2], glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			break;
+		case 4:
+			for (int i = 0; i < 4; i++)
+			{
+				Engine::Renderer2D::DrawQuad(m_StartPosition[i]*(1.0f - (float)m_Delay), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[1]), 0.0f);
+			}
+			break;
+		case 5:
+			Engine::Renderer2D::DrawQuad(glm::vec2(0.0f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			break;
+		case 6:
+			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f) * (float)m_Delay, glm::vec2(2.54f, 0.64f)* m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (float) m_Time), 1.0f);
+			break;
+		case 7:
+			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 1.0f);
+			break;
+		case 8:
+			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f -(float)m_Delay)), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f - (float)m_Delay)), 1.0f);
+			break;
+		}
+		Engine::Renderer2D::EndScene();
+	}
+}
+	
 #pragma endregion
 //---------------------------------------音乐和判定圈控制-------------------------------
 #pragma region 音乐控制
@@ -901,7 +999,7 @@ void TutorialMusic::OnBeat()
 //------------------------------------战斗主程序-------------------------------------
 #pragma region 战斗主程序
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_EventQueue(&m_Objects), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_EventQueue(&m_Objects), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f), m_UICamera(1280.0f / 720.0f, 5.0f)
 {
 	
 }
@@ -916,7 +1014,7 @@ void TutorialBattle::OnAttach()
 	auto boss = std::make_shared<TutorialBoss>();
 	auto stage = std::make_shared<BattleStage>();
 	auto heart = std::make_shared<Heart>();
-
+	m_StartUp = std::make_shared<TutorialStartUp>();
 	auto camera = std::make_shared<TutorialCameraControl>();
 	player->SetBoss(boss);
 	player->SetStage(stage);
@@ -926,7 +1024,7 @@ void TutorialBattle::OnAttach()
 	stage->SetCamera(&m_Camera);
 	heart->SetCamera(&m_Camera);
 	camera->SetCamera(&m_Camera);
-
+	m_StartUp->SetCamera(&m_UICamera);
 
 	m_Objects.SetBeatCounter(&m_BeatCounter);
 	
@@ -940,7 +1038,7 @@ void TutorialBattle::OnAttach()
 	m_Objects.Add("Camera", camera);
 
 	
-	m_Objects.Add("Start", std::make_shared<TutorialStartUp>());
+	m_Objects.Add("Start", m_StartUp);
 	m_Objects.Add("Music", std::make_shared<TutorialMusic>());
 	m_ResourceManager.Init();
 
@@ -950,13 +1048,9 @@ void TutorialBattle::OnAttach()
 
 	m_Objects.AllObjectInit();
 
-
 	//StartUp(&m_EventQueue);
-	
 	//StartLevel(&m_EventQueue);
-	
 	//GlitchState(&m_EventQueue);
-	
 
 
 }
@@ -1000,14 +1094,20 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	Engine::RendererCommand::Clear();
 
 	m_Objects.Get("Post")->Render();
+
+	m_Objects.Get("Start")->Render();
 }
 
 void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("%dFPS", m_FPS);
-	//ImGui::DragFloat2("Position", &m_Position.x, 0.1f, -5.0f, 5.0f);
-	//ImGui::DragFloat("ZoomLevel", &m_ZoomLevel, 0.1f, 0.0f, 5.0f);
+	for (int i = 0; i < 6; i++)
+	{
+		ImGui::DragFloat2("Position"+i, m_StartUp->GetPosition(i), 0.1f, -5.0f, 5.0f);
+	}
+	ImGui::DragFloat("size", m_StartUp->GetSize(0), 0.1f, 0.0f, 5.0f);
+	ImGui::DragFloat("ShadowSize", m_StartUp->GetSize(1), 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 }
 
@@ -1048,6 +1148,7 @@ void TutorialResourceManager::Init()
 	textures->Load("metronome", "assets/textures/metronome.png", 1, 1);
 	textures->Load("heart", "assets/textures/heart.png", 5, 1);
 	textures->Load("player", "assets/textures/player.png", 3, 1);
+	textures->Load("dancetime", "assets/textures/DanceTime.png", 2, 1);
 }
 #pragma endregion
 

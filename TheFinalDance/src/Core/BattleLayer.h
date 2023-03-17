@@ -4,7 +4,6 @@
 #include "Delay.h"
 #include "ResourceManager.h"
 #include "EventQueue.h"
-#include "BeatCounter.h"
 #include <memory>
 
 class BattleLayer :public Engine::Layer
@@ -316,8 +315,46 @@ class TutorialStartUp : public GameObject
 public:
 	virtual void Awake() override;
 	virtual void Update(float ts) override;
+	virtual void Render() override;
+
+	float* GetPosition(int index)
+	{
+		return &m_Position[index].x;
+	}
+	float* GetSize(int index)
+	{
+		return &m_Size[index];
+	}
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 private:
+	glm::vec2 m_Position[6] = {
+		{-2.6f,-2.7f},
+		{ 1.1f, 2.6f},
+		{-2.6f, 0.2f},
+		{-0.4f,-2.3f},
+		{ 1.9f, 2.8f},
+		{ 5.0f,-2.0f}
+	};
+	float m_Size[2] = {
+		3.2f,6.0f
+	};
+	float m_Alpha[2] = {
+		1.0f,0.3f
+	};
+	glm::vec2 m_StartPosition[4] =
+	{
+		{-8.0f, 0},
+		{-4.0f, 0},
+		{ 4.0f, 0},
+		{ 8.0f, 0}
+	};
+	int m_State = 0;
 	DelaySwitch m_Delay;
+	DelaySwitch m_Time;
+	Engine::OrthographicCamera* m_Camera;
 };
 //-------------------------“Ù¿÷∫Õ≈–∂®»¶øÿ÷∆--------------------------------------------
 class TutorialMusic : public GameObject
@@ -355,6 +392,8 @@ private:
 	glm::vec2 m_Position = glm::vec2(0.0f);
 	float m_ZoomLevel = 5.0f;
 
+	std::shared_ptr<TutorialStartUp> m_StartUp;
+
 	BeatCounter m_BeatCounter;
 	ObjectManager m_Objects;
 	EventQueue m_EventQueue;
@@ -362,8 +401,7 @@ private:
 	Engine::ParticleSystem m_ParticleSystem;
 	TutorialResourceManager m_ResourceManager;
 	
-
 	Engine::OrthographicCamera m_Camera;
-	
+	Engine::OrthographicCamera m_UICamera;
 	
 };
