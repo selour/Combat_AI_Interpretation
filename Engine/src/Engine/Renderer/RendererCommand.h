@@ -22,6 +22,14 @@ namespace Engine
 		{
 			s_RendererAPI->Clear();
 		}
+		inline static void SetStencilMask(int value)
+		{
+			s_RendererAPI->SetStencilMask(value);
+		}
+		inline static void SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask)
+		{
+			s_RendererAPI->SetStencilFunc(func, ref, mask);
+		}
 		inline static void Draw(const std::shared_ptr<VertexArray>& vertexArray)
 		{
 			vertexArray->Bind();

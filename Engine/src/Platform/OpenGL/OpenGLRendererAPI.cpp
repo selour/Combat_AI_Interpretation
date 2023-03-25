@@ -8,6 +8,8 @@ namespace Engine
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		//glEnable(GL_MULTISAMPLE);
 		//glEnable(GL_DEPTH_TEST);
 
@@ -24,7 +26,15 @@ namespace Engine
 	}
 	void OpenGLRendererAPI::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
+	void OpenGLRendererAPI::SetStencilMask(int value)
+	{
+		glStencilMask(value);
+	}
+	void OpenGLRendererAPI::SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask)
+	{
+		glStencilFunc(func + 0x0200, ref, mask);
 	}
 	void OpenGLRendererAPI::Draw(const std::shared_ptr<VertexArray>& vertexArray)
 	{
