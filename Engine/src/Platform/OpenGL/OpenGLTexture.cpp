@@ -130,8 +130,8 @@ namespace Engine
             glTexSubImage3D(
                 GL_TEXTURE_2D_ARRAY,
                 0,
-                0, y, (y / m_Height)*xIndex ,
-                m_Width, 1, m_Count,
+                0, y % m_Height, (yIndex - (y / m_Height)- 1) * xIndex ,
+                m_Width, 1, xIndex,
                 dataFormat,
                 GL_UNSIGNED_BYTE,
                 (image  + y * width * nrComponents));

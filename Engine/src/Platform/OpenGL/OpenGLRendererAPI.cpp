@@ -28,13 +28,25 @@ namespace Engine
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
+	void OpenGLRendererAPI::ClearColorBuffer()
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	void OpenGLRendererAPI::ClearDepthBuffer()
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
+	void OpenGLRendererAPI::ClearStencilBuffer()
+	{
+		glClear(GL_STENCIL_BUFFER_BIT);
+	}
 	void OpenGLRendererAPI::SetStencilMask(int value)
 	{
 		glStencilMask(value);
 	}
 	void OpenGLRendererAPI::SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask)
 	{
-		glStencilFunc(func + 0x0200, ref, mask);
+		glStencilFunc((int)func + 0x0200, ref, mask);
 	}
 	void OpenGLRendererAPI::Draw(const std::shared_ptr<VertexArray>& vertexArray)
 	{

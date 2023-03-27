@@ -10,12 +10,14 @@ void BeatCounter::Update(float ts)
 {
 
 	float bv = 60.0f / (float)m_Bpm;
-	m_Time += ts;
-	if (m_Time >= bv)
+	
+	if (m_Time >= bv || m_Time == 0)
 	{
 		m_Objects->AllObjectOnBeat();
-		m_Time -= bv;
+		if (m_Time >= bv)
+			m_Time -= bv;
 	}
+	m_Time += ts;
 
 }
 

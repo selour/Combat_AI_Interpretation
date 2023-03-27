@@ -10,6 +10,9 @@ namespace Engine
 		virtual void SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 		virtual void SetClearColor(const glm::vec4 color) override;
 		virtual void Clear() override;
+		virtual void ClearColorBuffer() override;
+		virtual void ClearDepthBuffer() override;
+		virtual void ClearStencilBuffer() override;
 		virtual void SetStencilMask(int value) override;
 		virtual void SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask) override;
 		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray) override;

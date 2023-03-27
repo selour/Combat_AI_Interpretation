@@ -22,6 +22,20 @@ namespace Engine
 		{
 			s_RendererAPI->Clear();
 		}
+
+		inline static void ClearColorBuffer()
+		{
+			s_RendererAPI->ClearColorBuffer();
+		}
+		inline static void	ClearDepthBuffer()
+		{
+			s_RendererAPI->ClearDepthBuffer();
+		}
+		inline static void	ClearStencilBuffer()
+		{
+			s_RendererAPI->ClearStencilBuffer();
+		}
+
 		inline static void SetStencilMask(int value)
 		{
 			s_RendererAPI->SetStencilMask(value);

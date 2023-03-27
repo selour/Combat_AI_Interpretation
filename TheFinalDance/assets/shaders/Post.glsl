@@ -35,7 +35,7 @@ vec4 RGBAnoise(vec2 uv)
 vec4 MpegGlitch(vec2 uv)
 {
 	vec2 fragCoord = uv.xy * u_Resolution.xy;
-	vec2 block = floor(fragCoord.xy / vec2(32.));
+	vec2 block = floor(fragCoord.xy / vec2(64.));
 	vec2 uv_noise = block / vec2(32.);
 	uv_noise += floor(vec2(fract(u_Time)*1.0) * vec2(1234.0, 3543.0)) / vec2(64.);
 	

@@ -21,7 +21,9 @@ public:
 //*								教程战斗 节拍器								*
 //*																			*
 //---------------------------------------------------------------------------
-// 
+// =======================================================================
+// -------------------------------战斗场景部分---------------------------
+// ========================================================================
 //----------------------------------地砖------------------------------------------
 struct Block
 {
@@ -309,7 +311,22 @@ private:
 
 	Engine::OrthographicCamera* m_Camera;
 };
-//--------------------------开场-------------------------
+//-------------------------音乐和判定圈控制--------------------------------------------
+class TutorialMusic : public GameObject
+{
+public:
+	virtual void Change() override;
+	virtual void Update(float ts) override;
+	virtual void OnBeat() override;
+private:
+	int m_BeatCount = 0;
+	int m_State = 0;
+	DelaySwitch m_Delay;
+};
+// =======================================================================
+// -----------------------------UI部分----------------------------------
+// ========================================================================
+//------------------------------开场报幕------------------------------------
 class TutorialStartUp : public GameObject
 {
 public:
@@ -331,43 +348,71 @@ public:
 	}
 private:
 	glm::vec2 m_Position[6] = {
-		{-2.6f,-2.7f},
-		{ 1.1f, 2.6f},
-		{-2.6f, 0.2f},
-		{-0.4f,-2.3f},
-		{ 1.9f, 2.8f},
-		{ 5.0f,-2.0f}
+		{-0.52f,-0.54f},
+		{ 0.55f, 0.52f},
+		{-0.52f, 0.04f},
+		{-0.08f,-0.46f},
+		{ 0.38f, 0.58f},
+		{ 1.0f,-0.4f}
 	};
 	float m_Size[2] = {
-		3.2f,6.0f
+		0.64f,1.2f
 	};
 	float m_Alpha[2] = {
 		1.0f,0.3f
 	};
 	glm::vec2 m_StartPosition[4] =
 	{
-		{-8.0f, 0},
-		{-4.0f, 0},
-		{ 4.0f, 0},
-		{ 8.0f, 0}
+		{-2.0f, 0},
+		{-1.0f, 0},
+		{ 1.0f, 0},
+		{ 2.0f, 0}
 	};
 	int m_State = 0;
 	DelaySwitch m_Delay;
 	DelaySwitch m_Time;
 	Engine::OrthographicCamera* m_Camera;
 };
-//-------------------------音乐和判定圈控制--------------------------------------------
-class TutorialMusic : public GameObject
+//------------------------------BossUI立绘------------------------------------
+class TutorialBossUI : public GameObject
 {
 public:
-	virtual void Change() override;
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
+	virtual void Render() override;
+	float* GetPosition()
+	{
+		return &m_Position.x;
+	}
+	
+	float* GetSize()
+	{
+		return &m_Size.x;
+	}
+	float* GetRotationCenter()
+	{
+		return &m_RotationCenter.x;
+	}
+	float* GetRotation()
+	{
+		return &m_Rotation;
+	}
+	void SetCamera(Engine::OrthographicCamera* camera)
+	{
+		m_Camera = camera;
+	}
 private:
-	int m_BeatCount = 0;
-	int m_State = 0;
-	DelaySwitch m_Delay;
+	int m_Forward = -1;
+	DelaySwitch m_Metronome;
+	glm::vec2 m_Position = { 1.28f,0.0f };
+	glm::vec2 m_Size = { 1.0f,2.0f };
+	glm::vec2 m_RotationCenter = { 0.0f, -0.445f };
+	float m_Rotation = 0.0f;
+	glm::mat4 m_PoleTransform;
+	bool m_isTransform = true;
+	Engine::OrthographicCamera* m_Camera;
 };
+
 //-------------------------资源管理器--------------------------------------------
 class TutorialResourceManager : public ResourceManager
 {
@@ -393,6 +438,7 @@ private:
 	float m_ZoomLevel = 5.0f;
 
 	std::shared_ptr<TutorialStartUp> m_StartUp;
+	std::shared_ptr<TutorialBossUI> m_BossUI;
 
 	BeatCounter m_BeatCounter;
 	ObjectManager m_Objects;

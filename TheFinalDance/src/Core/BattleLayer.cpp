@@ -8,7 +8,9 @@
 //--------------------------------------------------------------------------------
 //-----------------------------------教程战斗--------------------------------------
 //--------------------------------------------------------------------------------
-
+// =======================================================================
+// -------------------------------战斗场景部分---------------------------
+// ========================================================================
 
 //时间轴事件提交函数
 #pragma region 事件
@@ -16,6 +18,7 @@
 void StartUp(EventQueue* eventQueue)
 {
 	eventQueue->Emit("Start", EventType::Awake);
+	
 	eventQueue->Emit("Camera", EventType::Trigger);
 	eventQueue->Emit("Player", EventType::DisEnable);
 	eventQueue->Emit("Music", EventType::Change);
@@ -26,9 +29,11 @@ void StartLevel(EventQueue* eventQueue)
 	eventQueue->Emit("Player", EventType::Awake);
 	eventQueue->Emit("Boss", EventType::Awake);
 	eventQueue->Emit("Stage", EventType::Awake);
+	eventQueue->Emit("BossUI", EventType::Awake);
 	eventQueue->Emit("100", EventType::BeatCounterReset);
 	eventQueue->Emit("Player", EventType::Enable);
 	eventQueue->Emit("Music", EventType::Change);
+	
 }
 //进入故障阶段,在音乐控制中触发
 void GlitchState(EventQueue* eventQueue)
@@ -799,6 +804,86 @@ void TutorialCameraControl::Update(float ts)
 	}
 }
 #pragma endregion
+//---------------------------------------音乐和判定圈控制-------------------------------
+#pragma region 音乐控制
+//0:初始
+//1:开场报幕
+//2:第一阶段
+//3:第二阶段
+void TutorialMusic::Change()
+{
+	m_State++;
+	switch (m_State)
+	{
+	case 2:
+		m_BeatCount = -1;
+		SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_start"));
+		break;
+	}
+
+}
+
+void TutorialMusic::Update(float ts)
+{
+	m_Delay.Update(ts);
+	if (m_Delay.IsEnd())
+	{
+		GlitchStateTrigger(m_EventQueue);
+	}
+}
+void TutorialMusic::OnBeat()
+{
+	
+	switch (m_State)
+	{
+	case 0:
+		m_BeatCount++;
+		if (m_BeatCount == 1)
+		{
+			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_startup"));
+			m_EventQueue->Emit("Boss", EventType::Trigger);
+		}
+		m_BeatCount %= 9;
+		break;
+	case 2:
+		m_BeatCount++;
+		if (m_BeatCount == 15)
+		{
+			GlitchState(m_EventQueue);
+		}
+		if (m_BeatCount == 16)
+		{
+			GlitchStateReset(m_EventQueue);
+			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_loop"));
+			m_State++;
+			m_BeatCount = 0;
+		}
+		
+		break;
+	case 3:
+		m_BeatCount++;
+		if (m_BeatCount == 2)
+		{
+			m_EventQueue->Emit("Boss", EventType::Trigger);
+		}
+		if (m_BeatCount == 8)
+		{
+			m_Delay.SetDelay(60.0f / 200.0f);
+		}
+		if (m_BeatCount == 9)
+		{
+			GlitchStateReset(m_EventQueue);
+			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_loop"));
+			m_BeatCount = 0;
+		}
+		break;
+	}
+		
+}
+#pragma endregion
+// =======================================================================
+// -----------------------------UI部分----------------------------------
+// ========================================================================
 //--------------------------------------开场动画----------------------------------
 #pragma region 开场动画
 void TutorialStartUp::Awake()
@@ -902,16 +987,16 @@ void TutorialStartUp::Render()
 			Engine::Renderer2D::DrawQuad(glm::vec2(0.0f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
 			break;
 		case 6:
-			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f) * (float)m_Delay, glm::vec2(2.54f, 0.64f)* m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
-			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (float) m_Time), 1.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(-0.4f, 0.32f) * (float)m_Delay, glm::vec2(2.54f, 0.64f)* m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(0.4f, -0.32f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (float) m_Time), 1.0f);
 			break;
 		case 7:
-			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
-			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 1.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(-0.4f, 0.32f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(0.4f, -0.32f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0]), 1.0f);
 			break;
 		case 8:
-			Engine::Renderer2D::DrawQuad(glm::vec2(-2.0f, 1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f -(float)m_Delay)), 0.0f);
-			Engine::Renderer2D::DrawQuad(glm::vec2(2.6f, -1.7f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f - (float)m_Delay)), 1.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(-0.4f, 0.32f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f -(float)m_Delay)), 0.0f);
+			Engine::Renderer2D::DrawQuad(glm::vec2(0.4f, -0.32f), glm::vec2(2.54f, 0.64f) * m_Size[0], 0, glm::vec4(1.0f, 1.0f, 1.0f, m_Alpha[0] * (1.0f - (float)m_Delay)), 1.0f);
 			break;
 		}
 		Engine::Renderer2D::EndScene();
@@ -919,87 +1004,63 @@ void TutorialStartUp::Render()
 }
 	
 #pragma endregion
-//---------------------------------------音乐和判定圈控制-------------------------------
-#pragma region 音乐控制
-//0:初始
-//1:开场报幕
-//2:第一阶段
-//3:第二阶段
-void TutorialMusic::Change()
+//------------------------------BossUI立绘------------------------------------
+#pragma region Boss立绘
+void TutorialBossUI::Update(float ts)
 {
-	m_State++;
-	switch (m_State)
+	m_Metronome.Update(ts);
+	if (m_Metronome)
 	{
-	case 2:
-		m_BeatCount = -1;
-		SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_start"));
-		break;
-	}
-
-}
-
-void TutorialMusic::Update(float ts)
-{
-	m_Delay.Update(ts);
-	if (m_Delay.IsEnd())
-	{
-		GlitchStateTrigger(m_EventQueue);
+		m_isTransform = true;
+		m_Rotation = m_Forward * sin(glm::radians((float)m_Metronome * 180.0f)) * 0.5;
 	}
 }
-void TutorialMusic::OnBeat()
+void TutorialBossUI::OnBeat()
 {
+	if (m_IsAwake)
+	{
+		m_Forward = -m_Forward;
+		m_Metronome.SetDelay(60.0f / 100.0f);
+		
+	}
+
 	
-	switch (m_State)
+	
+}
+void TutorialBossUI::Render()
+{
+	if(m_isTransform)
 	{
-	case 0:
-		m_BeatCount++;
-		if (m_BeatCount == 1)
-		{
-			m_EventQueue->Emit("Boss", EventType::Trigger);
-		}
-		m_BeatCount %= 8;
-		break;
-	case 2:
-		m_BeatCount++;
-		if (m_BeatCount == 14)
-		{
-			GlitchState(m_EventQueue);
-		}
-		if (m_BeatCount == 15)
-		{
-			GlitchStateReset(m_EventQueue);
-			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_loop"));
-			m_State++;
-			m_BeatCount = 0;
-		}
-		
-		break;
-	case 3:
-		m_BeatCount++;
-		if (m_BeatCount == 1)
-		{
-			m_EventQueue->Emit("Boss", EventType::Trigger);
-		}
-		if (m_BeatCount == 7)
-		{
-			m_Delay.SetDelay(60.0f / 200.0f);
-		}
-		if (m_BeatCount == 8)
-		{
-			GlitchStateReset(m_EventQueue);
-			SoundEngine::Play2D(m_ResourceManager->GetSoundSourceLibrary()->Get("tutorial_metronome_loop"));
-		}
-		m_BeatCount %= 8;
-		break;
+		glm::vec2 position = m_Position - m_RotationCenter;
+		m_PoleTransform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.0f)) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f)) *
+		glm::rotate(glm::mat4(1.0f), m_Rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(m_Size.x, m_Size.y, 1.0f));
+		m_isTransform = false;
 	}
-		
+	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
+	Engine::RendererCommand::SetStencilMask(0xFF);
+	Engine::Renderer2D::BeginScene(*m_Camera);
+	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+	Engine::Renderer2D::EndScene();
+
+	Engine::RendererCommand::SetStencilFunc(EQUAL, 1, 0xFF);
+	Engine::RendererCommand::SetStencilMask(0x00);
+	auto texture = m_ResourceManager->GetTextureLibrary()->Get("metronome_ui");
+	Engine::Renderer2D::BeginScene(*m_Camera, texture);
+	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(1.0f), 0.0f);
+	Engine::Renderer2D::DrawQuad(m_PoleTransform, glm::vec4(1.0f), 1.0f);
+	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(1.0f), 2.0f);
+	Engine::Renderer2D::EndScene();
+
+	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
 }
 #pragma endregion
-
 //------------------------------------战斗主程序-------------------------------------
 #pragma region 战斗主程序
 TutorialBattle::TutorialBattle()
-	:BattleLayer("TutorialBattle"), m_EventQueue(&m_Objects), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f), m_UICamera(1280.0f / 720.0f, 5.0f)
+	:BattleLayer("TutorialBattle"), m_EventQueue(&m_Objects), m_ParticleSystem(500), m_Camera(1280.0f / 720.0f, 5.0f), m_UICamera(1280.0f / 720.0f, 1.0f)
 {
 	
 }
@@ -1016,6 +1077,8 @@ void TutorialBattle::OnAttach()
 	auto heart = std::make_shared<Heart>();
 	m_StartUp = std::make_shared<TutorialStartUp>();
 	auto camera = std::make_shared<TutorialCameraControl>();
+	m_BossUI = std::make_shared<TutorialBossUI>();
+
 	player->SetBoss(boss);
 	player->SetStage(stage);
 	player->SetCamera(&m_Camera);
@@ -1025,7 +1088,7 @@ void TutorialBattle::OnAttach()
 	heart->SetCamera(&m_Camera);
 	camera->SetCamera(&m_Camera);
 	m_StartUp->SetCamera(&m_UICamera);
-
+	m_BossUI->SetCamera(&m_UICamera);
 	m_Objects.SetBeatCounter(&m_BeatCounter);
 	
 	m_Objects.Add("Player", player);
@@ -1040,6 +1103,7 @@ void TutorialBattle::OnAttach()
 	
 	m_Objects.Add("Start", m_StartUp);
 	m_Objects.Add("Music", std::make_shared<TutorialMusic>());
+	m_Objects.Add("BossUI", m_BossUI);
 	m_ResourceManager.Init();
 
 	m_Objects.AllObjectSetEventQueue(&m_EventQueue);
@@ -1080,6 +1144,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	
 	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
+	Engine::RendererCommand::SetStencilMask(0x00);
 	
 	m_Objects.Get("Heart")->Render();
 	
@@ -1088,26 +1153,41 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	m_Objects.Get("Boss")->Render();
 	m_ParticleSystem.OnRender(m_Camera);
 	m_Objects.Get("Player")->Render();
-	
+
+
+	m_Objects.Get("BossUI")->Render();
+
+	m_Objects.Get("Start")->Render();
+
+
 	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->UnBind();
 	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
 
 	m_Objects.Get("Post")->Render();
+	
 
-	m_Objects.Get("Start")->Render();
+	
 }
 
 void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("%dFPS", m_FPS);
+	/*开场动画调整
+	ImGui::Text("StartUp:");
 	for (int i = 0; i < 6; i++)
 	{
 		ImGui::DragFloat2("Position"+i, m_StartUp->GetPosition(i), 0.1f, -5.0f, 5.0f);
 	}
 	ImGui::DragFloat("size", m_StartUp->GetSize(0), 0.1f, 0.0f, 5.0f);
 	ImGui::DragFloat("ShadowSize", m_StartUp->GetSize(1), 0.1f, 0.0f, 10.0f);
+	*/
+	ImGui::Text("UI:");
+	ImGui::DragFloat2("Position", m_BossUI->GetPosition(), 0.01f, -2.0f, 2.0f);
+	ImGui::DragFloat2("Size", m_BossUI->GetSize(), 0.02f, -2.0f, 2.0f);
+	ImGui::DragFloat2("RotationCenter", m_BossUI->GetRotationCenter(), 0.01f, -2.0f, 2.0f);
+	ImGui::DragFloat("Rotation", m_BossUI->GetRotation(), 0.01f, -2.0f, 2.0f);
 	ImGui::End();
 }
 
@@ -1131,6 +1211,7 @@ void TutorialResourceManager::Init()
 
 	soundSources->Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	soundSources->Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
+	soundSources->Load("tutorial_startup", "assets/audio/tutorial_metronome/tutorial_startup.wav");
 	soundSources->Load("bell", "assets/audio/tutorial_metronome/Bell.wav");
 	soundSources->Load("ddddance", "assets/audio/ddddance_time.wav");
 	soundSources->Load("hat", "assets/audio/hat.wav");
@@ -1149,6 +1230,8 @@ void TutorialResourceManager::Init()
 	textures->Load("heart", "assets/textures/heart.png", 5, 1);
 	textures->Load("player", "assets/textures/player.png", 3, 1);
 	textures->Load("dancetime", "assets/textures/DanceTime.png", 2, 1);
+
+	textures->Load("metronome_ui", "assets/textures/metronome_ui.png", 2, 2);
 }
 #pragma endregion
 
