@@ -31,6 +31,8 @@ namespace Engine
 		virtual void ClearDepthBuffer() = 0;
 		virtual void ClearStencilBuffer() = 0;
 		virtual void Clear() = 0;
+		virtual void EnableDepthTest() = 0;
+		virtual void DisableDepthTest() = 0;
 		virtual void SetStencilMask(int value) = 0;
 		virtual void SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask) = 0;
 		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray) = 0;

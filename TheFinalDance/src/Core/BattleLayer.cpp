@@ -42,6 +42,7 @@ void GlitchState(EventQueue* eventQueue)
 	eventQueue->Emit("Post", EventType::Awake);
 	eventQueue->Emit("Player", EventType::Change);
 	eventQueue->Emit("Boss", EventType::Change);
+	eventQueue->Emit("BossUI", EventType::Change);
 	
 }
 
@@ -1006,9 +1007,14 @@ void TutorialStartUp::Render()
 #pragma endregion
 //------------------------------BossUI立绘------------------------------------
 #pragma region Boss立绘
+void TutorialBossUI::Change()
+{
+	m_Change = true;
+}
 void TutorialBossUI::Update(float ts)
 {
 	m_Metronome.Update(ts);
+	m_BeatFlag.Update(ts);
 	if (m_Metronome)
 	{
 		m_isTransform = true;
@@ -1021,40 +1027,71 @@ void TutorialBossUI::OnBeat()
 	{
 		m_Forward = -m_Forward;
 		m_Metronome.SetDelay(60.0f / 100.0f);
+		m_BeatFlag.SetDelay(0.15f);
 		
 	}
-
-	
 	
 }
-void TutorialBossUI::Render()
+void TutorialBossUI::BufferRender()
 {
-	if(m_isTransform)
+	m_FBO->Bind();
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	Engine::RendererCommand::Clear();
+	Engine::RendererCommand::EnableDepthTest();
+	float size = 1.0f;
+	glm::vec2 position = m_Position - m_RotationCenter;
+	if (m_BeatFlag)
 	{
-		glm::vec2 position = m_Position - m_RotationCenter;
-		m_PoleTransform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.0f)) *
-		glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1.0f), m_Rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-		glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::scale(glm::mat4(1.0f), glm::vec3(m_Size.x, m_Size.y, 1.0f));
+		size += 0.1f * sin(glm::radians(m_BeatFlag.GetProportion() * 180.0f));
+	}
+	if (m_isTransform)
+	{
+		m_PoleTransform =
+			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f)) *
+			glm::rotate(glm::mat4(1.0f), m_Rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(m_Size.x, m_Size.y, 1.0f) * size);
 		m_isTransform = false;
 	}
 	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
 	Engine::RendererCommand::SetStencilMask(0xFF);
 	Engine::Renderer2D::BeginScene(*m_Camera);
-	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+	Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, -0.5f), m_Size, 0, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
 	Engine::Renderer2D::EndScene();
 
 	Engine::RendererCommand::SetStencilFunc(EQUAL, 1, 0xFF);
 	Engine::RendererCommand::SetStencilMask(0x00);
 	auto texture = m_ResourceManager->GetTextureLibrary()->Get("metronome_ui");
-	Engine::Renderer2D::BeginScene(*m_Camera, texture);
-	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(1.0f), 0.0f);
-	Engine::Renderer2D::DrawQuad(m_PoleTransform, glm::vec4(1.0f), 1.0f);
-	Engine::Renderer2D::DrawQuad(m_Position, m_Size, 0, glm::vec4(1.0f), 2.0f);
-	Engine::Renderer2D::EndScene();
+	auto transform1 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.2f)) * m_PoleTransform;
+	if (m_Change)
+	{
+		auto transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.3f)) * m_PoleTransform;
+		Engine::Renderer2D::BeginScene(*m_Camera, texture);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 0.0f);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.1), m_Size * size, 0, glm::vec4(1.0f), 4.0f);
+		Engine::Renderer2D::DrawQuad(transform1, glm::vec4(1.0f), 3.0f);
+		Engine::Renderer2D::DrawQuad(transform2, glm::vec4(1.0f), 5.0f);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.4), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f);
+		Engine::Renderer2D::EndScene();
+	}
+	else
+	{
+		Engine::Renderer2D::BeginScene(*m_Camera, texture);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(1.0f), 0.0f);
+		Engine::Renderer2D::DrawQuad(transform1, glm::vec4(1.0f), 1.0f);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.4), m_Size * size, 0, glm::vec4(1.0f), 2.0f);
+		Engine::Renderer2D::EndScene();
+	}
+
 
 	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
+	Engine::RendererCommand::DisableDepthTest();
+	m_FBO->UnBind();
+}
+void TutorialBossUI::Render()
+{
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("FBO");
+	Engine::RendererPostProcessing::Draw(m_FBO, shader);
 }
 #pragma endregion
 //------------------------------------战斗主程序-------------------------------------
@@ -1206,8 +1243,10 @@ void TutorialResourceManager::Init()
 	shaders->Load("Block", "assets/shaders/Block.glsl");
 	shaders->Load("heart", "assets/shaders/heart.glsl");
 	shaders->Load("Post", "assets/shaders/Post.glsl");
+	shaders->Load("FBO", "assets/shaders/FBO.glsl");
 	shaders->Get("heart")->SetInteger("u_Texture0", 0, true);
 	shaders->Get("Post")->SetInteger("u_Texture0", 0, true);
+	shaders->Get("FBO")->SetInteger("u_Texture0", 0, true);
 
 	soundSources->Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	soundSources->Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
@@ -1231,7 +1270,7 @@ void TutorialResourceManager::Init()
 	textures->Load("player", "assets/textures/player.png", 3, 1);
 	textures->Load("dancetime", "assets/textures/DanceTime.png", 2, 1);
 
-	textures->Load("metronome_ui", "assets/textures/metronome_ui.png", 2, 2);
+	textures->Load("metronome_ui", "assets/textures/metronome_ui.png", 3, 2);
 }
 #pragma endregion
 

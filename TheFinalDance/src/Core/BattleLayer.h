@@ -377,8 +377,20 @@ private:
 class TutorialBossUI : public GameObject
 {
 public:
+	TutorialBossUI()
+	{
+		Engine::FrameBufferSpecification fbSpec;
+		fbSpec.Width = 1280;
+		fbSpec.Height = 720;
+
+		m_FBO = Engine::FrameBuffer::Create(fbSpec);
+	}
+	virtual void Change() override;
+
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
+
+	virtual void BufferRender() override;
 	virtual void Render() override;
 	float* GetPosition()
 	{
@@ -402,14 +414,19 @@ public:
 		m_Camera = camera;
 	}
 private:
+	bool m_Change = false;
 	int m_Forward = -1;
 	DelaySwitch m_Metronome;
+	DelaySwitch m_BeatFlag;
+
 	glm::vec2 m_Position = { 1.28f,0.0f };
 	glm::vec2 m_Size = { 1.0f,2.0f };
 	glm::vec2 m_RotationCenter = { 0.0f, -0.445f };
 	float m_Rotation = 0.0f;
 	glm::mat4 m_PoleTransform;
 	bool m_isTransform = true;
+
+	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 	Engine::OrthographicCamera* m_Camera;
 };
 

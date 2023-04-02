@@ -79,8 +79,10 @@ vec4 MpegGlitch(vec2 uv)
 	}
 	return fragColor;
 }
+
 void main()
 { 
+	
     switch(u_State)
     {
     case 0:FragColor = vec4(vec3(texture(u_Texture0,v_TexCoords).rgb),1.);break;

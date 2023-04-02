@@ -13,6 +13,8 @@ namespace Engine
 		virtual void ClearColorBuffer() override;
 		virtual void ClearDepthBuffer() override;
 		virtual void ClearStencilBuffer() override;
+		virtual void EnableDepthTest() override;
+		virtual void DisableDepthTest() override;
 		virtual void SetStencilMask(int value) override;
 		virtual void SetStencilFunc(StencilFuncMode func, int ref, unsigned int mask) override;
 		virtual void Draw(const std::shared_ptr<VertexArray>& vertexArray) override;

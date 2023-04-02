@@ -35,7 +35,14 @@ namespace Engine
 		{
 			s_RendererAPI->ClearStencilBuffer();
 		}
-
+		inline static void EnableDepthTest()
+		{
+			s_RendererAPI->EnableDepthTest();
+		}
+		inline static void DisableDepthTest()
+		{
+			s_RendererAPI->DisableDepthTest();
+		}
 		inline static void SetStencilMask(int value)
 		{
 			s_RendererAPI->SetStencilMask(value);

@@ -40,6 +40,14 @@ namespace Engine
 	{
 		glClear(GL_STENCIL_BUFFER_BIT);
 	}
+	void OpenGLRendererAPI::EnableDepthTest()
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	void OpenGLRendererAPI::DisableDepthTest()
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
 	void OpenGLRendererAPI::SetStencilMask(int value)
 	{
 		glStencilMask(value);
