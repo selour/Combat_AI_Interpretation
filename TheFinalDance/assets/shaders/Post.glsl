@@ -1,4 +1,4 @@
-	#type vertex
+#type vertex
 #version 330 core
 layout (location = 0) in vec2 a_Pos;
 layout (location = 1) in vec2 a_TexCoords;
@@ -87,7 +87,7 @@ void main()
     {
     case 0:FragColor = vec4(vec3(texture(u_Texture0,v_TexCoords).rgb),1.);break;
     case 1:FragColor = RGBAnoise(v_TexCoords);break;
-	case 2:FragColor = mix(MpegGlitch(v_TexCoords), RGBAnoise(v_TexCoords),0.2 + (1. - u_Rhythm)*0.3);break;
+	case 2:FragColor = MpegGlitch(v_TexCoords) - RGBAnoise(v_TexCoords)*(0.2 + (1. - u_Rhythm)*0.3);break;
     }
     
 }

@@ -23,6 +23,7 @@ void main()
 #type fragment
 #version 330 core
 layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 brightColor;
 
 
 in vec3 v_TexCoord;
@@ -33,12 +34,15 @@ uniform sampler2DArray u_Texture0;
 
 void main()
 {
+		
+		//brightColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color.rgb, v_Alpha);
+		
 		float alpha = texture(u_Texture0, v_TexCoord).a *v_Alpha;
 		if( alpha < 0.1)
 			discard;
 		outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color.rgb, v_Alpha);
-		
-		//outColor = vec4(v_Color.rgb, v_Alpha);
+		//vec4 outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color.rgb, v_Alpha);
+		//float brightness = dot(outColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+		brightColor = vec4(outColor.rgb, alpha);
 
 }
-

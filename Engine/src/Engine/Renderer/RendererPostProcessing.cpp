@@ -51,4 +51,9 @@ namespace Engine
 		
 		RendererCommand::Draw(s_Data.VAO);
 	}
+	void RendererPostProcessing::Draw()
+	{
+
+		RendererCommand::Draw(s_Data.VAO);
+	}
 }

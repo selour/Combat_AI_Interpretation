@@ -100,6 +100,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Bloom.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="src\Core\EventQueue.cpp" />
     <ClCompile Include="src\Core\ResourceManager.cpp" />
     <ClCompile Include="src\Core\Object.cpp" />
@@ -108,8 +110,11 @@
     <ClCompile Include="src\Audio\SoundEngine.cpp" />
     <ClCompile Include="src\Core\BattleLayer.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Core\Component\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Bloom.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="src\Core\EventQueue.h" />
     <ClInclude Include="src\Core\ResourceManager.h" />
     <ClInclude Include="src\Core\Object.h" />
@@ -117,6 +122,7 @@
     <ClInclude Include="src\Core\GameInput.h" />
     <ClInclude Include="src\Audio\SoundEngine.h" />
     <ClInclude Include="src\Core\BattleLayer.h" />
+    <ClInclude Include="src\Core\Component\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

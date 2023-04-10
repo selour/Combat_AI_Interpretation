@@ -20,7 +20,9 @@ namespace Engine
 		}
 		inline static void Clear()
 		{
+			s_RendererAPI->SetStencilMask(0xFF);
 			s_RendererAPI->Clear();
+			s_RendererAPI->SetStencilMask(0x00);
 		}
 
 		inline static void ClearColorBuffer()

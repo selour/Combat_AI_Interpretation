@@ -1034,9 +1034,9 @@ void TutorialBossUI::OnBeat()
 }
 void TutorialBossUI::BufferRender()
 {
-	m_FBO->Bind();
-	Engine::RendererCommand::SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-	Engine::RendererCommand::Clear();
+}
+void TutorialBossUI::Render()
+{
 	Engine::RendererCommand::EnableDepthTest();
 	float size = 1.0f;
 	glm::vec2 position = m_Position - m_RotationCenter;
@@ -1063,16 +1063,27 @@ void TutorialBossUI::BufferRender()
 	Engine::RendererCommand::SetStencilMask(0x00);
 	auto texture = m_ResourceManager->GetTextureLibrary()->Get("metronome_ui");
 	auto transform1 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.2f)) * m_PoleTransform;
+	
 	if (m_Change)
 	{
+		auto shader = m_ResourceManager->GetShaderLibrary()->Get("Bright");
 		auto transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.3f)) * m_PoleTransform;
 		Engine::Renderer2D::BeginScene(*m_Camera, texture);
 		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 0.0f);
-		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.1), m_Size * size, 0, glm::vec4(1.0f), 4.0f);
+		Engine::Renderer2D::EndScene();
+
 		Engine::Renderer2D::DrawQuad(transform1, glm::vec4(1.0f), 3.0f);
-		Engine::Renderer2D::DrawQuad(transform2, glm::vec4(1.0f), 5.0f);
 		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.4), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f);
 		Engine::Renderer2D::EndScene();
+
+		Engine::Renderer2D::BeginScene(*m_Camera, texture, shader);
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.1), m_Size * size, 0, glm::vec4(1.0f), 4.0f);
+		Engine::Renderer2D::DrawQuad(transform2, glm::vec4(1.0f), 5.0f);
+		Engine::Renderer2D::EndScene();
+
+
+		
+		
 	}
 	else
 	{
@@ -1083,15 +1094,8 @@ void TutorialBossUI::BufferRender()
 		Engine::Renderer2D::EndScene();
 	}
 
-
 	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
 	Engine::RendererCommand::DisableDepthTest();
-	m_FBO->UnBind();
-}
-void TutorialBossUI::Render()
-{
-	auto shader = m_ResourceManager->GetShaderLibrary()->Get("FBO");
-	Engine::RendererPostProcessing::Draw(m_FBO, shader);
 }
 #pragma endregion
 //------------------------------------战斗主程序-------------------------------------
@@ -1149,7 +1153,7 @@ void TutorialBattle::OnAttach()
 
 	m_Objects.AllObjectInit();
 
-	//StartUp(&m_EventQueue);
+	StartUp(&m_EventQueue);
 	//StartLevel(&m_EventQueue);
 	//GlitchState(&m_EventQueue);
 
@@ -1169,7 +1173,7 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	m_ParticleSystem.OnUpdate(ts);
 
 
-
+	
 
 	//事件处理
 	m_EventQueue.OnUpdate();
@@ -1177,11 +1181,8 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	//渲染部分
 	m_Objects.AllObjectBufferRender();
 
-	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->Bind();
 	
-	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-	Engine::RendererCommand::Clear();
-	Engine::RendererCommand::SetStencilMask(0x00);
+	m_Bloom.Begin();
 	
 	m_Objects.Get("Heart")->Render();
 	
@@ -1195,9 +1196,15 @@ void TutorialBattle::OnUpdate(Engine::TimeStep ts)
 	m_Objects.Get("BossUI")->Render();
 
 	m_Objects.Get("Start")->Render();
+	m_Bloom.End();
 
-
+	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->Bind();
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	Engine::RendererCommand::Clear();
+	m_Bloom.Render();
 	std::dynamic_pointer_cast<TutorialPost>(m_Objects.Get("Post"))->GetFBO()->UnBind();
+	
+	
 	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 	Engine::RendererCommand::Clear();
 
@@ -1211,6 +1218,7 @@ void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("%dFPS", m_FPS);
+	ImGui::DragFloat("Exposure", m_Bloom.GetExposure(), 0.001f, 0.0f, 5.0f);
 	/*开场动画调整
 	ImGui::Text("StartUp:");
 	for (int i = 0; i < 6; i++)
@@ -1244,9 +1252,11 @@ void TutorialResourceManager::Init()
 	shaders->Load("heart", "assets/shaders/heart.glsl");
 	shaders->Load("Post", "assets/shaders/Post.glsl");
 	shaders->Load("FBO", "assets/shaders/FBO.glsl");
+	shaders->Load("Bright", "assets/shaders/BrightColor.glsl");
 	shaders->Get("heart")->SetInteger("u_Texture0", 0, true);
 	shaders->Get("Post")->SetInteger("u_Texture0", 0, true);
 	shaders->Get("FBO")->SetInteger("u_Texture0", 0, true);
+	shaders->Get("Bright")->SetInteger("u_Texture0", 0, true);
 
 	soundSources->Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 	soundSources->Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
