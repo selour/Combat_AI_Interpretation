@@ -691,11 +691,14 @@ void Heart::Render()
 #pragma region 后期处理
 void TutorialPost::Init()
 {
-	Engine::FrameBufferSpecification fbSpec;
-	fbSpec.Width = 1280;
-	fbSpec.Height = 720;
-
-	m_FBO = Engine::FrameBuffer::Create(fbSpec);
+	Engine::ColorAttachmentSpecification caSpec;
+	caSpec.Width = 1280;
+	caSpec.Height = 720;
+	caSpec.InternalFormat = Engine::RGBA8;
+	caSpec.Format = Engine::RGBA;
+	caSpec.Filter = Engine::LINEAR;
+	caSpec.Wrap = Engine::REPEAT;
+	m_FBO = Engine::FrameBuffer::Create(caSpec);
 }
 
 void TutorialPost::Awake()
@@ -1032,9 +1035,7 @@ void TutorialBossUI::OnBeat()
 	}
 	
 }
-void TutorialBossUI::BufferRender()
-{
-}
+
 void TutorialBossUI::Render()
 {
 	Engine::RendererCommand::EnableDepthTest();
@@ -1059,26 +1060,25 @@ void TutorialBossUI::Render()
 	Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, -0.5f), m_Size, 0, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
 	Engine::Renderer2D::EndScene();
 
+
 	Engine::RendererCommand::SetStencilFunc(EQUAL, 1, 0xFF);
 	Engine::RendererCommand::SetStencilMask(0x00);
 	auto texture = m_ResourceManager->GetTextureLibrary()->Get("metronome_ui");
 	auto transform1 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.2f)) * m_PoleTransform;
-	
+	auto shader = m_ResourceManager->GetShaderLibrary()->Get("Bright");
 	if (m_Change)
 	{
-		auto shader = m_ResourceManager->GetShaderLibrary()->Get("Bright");
+		
 		auto transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.3f)) * m_PoleTransform;
-		Engine::Renderer2D::BeginScene(*m_Camera, texture);
-		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 0.0f);
-		Engine::Renderer2D::EndScene();
+		Engine::Renderer2D::BeginScene(*m_Camera, texture, shader);
 
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 0.0f);
 		Engine::Renderer2D::DrawQuad(transform1, glm::vec4(1.0f), 3.0f);
 		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.4), m_Size * size, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f);
-		Engine::Renderer2D::EndScene();
-
-		Engine::Renderer2D::BeginScene(*m_Camera, texture, shader);
-		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.1), m_Size * size, 0, glm::vec4(1.0f), 4.0f);
-		Engine::Renderer2D::DrawQuad(transform2, glm::vec4(1.0f), 5.0f);
+	
+	
+		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.1), m_Size * size, 0, glm::vec4(1.5f, 1.5f, 1.5f, 1.0f), 4.0f);
+		Engine::Renderer2D::DrawQuad(transform2, glm::vec4(5.0f, 1.5f, 1.5f, 1.0f), 5.0f);
 		Engine::Renderer2D::EndScene();
 
 
@@ -1087,7 +1087,7 @@ void TutorialBossUI::Render()
 	}
 	else
 	{
-		Engine::Renderer2D::BeginScene(*m_Camera, texture);
+		Engine::Renderer2D::BeginScene(*m_Camera, texture, shader);
 		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.0), m_Size * size, 0, glm::vec4(1.0f), 0.0f);
 		Engine::Renderer2D::DrawQuad(transform1, glm::vec4(1.0f), 1.0f);
 		Engine::Renderer2D::DrawQuad(glm::vec3(m_Position.x, m_Position.y, 0.4), m_Size * size, 0, glm::vec4(1.0f), 2.0f);
@@ -1153,7 +1153,7 @@ void TutorialBattle::OnAttach()
 
 	m_Objects.AllObjectInit();
 
-	StartUp(&m_EventQueue);
+	//StartUp(&m_EventQueue);
 	//StartLevel(&m_EventQueue);
 	//GlitchState(&m_EventQueue);
 
@@ -1218,7 +1218,7 @@ void TutorialBattle::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("%dFPS", m_FPS);
-	ImGui::DragFloat("Exposure", m_Bloom.GetExposure(), 0.001f, 0.0f, 5.0f);
+	
 	/*开场动画调整
 	ImGui::Text("StartUp:");
 	for (int i = 0; i < 6; i++)
@@ -1234,6 +1234,8 @@ void TutorialBattle::OnImGuiRender()
 	ImGui::DragFloat2("RotationCenter", m_BossUI->GetRotationCenter(), 0.01f, -2.0f, 2.0f);
 	ImGui::DragFloat("Rotation", m_BossUI->GetRotation(), 0.01f, -2.0f, 2.0f);
 	ImGui::End();
+
+	m_Bloom.OnImGuiRender();
 }
 
 void TutorialBattle::OnEvent(Engine::Event& event)

@@ -46,6 +46,8 @@ public:
 	//实际输出渲染
 	virtual void Render() {};
 
+	//调试UI渲染
+	virtual void OnImGuiRender() {};
 
 	bool IsAwake() const
 	{
@@ -134,7 +136,8 @@ public:
 	void AllObjectUpdate(float ts);
 	void AllObjectBufferRender();
 	void AllObjectOnBeat();
-	
+	void AllObjectOnImGuiRender();
+
 	void AllObjectSetEventQueue(EventQueue* eventQueue);
 	void AllObjectSetResourceManager(ResourceManager* resourceManager);
 	void AllObjectSetParticleSystem(Engine::ParticleSystem* particleSystem);

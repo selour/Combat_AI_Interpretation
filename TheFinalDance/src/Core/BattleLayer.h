@@ -222,11 +222,15 @@ class Heart : public GameObject
 public:
 	Heart()
 	{
-		Engine::FrameBufferSpecification fbSpec;
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
+		Engine::ColorAttachmentSpecification caSpec;
+		caSpec.Width = 1280;
+		caSpec.Height = 720;
+		caSpec.InternalFormat = Engine::RGBA8;
+		caSpec.Format = Engine::RGBA;
+		caSpec.Filter = Engine::LINEAR;
+		caSpec.Wrap = Engine::REPEAT;
 
-		m_FBO = Engine::FrameBuffer::Create(fbSpec);
+		m_FBO = Engine::FrameBuffer::Create(caSpec);
 	}
 	virtual void Init() override;
 	//³öÏÖ
@@ -380,18 +384,13 @@ class TutorialBossUI : public GameObject
 public:
 	TutorialBossUI()
 	{
-		Engine::FrameBufferSpecification fbSpec;
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
 
-		m_FBO = Engine::FrameBuffer::Create(fbSpec);
 	}
 	virtual void Change() override;
 
 	virtual void Update(float ts) override;
 	virtual void OnBeat() override;
 
-	virtual void BufferRender() override;
 	virtual void Render() override;
 	float* GetPosition()
 	{
@@ -427,7 +426,6 @@ private:
 	glm::mat4 m_PoleTransform;
 	bool m_isTransform = true;
 
-	std::shared_ptr<Engine::FrameBuffer> m_FBO;
 	Engine::OrthographicCamera* m_Camera;
 };
 

@@ -22,6 +22,30 @@ uniform sampler2D u_Texture0;
 uniform bool u_Horizontal;
 
 uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
+/*
+uniform float offset[3] = float[](0.0, 1.3846153846, 3.2307692308);
+//uniform float weight[3] = float[](0.2270270270, 0.3162162162, 0.0702702703);
+ 
+void main(void) {
+    vec3 FragmentColor = texture2D(u_Texture0, v_TexCoords).rgb * weight[0];
+     if(u_Horizontal)
+    {
+        for (int i=1; i<5; i++) 
+        {
+            FragmentColor += texture2D(u_Texture0, (v_TexCoords + vec2(offset[i], 0.0))).rgb * weight[i];
+            FragmentColor += texture2D(u_Texture0, (v_TexCoords - vec2(offset[i], 0.0))).rgb * weight[i];
+        }
+    }
+    else
+    {
+        for (int i=1; i<5; i++) 
+        {
+            FragmentColor += texture2D(u_Texture0, (v_TexCoords + vec2(0.0, offset[i]))).rgb * weight[i];
+            FragmentColor += texture2D(u_Texture0, (v_TexCoords - vec2(0.0, offset[i]))).rgb * weight[i];
+        }
+    }
+    FragColor = vec4(FragmentColor, 1.0);
+}*/
 
 void main()
 {             

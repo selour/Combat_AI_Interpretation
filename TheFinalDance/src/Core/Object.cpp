@@ -73,6 +73,14 @@ void ObjectManager::AllObjectOnBeat()
 	}
 }
 
+void ObjectManager::AllObjectOnImGuiRender()
+{
+	for (auto& [_, object] : m_Objects)
+	{
+		object->OnImGuiRender();
+	}
+}
+
 void ObjectManager::AllObjectSetEventQueue(EventQueue* eventQueue)
 {
 	for (auto& [_, object] : m_Objects)

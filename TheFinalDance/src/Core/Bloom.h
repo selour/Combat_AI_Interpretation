@@ -7,20 +7,20 @@ public:
 	void Begin() const;
 	void End();
 	void Render() const;
-
-	float* GetExposure()
+	void OnImGuiRender();
+	void SetExposure(float exposure)
 	{
-		return &m_Exposure;
+		m_Exposure = exposure;
 	}
 private:
-	unsigned int m_Amount = 10;
-	float m_Exposure = 0.5f;
+	float m_Exposure = 1.0f;
 	bool m_Horizontal = true;
 	std::shared_ptr <Engine::MRTFrameBuffer> m_MTRFBO;
-	std::shared_ptr <Engine::FrameBuffer> m_FBOs[2];
+	std::shared_ptr <Engine::FrameBuffer> m_FBOs[3][2];
 
 
 	std::shared_ptr <Engine::Shader> m_ShaderBlur;
 	std::shared_ptr <Engine::Shader> m_ShaderBloom;
+	Engine::ColorAttachmentSpecification m_BlurFBSpec[3];
 };
 

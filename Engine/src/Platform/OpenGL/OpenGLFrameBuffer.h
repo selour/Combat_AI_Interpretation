@@ -6,7 +6,8 @@ namespace Engine
 	class OpenGLFrameBuffer : public FrameBuffer
 	{
 	public:
-		OpenGLFrameBuffer(const FrameBufferSpecification& spec);
+		OpenGLFrameBuffer(const ColorAttachmentSpecification& spec);
+		OpenGLFrameBuffer(const ColorAttachmentSpecification& cas, const RenderBufferSpecification& rbs);
 		virtual ~OpenGLFrameBuffer();
 
 		void Init();
@@ -17,18 +18,20 @@ namespace Engine
 		virtual void BindColorAttachment(unsigned slot = 0) const override;
 
 		virtual const unsigned int GetColorAttachment() const override { return m_ColorAttachment; }
-		virtual const FrameBufferSpecification& GetSpecification() const override { return m_Specification; }
+		virtual const ColorAttachmentSpecification& GetColorAttachmentSpec() const override { return m_ColorAttachmentSpec; }
 	private:
 		unsigned int m_FBO;
 		unsigned int m_ColorAttachment;
-		FrameBufferSpecification m_Specification;
+		bool m_HasRBO;
+		ColorAttachmentSpecification m_ColorAttachmentSpec;
+		RenderBufferSpecification m_RenderBufferSpec;
 	};
 
 
 	class OpenGLMRTFrameBuffer : public MRTFrameBuffer
 	{
 	public:
-		OpenGLMRTFrameBuffer(const FrameBufferSpecification& spec, unsigned amount);
+		OpenGLMRTFrameBuffer(const ColorAttachmentSpecification* cas, unsigned amount, const RenderBufferSpecification* rbs);
 		virtual ~OpenGLMRTFrameBuffer();
 
 		void Init();
@@ -38,14 +41,17 @@ namespace Engine
 
 		virtual void BindColorAttachment(unsigned slot = 0) const override;
 		virtual void BindColorAttachment(unsigned slot , unsigned index ) const override;
+		virtual const unsigned int GetColorAttachment(unsigned index) const override { return m_ColorAttachments[index]; }
 		virtual const unsigned int GetColorAttachmentSize() const override;
 
-		virtual const FrameBufferSpecification& GetSpecification() const override { return m_Specification; }
+		virtual const ColorAttachmentSpecification& GetSpecification(unsigned index) const override { return m_ColorAttachmentSpec[index]; }
 	private:
 		unsigned int m_FBO;
 		unsigned int m_Amount;
 		std::vector<unsigned int> m_ColorAttachments;
-		FrameBufferSpecification m_Specification;
+		bool m_HasRBO;
+		std::vector <ColorAttachmentSpecification> m_ColorAttachmentSpec;
+		RenderBufferSpecification m_RenderBufferSpec;
 	};
 }
 
