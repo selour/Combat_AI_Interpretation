@@ -18,9 +18,13 @@ out vec4 FragColor;
 
 in vec2 v_TexCoords;
 
-uniform vec4 v_Color;
+uniform float v_Time;
 
 void main()
 { 
-    FragColor = v_Color;
+    // Time varying pixel color
+    vec3 col = 0.5 + 0.5*cos(v_Time + v_TexCoords.xyx + vec3(0,2,4));
+
+    // Output to screen
+    FragColor = vec4(col,1.0);
 }

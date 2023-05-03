@@ -134,17 +134,20 @@ namespace Engine
 	void Renderer2D::Shutdown()
 	{
 	}
-	void Renderer2D::BeginScene(const OrthographicCamera& camera, std::shared_ptr<Texture2DArray> texture, const std::shared_ptr<Shader> shader)
+	void Renderer2D::BeginScene(const std::shared_ptr<Camera>& camera, std::shared_ptr<Texture2DArray> texture, const std::shared_ptr<Shader> shader)
 	{
+
+		ENGINE_CORE_ASSERT(camera, "Renderer needs a camera!")
+		
 		if (shader == nullptr)
 		{
 			s_Data.Shader->Use();
-			s_Data.Shader->SetMatrix4("u_ViewProjection", camera.GetViewProjectionMatrix());
+			s_Data.Shader->SetMatrix4("u_ViewProjection", camera->GetViewProjectionMatrix());
 		}
 		else
 		{
 			shader->Use();
-			shader->SetMatrix4("u_ViewProjection", camera.GetViewProjectionMatrix());
+			shader->SetMatrix4("u_ViewProjection", camera->GetViewProjectionMatrix());
 		}
 
 		if (texture == nullptr)

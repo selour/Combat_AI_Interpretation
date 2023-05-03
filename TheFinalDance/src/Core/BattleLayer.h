@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "EventQueue.h"
 #include "Bloom.h"
+#include "Transform.h"
 #include <memory>
 
 class BattleLayer :public Engine::Layer
@@ -386,6 +387,7 @@ public:
 	{
 
 	}
+	virtual void Init() override;
 	virtual void Change() override;
 
 	virtual void Update(float ts) override;
@@ -418,6 +420,7 @@ private:
 	int m_Forward = -1;
 	DelaySwitch m_Metronome;
 	DelaySwitch m_BeatFlag;
+
 
 	glm::vec2 m_Position = { 1.28f,0.0f };
 	glm::vec2 m_Size = { 1.0f,2.0f };

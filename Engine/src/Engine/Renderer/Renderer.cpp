@@ -17,9 +17,10 @@ namespace Engine
 	{
 		RendererCommand::SetViewport(0, 0, width, height);
 	}
-	void Renderer::BeginScene(OrthographicCamera& camera)
+	void Renderer::BeginScene(const std::shared_ptr<Camera>& camera)
 	{
-		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		ENGINE_CORE_ASSERT(camera, "Renderer needs a camera!")
+		s_SceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
 	}
 	void Renderer::EndScene()
 	{

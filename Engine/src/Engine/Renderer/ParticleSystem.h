@@ -23,7 +23,7 @@ namespace Engine
 
 		void OnUpdate(TimeStep ts);
 
-		void OnRender(OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture = nullptr);
+		void OnRender(const std::shared_ptr<Camera>& camera, const std::shared_ptr<Texture2DArray> teture = nullptr);
 
 		void Emit(const ParticleProps& particleProps);
 

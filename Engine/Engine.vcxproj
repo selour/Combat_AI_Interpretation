@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\stb_image\stb_image.h" />
+    <ClInclude Include="src\Engine\Core\Timer.h" />
     <ClInclude Include="src\Platform\GLFW\GLFWAPI.h" />
     <ClInclude Include="src\Engine\Core\PlatformCommand.h" />
     <ClInclude Include="src\Engine\Core\PlatformAPI.h" />
@@ -160,7 +161,6 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayerBuild.cpp" />
-    <ClCompile Include="src\Engine\Renderer\Camera.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Engine\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Engine\Renderer\RendererCommand.cpp" />

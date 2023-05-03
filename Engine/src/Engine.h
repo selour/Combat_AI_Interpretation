@@ -8,6 +8,7 @@
 #include "Engine/Core/Input.h"
 #include "Engine/Core/KeyCodes.h"
 #include "Engine/Core/TimeStep.h"
+#include "Engine/Core/Timer.h"
 #include "Engine/Core/Layer.h"
 #include "Engine/Core/Random.h"
 #include "Engine/ImGui/ImGuiLayer.h"

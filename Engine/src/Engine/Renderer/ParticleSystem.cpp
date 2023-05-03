@@ -34,7 +34,7 @@ namespace Engine
 		
 	}
 
-	void ParticleSystem::OnRender(OrthographicCamera& camera, const std::shared_ptr<Texture2DArray> teture)
+	void ParticleSystem::OnRender(const std::shared_ptr<Camera>& camera, const std::shared_ptr<Texture2DArray> teture)
 	{
 		Renderer2D::BeginScene(camera, teture);
 		for (auto& particle : m_ParticlePool)

@@ -48,7 +48,7 @@ Bloom::Bloom()
 	m_ShaderBloom->SetInteger("u_BloomBlur2", 3);
 }
 
-void Bloom::Begin() const
+void Bloom::Bind()
 {
 	m_MTRFBO->Bind();
 	Engine::RendererCommand::SetViewport(0, 0, 1280, 720);
@@ -56,7 +56,7 @@ void Bloom::Begin() const
 	Engine::RendererCommand::Clear();
 }
 
-void Bloom::End()
+void Bloom::UnBind()
 {
 	m_MTRFBO->UnBind();
 
@@ -85,7 +85,7 @@ void Bloom::End()
 	m_MTRFBO->UnBind();
 }
 
-void Bloom::Render() const
+void Bloom::Render()
 {
 	m_ShaderBloom->Use();
 	m_MTRFBO->BindColorAttachment(0, 0);

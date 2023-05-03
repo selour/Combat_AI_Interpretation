@@ -1010,6 +1010,10 @@ void TutorialStartUp::Render()
 #pragma endregion
 //------------------------------BossUI¡¢ªÊ------------------------------------
 #pragma region Boss¡¢ªÊ
+void TutorialBossUI::Init()
+{
+
+}
 void TutorialBossUI::Change()
 {
 	m_Change = true;
@@ -1024,6 +1028,7 @@ void TutorialBossUI::Update(float ts)
 		m_Rotation = m_Forward * sin(glm::radians((float)m_Metronome * 180.0f)) * 0.5;
 	}
 }
+
 void TutorialBossUI::OnBeat()
 {
 	if (m_IsAwake)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -100,29 +100,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Core\Bloom.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="src\Core\EventQueue.cpp" />
-    <ClCompile Include="src\Core\ResourceManager.cpp" />
-    <ClCompile Include="src\Core\Object.cpp" />
-    <ClCompile Include="src\Core\Delay.cpp" />
-    <ClCompile Include="src\Core\GameInput.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Heart.cpp" />
     <ClCompile Include="src\Audio\SoundEngine.cpp" />
-    <ClCompile Include="src\Core\BattleLayer.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\TutorialBattleScene.cpp" />
+    <ClCompile Include="src\Core\GameInput.cpp" />
+    <ClCompile Include="src\Core\GameLayer.cpp" />
+    <ClCompile Include="src\Core\ObjectManager.cpp" />
+    <ClCompile Include="src\Core\Scene.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Core\Component\Transform.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\TutorialBattleControl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Core\Bloom.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="src\Core\EventQueue.h" />
-    <ClInclude Include="src\Core\ResourceManager.h" />
-    <ClInclude Include="src\Core\Object.h" />
-    <ClInclude Include="src\Core\Delay.h" />
-    <ClInclude Include="src\Core\GameInput.h" />
+    <ClInclude Include="src\Battle\Base\BeatCounter.h" />
+    <ClInclude Include="src\Battle\Base\BattleStage.h" />
+    <ClInclude Include="src\Battle\BattleScene.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Heart.h" />
     <ClInclude Include="src\Audio\SoundEngine.h" />
-    <ClInclude Include="src\Core\BattleLayer.h" />
-    <ClInclude Include="src\Core\Component\Transform.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\TutorialBattleScene.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\TutorialResourceManager.h" />
+    <ClInclude Include="src\Core\GameEvent.h" />
+    <ClInclude Include="src\Core\GameInput.h" />
+    <ClInclude Include="src\Core\GameLayer.h" />
+    <ClInclude Include="src\Core\GameTimer.h" />
+    <ClInclude Include="src\Core\ObjectManager.h" />
+    <ClInclude Include="src\Core\ResourceManager.h" />
+    <ClInclude Include="src\Core\Scene.h" />
+    <ClInclude Include="src\Core\Transform.h" />
+    <ClInclude Include="src\Core\TestScene.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\TutorialBattleControl.h" />
+    <ClInclude Include="src\Core\Object.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

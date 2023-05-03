@@ -4,7 +4,8 @@
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Core/BattleLayer.h"
+#include "Core/GameLayer.h"
+//#include "Core/BattleLayer.h"
 #include "Core/GameInput.h"
 
 class Game : public Engine::Application
@@ -13,8 +14,8 @@ public:
 	Game()
 	{
 		//AppPushLayer(new TestLayer());
-		AppPushLayer(new TutorialBattle());
-		AppPushLayer(new InputLayer());
+		AppPushLayer(new GameLayer());
+		AppPushOverlay(new InputLayer());
 	}
 
 	~Game()

@@ -1,12 +1,13 @@
 #pragma once
 #include "Engine.h"
-class Bloom
+#include "Core/Object.h"
+class Bloom : public PostObject
 {
 public:
 	Bloom();
-	void Begin() const;
-	void End();
-	void Render() const;
+	virtual void Bind() override;
+	virtual void UnBind() override;
+	//virtual void Render() override;
 	void OnImGuiRender();
 	void SetExposure(float exposure)
 	{
