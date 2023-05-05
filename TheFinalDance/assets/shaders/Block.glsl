@@ -53,11 +53,11 @@ void main()
     float outAlpha = 0.0;
     switch (int (v_TexCoord.z))
     {
-    case -1: 
+    case 0: 
         outAlpha = RoundRectEdge(uv,vec2(0.5),0.05); 
         outColor = vec4(vec3(1.0),outAlpha * v_Alpha);
         break;
-    case -2:
+    case 1:
         outAlpha= RoundRectTile(uv,vec2(0.5),0.05); 
         outColor = vec4(v_Color,outAlpha * v_Alpha) + vec4(vec3(1.0),RoundRectEdge(uv,vec2(0.5),0.05) * v_Alpha);
         break;

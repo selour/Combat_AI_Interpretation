@@ -13,7 +13,6 @@ protected:
 	void Add(const std::shared_ptr<GameObject>& object);
 	void SetPost(const std::shared_ptr<PostObject>& object);
 	void SetCamera(const std::shared_ptr<Engine::Camera>& camera);
-	void Init();
 	void Update(float ts);
 	void Render();
 	void OnImGuiRender();

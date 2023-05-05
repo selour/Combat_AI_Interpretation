@@ -2,11 +2,16 @@
 #include "Core/Object.h"
 #include "Core/Transform.h"
 #include "Engine.h"
+//-------Link----------
+//       [0]
+//    [2]   [3]
+//       [1]
+//---------------------
 struct StageBlock
 {
 public:
 
-	Transform m_Transform = Transform(true, true, true);
+	Transform Transform;
 
 	int Step = 0;
 	bool Awake = false;
@@ -20,4 +25,5 @@ class BattleStage : public GameObject
 {
 protected:
 	std::vector<StageBlock> m_Stage;
+	Transform m_MainTransform;
 };

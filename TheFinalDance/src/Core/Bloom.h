@@ -7,7 +7,7 @@ public:
 	Bloom();
 	virtual void Bind() override;
 	virtual void UnBind() override;
-	//virtual void Render() override;
+	virtual void Render(std::shared_ptr<Engine::Camera> camera) override;
 	void OnImGuiRender();
 	void SetExposure(float exposure)
 	{

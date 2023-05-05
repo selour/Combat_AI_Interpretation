@@ -1,5 +1,6 @@
 #include "Heart.h"
 #include "Core/ObjectManager.h"
+#include <imgui.h>
 Heart::Heart()
 {
 	const glm::vec2 pos[5] = {
@@ -46,7 +47,7 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(1.0f), float(i));
+				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(1.0f) * m_Brightness, float(i));
 			}
 		}
 		Engine::Renderer2D::EndScene();
@@ -57,7 +58,8 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 
 void Heart::OnImGuiRender()
 {
-
+	ImGui::Text("Heart:");
+	ImGui::DragFloat("Brightness", &m_Brightness, 0.001f, 0.0f, 5.0f);
 }
 
 void Heart::OnBeat()

@@ -3,6 +3,7 @@
 void ObjectLayer::Add(const std::shared_ptr<GameObject>& object)
 {
 	m_Objects.push_back(object);
+	object->Init();
 }
 
 void ObjectLayer::SetPost(const std::shared_ptr<PostObject>& object)
@@ -15,13 +16,6 @@ void ObjectLayer::SetCamera(const std::shared_ptr<Engine::Camera>& camera)
 	m_Camera = camera;
 }
 
-void ObjectLayer::Init()
-{
-	for (auto& object : m_Objects)
-	{
-		object->Init();
-	}
-}
 
 void ObjectLayer::Update(float ts)
 {
@@ -36,7 +30,7 @@ void ObjectLayer::Render()
 	if (m_Post)
 	{
 		m_Post->Bind();
-		if(m_Camera)
+		if (m_Camera)
 			m_Camera->ViewportActivated();
 		for (auto& object : m_Objects)
 		{
@@ -107,17 +101,6 @@ bool ObjectManager::IsOverflow(int index) const
 	return m_ObjectLayers.empty() || m_MaxIndex <= index || index < 0;
 }
 
-void ObjectManager::Init()
-{
-	for (auto& object : m_LogicObjects)
-	{
-		object->Init();
-	}
-	for (auto& object : m_ObjectLayers)
-	{
-		object.Init();
-	}
-}
 
 void ObjectManager::Update(float ts)
 {

@@ -2,26 +2,52 @@
 
 void TutorialBattleScene::OnAttach()
 {
-	auto backgroundCamera = m_CameraLibrary.AddOrthographicCamera("Background");
+	auto MainCamera = m_CameraLibrary.AddOrthographicCamera("Main");
 	auto UICamera = m_CameraLibrary.AddOrthographicCamera("UI");
 
 	m_ResourceManager.Init();
+
+
+
 	m_ObjectManager.SetResourceManager(&m_ResourceManager);
 	m_ObjectManager.SetCameraLibrary(&m_CameraLibrary);
 	m_ObjectManager.Reset(5);
-	m_ObjectManager.SetCamera(0, m_CameraLibrary.Get("Background"));
 
 
-	m_Heart = std::make_shared<Heart>();
+	auto heart = std::make_shared<Heart>();
 
-	m_Heart->Awake();
+	auto stage = std::make_shared<TutorialBattleStage>();
 
-	m_ObjectManager.Add(0, m_Heart);
+	auto backgroundFBO = std::make_shared<BackgroundFBO>();
+	
+
+	auto stagePost = std::make_shared<GenericFBO>();
+	auto bloomPost = std::make_shared<Bloom>();
+	
+	m_ObjectManager.SetCamera(0, m_CameraLibrary.Get("Main"));
+	m_ObjectManager.SetPost(0, backgroundFBO);
+	m_ObjectManager.Add(0, heart);
+
+	m_ObjectManager.SetCamera(1, m_CameraLibrary.Get("Main"));
+	m_ObjectManager.SetPost(1, stagePost);
+	m_ObjectManager.Add(1, stage);
+
+	m_ObjectManager.SetCamera(2, m_CameraLibrary.Get("Main"));
+	m_ObjectManager.SetPost(2, bloomPost);
+	m_ObjectManager.Add(2, backgroundFBO);
+	m_ObjectManager.Add(2, stagePost);
 
 
-	m_BeatCounter = std::make_shared<BeatCounter>(100);
-	m_BeatCounter->AddDelegate(std::bind(&Heart::OnBeat, m_Heart));
-	m_ObjectManager.AddLogic(m_BeatCounter);
+	//m_ObjectManager.SetCamera(3, m_CameraLibrary.Get("Main"));
+	m_ObjectManager.Add(3, bloomPost);
+	
+
+
+	auto beatCounter = std::make_shared<BeatCounter>(100);
+	beatCounter->AddDelegate(std::bind(&Heart::OnBeat, heart));
+	m_ObjectManager.AddLogic(beatCounter);
+	
+	heart->Awake();
 
 }
 
@@ -38,6 +64,8 @@ void TutorialBattleScene::OnUpdate(Engine::TimeStep ts)
 
 void TutorialBattleScene::OnRender()
 {
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	//Engine::RendererCommand::Clear();
 	m_ObjectManager.Render();
 }
 
@@ -45,6 +73,6 @@ void TutorialBattleScene::OnImGuiRender()
 {
 	ImGui::Begin("TutorialBattleScene");
 	ImGui::Text("Time:%.2f s", m_Time);
-	ImGui::End();
 	m_ObjectManager.OnImGuiRender();
+	ImGui::End();
 }

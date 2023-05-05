@@ -220,9 +220,9 @@ namespace Engine
 		void ViewportActivated() const
 		{
 			RendererCommand::SetViewport(m_ViewportRect.X, m_ViewportRect.Y, m_ViewportRect.Width, m_ViewportRect.Height);
-			RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-			if (m_ClearFlag)
-				RendererCommand::Clear();
+			//RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+			//if (m_ClearFlag)
+				//RendererCommand::Clear();
 		}
 
 		const glm::mat4& GetViewProjectionMatrix()

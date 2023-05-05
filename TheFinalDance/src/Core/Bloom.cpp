@@ -52,8 +52,9 @@ void Bloom::Bind()
 {
 	m_MTRFBO->Bind();
 	Engine::RendererCommand::SetViewport(0, 0, 1280, 720);
-	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.0f));
 	Engine::RendererCommand::Clear();
+	Engine::RendererCommand::DisableDepthTest();
 }
 
 void Bloom::UnBind()
@@ -85,7 +86,7 @@ void Bloom::UnBind()
 	m_MTRFBO->UnBind();
 }
 
-void Bloom::Render()
+void Bloom::Render(std::shared_ptr<Engine::Camera> camera)
 {
 	m_ShaderBloom->Use();
 	m_MTRFBO->BindColorAttachment(0, 0);
@@ -99,11 +100,10 @@ void Bloom::Render()
 
 void Bloom::OnImGuiRender()
 {
-	ImGui::Begin("Bloom");
+	ImGui::Text("Bloom:");
 	ImGui::DragFloat("Exposure", &m_Exposure, 0.001f, 0.0f, 5.0f);
 	ImGui::Image((void*)m_MTRFBO->GetColorAttachment(0), ImVec2{ 320,180 }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
 	ImGui::Image((void*)m_MTRFBO->GetColorAttachment(1), ImVec2{ 320,180 }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
-	ImGui::End();
 }
 
 

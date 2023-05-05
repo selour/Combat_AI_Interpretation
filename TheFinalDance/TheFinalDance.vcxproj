@@ -100,24 +100,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Battle\TutorialBattle\Heart.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Background\BackgroundFBO.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Background\Heart.cpp" />
     <ClCompile Include="src\Audio\SoundEngine.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\TutorialBattleScene.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattleStage.cpp" />
+    <ClCompile Include="src\Core\Bloom.cpp" />
     <ClCompile Include="src\Core\GameInput.cpp" />
     <ClCompile Include="src\Core\GameLayer.cpp" />
     <ClCompile Include="src\Core\ObjectManager.cpp" />
     <ClCompile Include="src\Core\Scene.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Battle\TutorialBattle\TutorialBattleControl.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\GenericFBO.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Background\BackgroundFBO.h" />
     <ClInclude Include="src\Battle\Base\BeatCounter.h" />
     <ClInclude Include="src\Battle\Base\BattleStage.h" />
     <ClInclude Include="src\Battle\BattleScene.h" />
-    <ClInclude Include="src\Battle\TutorialBattle\Heart.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Background\Heart.h" />
     <ClInclude Include="src\Audio\SoundEngine.h" />
     <ClInclude Include="src\Battle\TutorialBattle\TutorialBattleScene.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattleStage.h" />
     <ClInclude Include="src\Battle\TutorialBattle\TutorialResourceManager.h" />
+    <ClInclude Include="src\Core\Bloom.h" />
     <ClInclude Include="src\Core\GameEvent.h" />
     <ClInclude Include="src\Core\GameInput.h" />
     <ClInclude Include="src\Core\GameLayer.h" />
@@ -127,7 +134,7 @@
     <ClInclude Include="src\Core\Scene.h" />
     <ClInclude Include="src\Core\Transform.h" />
     <ClInclude Include="src\Core\TestScene.h" />
-    <ClInclude Include="src\Battle\TutorialBattle\TutorialBattleControl.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.h" />
     <ClInclude Include="src\Core\Object.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

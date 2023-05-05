@@ -20,8 +20,9 @@ public:
 
 	virtual void OnRender() override
 	{
-		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		Engine::RendererCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.0f));
 		Engine::RendererCommand::Clear();
+		Engine::RendererCommand::DisableDepthTest();
 		m_Shader->Use();
 		m_Shader->SetFloat("v_Time", m_Time);
 		Engine::RendererPostProcessing::Draw();

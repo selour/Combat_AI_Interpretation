@@ -1,8 +1,13 @@
 #pragma once
 #include "Core/Scene.h"
 #include "Core/ObjectManager.h"
+#include "Core/Bloom.h"
+#include "Core/GenericFBO.h"
 #include "Battle/Base/BeatCounter.h"
-#include "Heart.h"
+#include "Background/Heart.h"
+#include "Background/BackgroundFBO.h"
+#include "Main/TutorialBattleStage.h"
+
 #include "TutorialResourceManager.h"
 
 class TutorialBattleScene : public Scene
@@ -34,10 +39,6 @@ private:
 
 	ObjectManager m_ObjectManager;
 	
-
-	std::shared_ptr<BeatCounter> m_BeatCounter;
-	std::shared_ptr<Heart> m_Heart;
-
 	Engine::CameraLibrary m_CameraLibrary;
 
 };

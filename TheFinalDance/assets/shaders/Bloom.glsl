@@ -32,10 +32,10 @@ void main()
     vec3 bloomColor = texture(u_BloomBlur0, v_TexCoords).rgb + texture(u_BloomBlur1, v_TexCoords).rgb + texture(u_BloomBlur2, v_TexCoords).rgb;
     //vec3 result = vec3(1.0) - exp(-bloomColor * u_Exposure);
     //hdrColor += result; // additive 
-    //hdrColor += bloomColor; // additive blending
+   hdrColor += bloomColor; // additive blending
     // tone mapping
-   // vec3 result = vec3(1.0) - exp(-hdrColor * u_Exposure
-    vec3 result = hdrColor * u_Exposure + vec3(1.0) - exp(-bloomColor * u_Exposure);
+    vec3 result = vec3(1.0) - exp(-hdrColor * u_Exposure);
+    //vec3 result = hdrColor * u_Exposure + vec3(1.0) - exp(-bloomColor * u_Exposure);
     // also gamma correct while we're at it       
    //result = pow(result, vec3(1.0 / gamma));
    FragColor = vec4(result, 1.0f);
