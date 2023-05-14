@@ -17,11 +17,12 @@ void TutorialBattleScene::OnAttach()
 	auto heart = std::make_shared<Heart>();
 
 	auto stage = std::make_shared<TutorialBattleStage>();
-
+	auto player = std::make_shared<TutorialBattlePlayer>();
+	
 	auto backgroundFBO = std::make_shared<BackgroundFBO>();
 	
 
-	auto stagePost = std::make_shared<GenericFBO>();
+	auto stagePost = std::make_shared<MainFBO>();
 	auto bloomPost = std::make_shared<Bloom>();
 	
 	m_ObjectManager.SetCamera(0, m_CameraLibrary.Get("Main"));
@@ -31,7 +32,8 @@ void TutorialBattleScene::OnAttach()
 	m_ObjectManager.SetCamera(1, m_CameraLibrary.Get("Main"));
 	m_ObjectManager.SetPost(1, stagePost);
 	m_ObjectManager.Add(1, stage);
-
+	m_ObjectManager.Add(1, player);
+	
 	m_ObjectManager.SetCamera(2, m_CameraLibrary.Get("Main"));
 	m_ObjectManager.SetPost(2, bloomPost);
 	m_ObjectManager.Add(2, backgroundFBO);
@@ -42,12 +44,15 @@ void TutorialBattleScene::OnAttach()
 	m_ObjectManager.Add(3, bloomPost);
 	
 
+	
 
 	auto beatCounter = std::make_shared<BeatCounter>(100);
 	beatCounter->AddDelegate(std::bind(&Heart::OnBeat, heart));
 	m_ObjectManager.AddLogic(beatCounter);
 	
 	heart->Awake();
+	player->SetInitBlock(stage->GetBlock(3 * 7 + 3));
+	player->SetStage(stage);
 
 }
 

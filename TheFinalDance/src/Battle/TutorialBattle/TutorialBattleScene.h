@@ -7,6 +7,9 @@
 #include "Background/Heart.h"
 #include "Background/BackgroundFBO.h"
 #include "Main/TutorialBattleStage.h"
+#include "Main/TutorialBattlePlayer.h"
+#include "Main/MainFBO.h"
+
 
 #include "TutorialResourceManager.h"
 

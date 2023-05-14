@@ -1,28 +1,22 @@
 #pragma once
 #include "Engine.h"
+enum InputType
+{
+	InteractiveKey = 0, UpKey = 1, DownKey = 2, LeftKey = 3, RightKey = 4
+};
 class GameInput
 {
 public:
 	//键按住
-	static bool IsUpKeyPoressed();
-	static bool IsDownKeyPoressed();
-	static bool IsLeftKeyPoressed();
-	static bool IsRightKeyPoressed();
-	static bool IsInteractiveKeyPoressed();
+	static bool IsKeyPoressed(InputType type);
+	
 	//键按下
-	static bool IsUpKeyDown();
-	static bool IsDownKeyDown();
-	static bool IsLeftKeyDown();
-	static bool IsRightKeyDown();
-	static bool IsInteractiveKeyDown();
+	static bool IsKeyDown(InputType type);
+	//单键按下
+	static bool IsOnlyKeyDown(InputType type);
 	//键松开
-	static bool IsUpKeyRelease();
-	static bool IsDownKeyRelease();
-	static bool IsLeftKeyRelease();
-	static bool IsRightKeyRelease();
-	static bool IsInteractiveKeyRelease();
-
-
+	static bool IsKeyRelease(InputType type);
+	
 	static void UpdateKeyEvent();
 private:
 	GameInput();

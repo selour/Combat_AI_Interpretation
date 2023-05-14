@@ -3,6 +3,11 @@
 #include <imgui.h>
 Heart::Heart()
 {
+	
+}
+
+void Heart::Init()
+{
 	const glm::vec2 pos[5] = {
 		{0.045f, -0.571f},
 		{ -0.711f, 0.044f },
@@ -15,11 +20,6 @@ Heart::Heart()
 		m_Part[i].SetPostion({ pos[i].x,pos[i].y,0.0 });
 		m_Part[i].SetScale(glm::vec3(1.3f));
 	}
-}
-
-void Heart::Init()
-{
-
 }
 
 void Heart::Update(float ts)
@@ -47,7 +47,7 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(1.0f) * m_Brightness, float(i));
+				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(glm::vec3(1.0f) * m_Brightness,1.0f), float(i));
 			}
 		}
 		Engine::Renderer2D::EndScene();
@@ -59,7 +59,7 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 void Heart::OnImGuiRender()
 {
 	ImGui::Text("Heart:");
-	ImGui::DragFloat("Brightness", &m_Brightness, 0.001f, 0.0f, 5.0f);
+	ImGui::DragFloat("Heart Brightness", &m_Brightness, 0.001f, 0.0f, 5.0f);
 }
 
 void Heart::OnBeat()

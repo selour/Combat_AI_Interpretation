@@ -42,7 +42,7 @@ float RoundRectEdge(vec2 position, vec2 size, float radius)
 float RoundRectTile(vec2 position, vec2 size, float radius)
 {
     float d = length(max(abs(position) - size + radius, 0.0)) - radius;
-    float col = (1.-smoothstep(-.05, 0., d))*0.2;
+    float col = (1.-smoothstep(-.05, 0., d))*0.5;
     return col;
 }
 void main()
@@ -53,13 +53,13 @@ void main()
     float outAlpha = 0.0;
     switch (int (v_TexCoord.z))
     {
-    case 0: 
+    case -2: 
         outAlpha = RoundRectEdge(uv,vec2(0.5),0.05); 
-        outColor = vec4(vec3(1.0),outAlpha * v_Alpha);
+        outColor = vec4(v_Color,outAlpha * v_Alpha);
         break;
-    case 1:
-        outAlpha= RoundRectTile(uv,vec2(0.5),0.05); 
-        outColor = vec4(v_Color,outAlpha * v_Alpha) + vec4(vec3(1.0),RoundRectEdge(uv,vec2(0.5),0.05) * v_Alpha);
+    case -1:
+        outAlpha= max(RoundRectTile(uv,vec2(0.5),0.05),RoundRectEdge(uv,vec2(0.5),0.05)); 
+        outColor = vec4(v_Color,outAlpha * v_Alpha);
         break;
     default:
         outColor = texture(u_Texture0, v_TexCoord)* vec4(v_Color.rgb,v_Alpha);

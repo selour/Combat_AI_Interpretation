@@ -13,7 +13,6 @@ public:
 		:m_TransformFlag(true),m_Father(nullptr)
 	{
 	}
-
 	const glm::vec3& GetPostion() const
 	{
 		return m_Position;
@@ -121,7 +120,7 @@ private:
 			m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.w, glm::vec3(m_Rotation));
 			m_TransformMatrix = glm::scale(m_TransformMatrix, m_Scale);
 			if (m_Father)
-				m_TransformMatrix *= m_Father->GetMatrix();
+				m_TransformMatrix = m_Father->GetMatrix() * m_TransformMatrix ;
 		}
 	}
 	void SetChildrenFlag()

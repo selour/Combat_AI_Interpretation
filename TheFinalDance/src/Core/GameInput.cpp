@@ -3,103 +3,46 @@
 
 GameInput* GameInput::s_Instance = GameInput::Init();
 
-bool GameInput::IsUpKeyPoressed()
+
+bool GameInput::IsKeyPoressed(InputType type)
 {
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[1]);
+	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[type]);
 }
 
-bool GameInput::IsDownKeyPoressed()
+bool GameInput::IsKeyDown(InputType type)
 {
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[2]);
+	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[type]) && !s_Instance->m_IsKeyPoressed[type];
 }
-
-bool GameInput::IsLeftKeyPoressed()
+bool GameInput::IsOnlyKeyDown(InputType type)
 {
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[3]);
+	bool flag = true;
+	for (int i = 0; i < 5; i++)
+	{
+		if((int)type == i)
+		{
+			flag = flag && IsKeyDown((InputType)i);
+		}
+		else
+		{
+			flag = flag && !IsKeyDown((InputType)i);
+		}
+	}
+	return false;
 }
-
-bool GameInput::IsRightKeyPoressed()
+bool GameInput::IsKeyRelease(InputType type)
 {
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[4]);
-}
-
-bool GameInput::IsInteractiveKeyPoressed()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[0]);
-}
-
-bool GameInput::IsUpKeyDown()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[1])&& !s_Instance->m_IsKeyPoressed[1];
-}
-
-bool GameInput::IsDownKeyDown()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[2]) && !s_Instance->m_IsKeyPoressed[2];
-}
-
-bool GameInput::IsLeftKeyDown()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[3]) && !s_Instance->m_IsKeyPoressed[3];
-}
-
-bool GameInput::IsRightKeyDown()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[4]) && !s_Instance->m_IsKeyPoressed[4];
-}
-
-bool GameInput::IsInteractiveKeyDown()
-{
-	return Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[0]) && !s_Instance->m_IsKeyPoressed[0];
-}
-
-bool GameInput::IsUpKeyRelease()
-{
-	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[1]) && s_Instance->m_IsKeyPoressed[1];
-}
-
-bool GameInput::IsDownKeyRelease()
-{
-	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[2]) && s_Instance->m_IsKeyPoressed[2];
-}
-
-bool GameInput::IsLeftKeyRelease()
-{
-	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[3]) && s_Instance->m_IsKeyPoressed[3];
-}
-
-bool GameInput::IsRightKeyRelease()
-{
-	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[4]) && s_Instance->m_IsKeyPoressed[4];
-}
-
-bool GameInput::IsInteractiveKeyRelease()
-{
-	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[0]) && s_Instance->m_IsKeyPoressed[0];
+	return !Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[type]) && s_Instance->m_IsKeyPoressed[type];
 }
 
 void GameInput::UpdateKeyEvent()
 {
-	if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[0]))
-		s_Instance->m_IsKeyPoressed[0] = true;
-	else
-		s_Instance->m_IsKeyPoressed[0] = false;
-	if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[1]))
-		s_Instance->m_IsKeyPoressed[1] = true;
-	else
-		s_Instance->m_IsKeyPoressed[1] = false;
-	if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[2]))
-		s_Instance->m_IsKeyPoressed[2] = true;
-	else
-		s_Instance->m_IsKeyPoressed[2] = false;
-	if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[3]))
-		s_Instance->m_IsKeyPoressed[3] = true;
-	else
-		s_Instance->m_IsKeyPoressed[3] = false;
-	if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[4]))
-		s_Instance->m_IsKeyPoressed[4] = true;
-	else
-		s_Instance->m_IsKeyPoressed[4] = false;
+	for (int i = 0; i < 5; i++)
+	{
+		if (Engine::Input::IsKeyPoressed(s_Instance->m_KeyCode[i]))
+			s_Instance->m_IsKeyPoressed[i] = true;
+		else
+			s_Instance->m_IsKeyPoressed[i] = false;
+	}
 }
 
 GameInput::GameInput()
