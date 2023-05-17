@@ -43,7 +43,19 @@ public:
 	{
 		s_SoundEngine->play2D(soundSource->GetSoundSource(), loop);
 	}
+	inline static void StopAllSound()
+	{
+		s_SoundEngine->stopAllSounds();
+	}
+	inline static void SetAllSoundsPaused(bool puased)
+	{
+		s_SoundEngine->setAllSoundsPaused(puased);
 
+	}
+	
 private:
+	SoundEngine()
+	{
+	}
 	static ISoundEngine* s_SoundEngine;
 };

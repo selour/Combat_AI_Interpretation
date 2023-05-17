@@ -100,8 +100,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Battle\TutorialBattle\Main\MainFBO.cpp" />
-    <ClCompile Include="src\Battle\TutorialBattle\Background\BackgroundFBO.cpp" />
+    <ClCompile Include="src\Core\BrightFBO.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Background\HeartFBO.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Background\Heart.cpp" />
     <ClCompile Include="src\Audio\SoundEngine.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\TutorialBattleScene.cpp" />
@@ -114,13 +114,18 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattlePlayer.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\TutorialPost.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\UI\TutorialEnemyUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Battle\Base\BattleEnemy.h" />
-    <ClInclude Include="src\Battle\TutorialBattle\Main\MainFBO.h" />
+    <ClInclude Include="src\Battle\Base\BattleUI.h" />
+    <ClInclude Include="src\Battle\Base\ParticleComponent.h" />
+    <ClInclude Include="src\Core\BrightFBO.h" />
     <ClInclude Include="src\Battle\Base\BattlePlayer.h" />
     <ClInclude Include="src\Core\GenericFBO.h" />
-    <ClInclude Include="src\Battle\TutorialBattle\Background\BackgroundFBO.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Background\HeartFBO.h" />
     <ClInclude Include="src\Battle\Base\BeatCounter.h" />
     <ClInclude Include="src\Battle\Base\BattleStage.h" />
     <ClInclude Include="src\Battle\BattleScene.h" />
@@ -142,6 +147,9 @@
     <ClInclude Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.h" />
     <ClInclude Include="src\Core\Object.h" />
     <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattlePlayer.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\TutorialPost.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\UI\TutorialEnemyUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

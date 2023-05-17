@@ -29,7 +29,7 @@ void main()
 {             
     //const float gamma = 2.2;
     vec3 hdrColor = texture(u_Scene, v_TexCoords).rgb;      
-    vec3 bloomColor = texture(u_BloomBlur0, v_TexCoords).rgb + texture(u_BloomBlur1, v_TexCoords).rgb + texture(u_BloomBlur2, v_TexCoords).rgb;
+    vec3 bloomColor = max(max(texture(u_BloomBlur0, v_TexCoords).rgb, texture(u_BloomBlur1, v_TexCoords).rgb), texture(u_BloomBlur2, v_TexCoords).rgb);
     //vec3 result = vec3(1.0) - exp(-bloomColor * u_Exposure);
     //hdrColor += result; // additive 
    hdrColor += bloomColor; // additive blending

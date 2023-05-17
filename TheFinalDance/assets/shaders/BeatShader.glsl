@@ -76,13 +76,13 @@ float beatCircle(vec2 uv, float radius)
 {
     float d = length(uv);
     float R =.5 - (1. - radius) *(1./3.);
-    return smoothstep(R , R - .04, d)*(1.-smoothstep(R - .04 , R - .05 , d)) * 0.4;
+    return smoothstep(R , R - .04, d)*(1.-smoothstep(R - .04 , R - .05 , d)) * 0.5;
 }
 float determineCircle(vec2 uv)
 {
     float col = 1.0;
     float d = length(uv);
-    col = smoothstep(.5/3., .5/3. -.01, d) * smoothstep(.5/3. -.05, .5/3. -.01, d) * 0.4;
+    col = smoothstep(.5/3., .5/3. -.01, d) * smoothstep(.5/3. -.05, .5/3. -.01, d) * 0.5;
     return col;
 }
 

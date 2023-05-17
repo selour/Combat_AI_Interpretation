@@ -81,6 +81,7 @@ void ObjectManager::Add(int index, const std::shared_ptr<GameObject>& object)
 void ObjectManager::AddLogic(const std::shared_ptr<GameObject>& object)
 {
 	object->SetObjectManager(this);
+	object->Init();
 	m_LogicObjects.push_back(object);
 }
 

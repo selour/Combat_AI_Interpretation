@@ -35,7 +35,6 @@ public:
 
 	bool IsOverflow(int index) const;
 
-	void Init();
 	void Update(float ts);
 	void Render();
 	void OnImGuiRender();
@@ -45,10 +44,6 @@ public:
 	{
 		m_ResourceManager = resourceManager;
 	}
-	void SetParticleSystem(Engine::ParticleSystem* particleSystem)
-	{
-		m_ParticleSystem = particleSystem;
-	}
 	void SetCameraLibrary(Engine::CameraLibrary* cameraLibrary)
 	{
 		m_CameraLibrary = cameraLibrary;
@@ -57,10 +52,7 @@ public:
 	{
 		return m_ResourceManager;
 	}
-	Engine::ParticleSystem* GetParticleSystem()
-	{
-		return m_ParticleSystem;
-	}
+
 	Engine::CameraLibrary* GetCameraLibrary()
 	{
 		return m_CameraLibrary;
@@ -84,7 +76,6 @@ private:
 	int m_MaxIndex = 0;
 
 	ResourceManager* m_ResourceManager = nullptr;
-	Engine::ParticleSystem* m_ParticleSystem = nullptr;
 	Engine::CameraLibrary* m_CameraLibrary = nullptr;
 };
 

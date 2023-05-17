@@ -2,7 +2,9 @@
 #include "Core/ObjectManager.h"
 #include "Core/GameTimer.h"
 #include "Core/GameInput.h"
+#include "ParticleComponent.h"
 #include "BattleStage.h"
+#include "BattleEnemy.h"
 class BattlePlayer : public GameObject
 {
 public:
@@ -12,17 +14,54 @@ public:
 	}
 	enum PlayerState
 	{
-		Free = 0, Move = 2, Beat = 3
+		Free = 0, Move = 2, Beat = 3, Wait = 4
 	};
 	void SetStage(std::shared_ptr<BattleStage> stage)
 	{
 		m_Stage = stage;
 	}
-	void SetInitBlock(StageBlock* block)
+	void SetParticleSystem(std::shared_ptr<ParticleCompomemt> particleSystem)
 	{
-		m_Current = block;
+		m_ParticleSystem = particleSystem;
 	}
-
+	void SetEnemy(std::shared_ptr<BattleEnemy> enemy)
+	{
+		m_Enemy = enemy;
+	}
+	void SetBlock(unsigned int index)
+	{
+		if (m_Stage->GetBlock(m_Current))
+		{
+			m_Stage->GetBlock(m_Current)->Occupy = false;
+		}
+		if (m_State == Move)
+		{
+			m_Stage->GetBlock(m_Next)->Occupy = false;
+			m_State = Free;
+			m_MoveFlag.Clear();
+		}
+		m_Current = index;
+		m_Stage->GetBlock(m_Current)->Occupy = true;
+	}
+	void SetEnable(bool enable)
+	{
+		m_Enable = enable;
+	}
+	void SetColor(glm::vec4 color)
+	{
+		m_Color = color;
+	}
+	void OnWait()
+	{
+		m_MoveFlag.SetTime(m_MoveTime - m_OffsetTime);
+		m_State = Wait;
+		m_WaitInput = None;
+	}
+	void ClearStep()
+	{
+		m_Step = 0;
+		m_Stage->ClearStep();
+	}
 protected:
 	
 	void OnRender(std::shared_ptr<Engine::Camera> camera)
@@ -34,9 +73,10 @@ protected:
 		Engine::Renderer2D::BeginScene(camera, texuture, shader);
 		shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
 		shader->SetFloat("u_Hit", 0.0f);
-		//ÅÐ¶¨È¦
-
-		Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f);
+		if(m_Enable)
+			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f);
+		
+		
 		//ÖÕÄ©ÅÄ
 		if (m_State == Beat)
 		{
@@ -62,86 +102,127 @@ protected:
 	}
 	void OnUpdate(float ts)
 	{
-		m_Time += ts;
-		m_Position = m_Current->Postion.GetPostion();
+		m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion();
 		m_MoveFlag.Update(ts);
 		m_ErrorFlag.Update(ts);
-		switch (m_State)
+		m_Time += ts;
+		if (m_Enable)
 		{
-		case Move:
-			if (m_MoveFlag.IsTimeOut())
+			
+			
+			switch (m_State)
 			{
-				m_Current = m_Next;
-				m_Position = m_Current->Postion.GetPostion();
-				m_State = Free;
+			case Move:
+				if (m_MoveFlag.IsTimeOut())
+				{
+					m_Stage->GetBlock(m_Current)->Occupy = false;
+					m_Current = m_Next;
+					m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion();
+					m_State = Free;
+				}
+				else
+				{
+					m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion() + m_MoveFlag.GetProportion() * (m_Stage->GetBlock(m_Next)->Postion.GetPostion() - m_Stage->GetBlock(m_Current)->Postion.GetPostion());
+				}
+				break;
+			case Beat:
+				if (m_MoveFlag.IsTimeOut())
+				{
+					m_State = Free;
+				}
+				break;
+			case Wait:
+				if (m_MoveFlag.IsTimeOut())
+				{
+					PlayerWaitInput();
+				}
+				break;
 			}
-			else
-			{
-				m_Position = m_Current->Postion.GetPostion() + m_MoveFlag.GetProportion() * (m_Next->Postion.GetPostion() - m_Current->Postion.GetPostion());
-			}
-			break;
-		case Beat:
-			if (m_MoveFlag.IsTimeOut())
-			{
-				m_State = Free;
-			}
-			break;
+			PlayerControl();
 		}
-		
 	}
 	void PlayerControl()
 	{
-		if (m_Enable && !m_ErrorFlag)
+		if (!m_ErrorFlag)
 		{
 
 			if (GameInput::IsKeyDown(UpKey))
 			{
-				if (m_State == Free && m_Current->CanMove(MoveForward::Up))
+				if (m_State == Free && m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Up))
 				{
 					MoveTo(MoveForward::Up);
 				}
 				else
 				{
-					MoveError({ 0.0f , 1.0f });
+					if (m_State != Wait)
+					{
+						MoveError({ 0.0f , 1.0f });
+					}
+					else
+					{
+						m_WaitInput = UpKey;
+					}
+					
 				}
 			}
 			else
 			{
 				if (GameInput::IsKeyDown(DownKey))
 				{
-					if (m_State == Free && m_Current->CanMove(MoveForward::Down))
+					if (m_State == Free && m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Down))
 					{
 						MoveTo(MoveForward::Down);
 					}
 					else
 					{
-						MoveError({ 0.0f , -1.0f });
+						if (m_State != Wait)
+						{
+							MoveError({ 0.0f , -1.0f });
+						}
+						else
+						{
+							m_WaitInput = DownKey;
+						}
 					}
 				}
 				else
 				{
 					if (GameInput::IsKeyDown(LeftKey))
 					{
-						if (m_State == Free && m_Current->CanMove(MoveForward::Left))
+						if (m_State == Free && m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Left))
 						{
 							MoveTo(MoveForward::Left);
 						}
 						else
 						{
-							MoveError({ -1.0 , 0.0f });
+							if (m_State != Wait)
+							{
+								MoveError({ -1.0 , 0.0f });
+							}
+							else
+							{
+								m_WaitInput = LeftKey;
+							}
 						}
 					}
 					else
 					{
 						if (GameInput::IsKeyDown(RightKey))
 						{
-							if (m_State == Free && m_Current->CanMove(MoveForward::Right))
+							if (m_State == Free && m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Right))
 							{
 								MoveTo(MoveForward::Right);
 							}
 							else
 							{
-								MoveError({ 1.0 , 0.0f });
+								if (m_State != Wait)
+								{
+									MoveError({ 1.0 , 0.0f });
+								}
+								else
+								{
+									m_WaitInput = RightKey;
+								}
 							}
 						}
 						else
@@ -154,7 +235,14 @@ protected:
 								}
 								else
 								{
-									MoveError({ 0.0f , 0.0f });
+									if (m_State != Wait)
+									{
+										MoveError({ 0.0f , 0.0f });
+									}
+									else
+									{
+										m_WaitInput = InteractiveKey;
+									}
 								}
 								
 							}
@@ -166,12 +254,78 @@ protected:
 
 		}
 	}
+	void PlayerWaitInput()
+	{
+		switch (m_WaitInput)
+		{
+		case InteractiveKey:
+			OnBeat();
+			break;
+		case UpKey:
+			if (m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Up))
+			{
+				MoveTo(MoveForward::Up);
+			}
+			else
+			{
+				m_State = Free;
+				MoveError({ 0.0f , 1.0f });
+				
+
+			}
+			break;
+		case DownKey:
+			if (m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Down))
+			{
+				MoveTo(MoveForward::Down);
+			}
+			else
+			{
+				m_State = Free;
+				MoveError({ 0.0f , -1.0f });
+			
+			}
+			break;
+		case LeftKey:
+			if (m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Left))
+			{
+				MoveTo(MoveForward::Left);
+			}
+			else
+			{
+				m_State = Free;
+				MoveError({ -1.0 , 0.0f });
+				
+			}
+			break;
+		case RightKey:
+			if (m_Stage->GetBlock(m_Current)->CanMove(MoveForward::Right))
+			{
+				MoveTo(MoveForward::Right);
+			}
+			else
+			{
+				m_State = Free;
+				MoveError({ 1.0 , 0.0f });
+			}
+			break;
+		case None:
+			m_State = Free;
+			break;
+		default:
+			break;
+		}
+			
+			
+
+	}
 	virtual void MoveBind(){}
 	virtual void ErrorBind(){}
 	float m_Time = 0.0f;
 	bool m_Enable = true;
+	GameTimer m_EnableFlag;
 	PlayerState m_State = Free;
-
+	InputType m_WaitInput = None;
 	glm::vec4 m_Color = { 0.0f,1.0f,1.0f,1.0f };
 
 	glm::vec3 m_Position;
@@ -188,24 +342,27 @@ protected:
 	float m_ErrorTime = 60.0f / 200.0f;
 	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
 
-	StageBlock* m_Current = nullptr;
-	StageBlock* m_Next = nullptr;
+	int m_Current = -1;;
+	int  m_Next = -1;
 
+	std::shared_ptr<BattleEnemy> m_Enemy;
 	std::shared_ptr<BattleStage> m_Stage;
+	std::shared_ptr<ParticleCompomemt> m_ParticleSystem;
 private:
 	
 	void MoveTo(MoveForward forward)
 	{
-		m_Next = m_Current->Link[(int)forward];
+		m_Next = m_Stage->GetBlock(m_Current)->Link[(int)forward]->Index;
+		m_Stage->GetBlock(m_Next)->Occupy = true;
 		m_MoveFlag.SetTime(m_MoveTime - m_OffsetTime);
 		m_State = Move;
-		if (m_Current->Step == 0)
+		m_ParticleSystem->EmitParticle(3, m_Position, glm::vec3(1.0f));
+		if (m_Stage->GetBlock(m_Current)->Step == 0)
 		{
 			m_Step++;
-			m_Current->Step = m_Step;
+			m_Stage->GetBlock(m_Current)->Step = m_Step;
 		}
 		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("hat"));
-		MoveBind();
 	}
 	void MoveError(const glm::vec2 direction)
 	{
@@ -214,7 +371,6 @@ private:
 		//m_Step = 0;
 		//m_Stage->ClearStep();
 		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("error"));
-		ErrorBind();
 	}
 	void OnBeat()
 	{
@@ -222,6 +378,29 @@ private:
 		m_State = Beat;
 		m_Step = 0;
 		m_Stage->ClearStep();
-		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("swoosh"));
+		m_ParticleSystem->EmitParticle(10 ,m_Position, m_Color);
+		StageBlock* boss = m_Enemy->GetBlock();
+		if (boss == m_Stage->GetBlock(m_Current)->Link[0] || boss == m_Stage->GetBlock(m_Current)->Link[1] ||
+			boss == m_Stage->GetBlock(m_Current)->Link[2] || boss == m_Stage->GetBlock(m_Current)->Link[3] ||
+			m_Stage->GetBlock(m_Current)->Link[0] != nullptr && boss == m_Stage->GetBlock(m_Current)->Link[0]->Link[3] ||
+			m_Stage->GetBlock(m_Current)->Link[1] != nullptr && boss == m_Stage->GetBlock(m_Current)->Link[1]->Link[2] ||
+			m_Stage->GetBlock(m_Current)->Link[2] != nullptr && boss == m_Stage->GetBlock(m_Current)->Link[2]->Link[0] ||
+			m_Stage->GetBlock(m_Current)->Link[3] != nullptr && boss == m_Stage->GetBlock(m_Current)->Link[3]->Link[1])
+		{
+			if (m_Enemy->OnHit(m_Step))
+			{
+				SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("clap"));
+			}
+			else
+			{
+				SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("solid"));
+			}
+		}
+		else
+		{
+			SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("swoosh"));
+		}
+		
 	}
+	
 };			   

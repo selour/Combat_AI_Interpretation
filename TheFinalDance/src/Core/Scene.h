@@ -8,11 +8,12 @@ public:
 
 	//场景生命周期函数
 	virtual void OnAttach() {}
+	virtual void Reset() {}
 	virtual void OnDetach() {}
 	virtual void OnUpdate(Engine::TimeStep ts) {}
 	virtual void OnRender() {}
 	virtual void OnImGuiRender() {}
-
+	
 
 protected:
 	std::string m_DebugName;

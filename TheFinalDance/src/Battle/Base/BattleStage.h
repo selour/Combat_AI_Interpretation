@@ -12,7 +12,7 @@ enum MoveForward
 struct StageBlock
 {
 public:
-	void Init()
+	StageBlock()
 	{
 		Number1.SetFather(&Postion);
 		Number2.SetFather(&Postion);
@@ -21,10 +21,12 @@ public:
 		Number2.SetPostion(glm::vec3(-0.05f, 0.3f, 0.0f));
 		Number2.SetScale(glm::vec3(0.25f));
 	}
+
 	bool CanMove(MoveForward forward)
 	{
 		return Link[forward] != nullptr && Link[forward]->Awake && !Link[forward]->Occupy;
 	}
+	unsigned int Index;
 	Transform Postion;
 	Transform Number1,Number2;
 	int Step = 0;
@@ -52,7 +54,7 @@ public:
 	}
 	StageBlock* GetBlock(int index)
 	{
-		if (index < m_Stage.size())
+		if (index < m_Stage.size() && index >= 0)
 		{
 			return &m_Stage[index];
 		}

@@ -26,7 +26,7 @@ Bloom::Bloom()
 	{
 		int size = pow(2, i) * 128;
 		m_BlurFBSpec[i].Width = size;
-		m_BlurFBSpec[i].Height = size;
+		m_BlurFBSpec[i].Height = size * m_AspectRatio;
 		m_BlurFBSpec[i].InternalFormat = Engine::RGB16F;
 		m_BlurFBSpec[i].Format = Engine::RGB;
 		m_BlurFBSpec[i].Filter = Engine::LINEAR;

@@ -38,6 +38,7 @@ public:
 		m_Position = position;
 		
 	}
+	//轴角法,前三位为旋转轴，后一位为角度
 	void SetRotation(const glm::vec4& rotation)
 	{
 		

@@ -13,5 +13,8 @@ public:
 	virtual void Render(std::shared_ptr<Engine::Camera> camera) override;
 	//µ÷ÊÔUIäÖÈ¾
 	virtual void OnImGuiRender() override;
+	void ChangeColor();
+private:
+	float m_Brightness = 4.0f;
 };
 

@@ -27,10 +27,10 @@ float random (vec2 st, float seed)
 {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * (43758.5453123 * seed));
 }
-vec4 RGBAnoise(vec2 uv)
+vec3 RGBAnoise(vec2 uv)
 {
     float seed = fract(u_Time);
-    return vec4(random(uv,seed + 0.1),random(uv,seed + 0.2),random(uv,seed + 0.3),random(uv,seed + 0.4));
+    return vec3(random(uv,seed + 0.1),random(uv,seed + 0.2),random(uv,seed + 0.3));
 }
 vec4 MpegGlitch(vec2 uv)
 {
@@ -63,7 +63,7 @@ vec4 MpegGlitch(vec2 uv)
 
 	// discolor block lines
 	if (RGBAnoise(vec2(uv_noise.y, 0.0)).b * 3.5 < line_thresh)
-		fragColor.rgb = vec3(0.0, dot(fragColor.rgb, vec3(1.0)), 0.0);
+		fragColor.rgb = vec3(dot(fragColor.rgb, vec3(1.0)), 0.0, 0.0);
 
 	// interleave lines in some blocks
 	if (RGBAnoise(uv_noise).g * 1.5 < block_thresh || RGBAnoise(vec2(uv_noise.y, 0.0)).g * 2.5 < line_thresh) 
@@ -86,8 +86,8 @@ void main()
     switch(u_State)
     {
     case 0:FragColor = vec4(vec3(texture(u_Texture0,v_TexCoords).rgb),1.);break;
-    case 1:FragColor = RGBAnoise(v_TexCoords);break;
-	case 2:FragColor = MpegGlitch(v_TexCoords) - RGBAnoise(v_TexCoords)*(0.2 + (1. - u_Rhythm)*0.3);break;
+    case 1:FragColor = vec4(RGBAnoise(v_TexCoords),0.5);break;
+	case 2:FragColor = vec4(MpegGlitch(v_TexCoords).rgb - RGBAnoise(v_TexCoords)*(0.1 + (1. - u_Rhythm)*0.2), 1.0);break;
     }
     
 }

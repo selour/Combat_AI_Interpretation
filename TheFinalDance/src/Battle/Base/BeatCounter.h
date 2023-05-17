@@ -8,7 +8,7 @@ class BeatCounter : public GameObject
 public:
 
 	BeatCounter(int bpm = 100)
-		:m_StartUpFlag(true), m_DelayTime(60.0f/(float)bpm), m_Timer(0)
+		:m_StartUpFlag(false), m_DelayTime(60.0f/(float)bpm), m_Timer(0)
 	{
 	}
 	virtual void Update(float ts) override
@@ -43,9 +43,11 @@ public:
 	void Clear()
 	{
 		m_Timer = 0;
+		m_StartUpFlag = false;
 	}
 	void SetBPM(int bpm)
 	{
+		m_StartUpFlag = true;
 		m_Timer = 0;
 		m_DelayTime = 60.0f / (float)bpm;
 	}

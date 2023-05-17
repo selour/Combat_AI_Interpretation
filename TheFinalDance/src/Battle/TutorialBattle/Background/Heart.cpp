@@ -47,7 +47,7 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(glm::vec3(1.0f) * m_Brightness,1.0f), float(i));
+				Engine::Renderer2D::DrawQuad(m_Part[i].GetMatrix(), glm::vec4(1.0f), float(i));
 			}
 		}
 		Engine::Renderer2D::EndScene();
@@ -58,8 +58,6 @@ void Heart::Render(std::shared_ptr<Engine::Camera> camera)
 
 void Heart::OnImGuiRender()
 {
-	ImGui::Text("Heart:");
-	ImGui::DragFloat("Heart Brightness", &m_Brightness, 0.001f, 0.0f, 5.0f);
 }
 
 void Heart::OnBeat()
@@ -70,6 +68,7 @@ void Heart::OnBeat()
 	}
 	
 }
+
 void Heart::Awake()
 {
 	m_Awake = true;

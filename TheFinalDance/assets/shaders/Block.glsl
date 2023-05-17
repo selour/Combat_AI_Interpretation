@@ -36,7 +36,7 @@ uniform float u_Proportion;
 float RoundRectEdge(vec2 position, vec2 size, float radius)
 {
     float d = length(max(abs(position) - size + radius, 0.0)) - radius;
-    float col = (1.-smoothstep(-.01, 0., d))*smoothstep(-.02, -0.01, d);
+    float col = (1.-smoothstep(-.02, 0., d))*smoothstep(-.04, -0.02, d);
     return col;
 }
 float RoundRectTile(vec2 position, vec2 size, float radius)
