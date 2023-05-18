@@ -24,7 +24,7 @@ void TutorialBattleScene::OnAttach()
 	m_ParticleSystem = std::make_shared<ParticleCompomemt>();
 
 	m_EnemyUI = std::make_shared<TutorialEnemyUI>();
-
+	m_PlayerUI = std::make_shared<TutorialPlayerUI>();
 	
 	m_StagePost = std::make_shared<BrightFBO>();
 	m_UIPost = std::make_shared<BrightFBO>();
@@ -51,7 +51,9 @@ void TutorialBattleScene::OnAttach()
 
 	m_ObjectManager.SetCamera(2, m_CameraLibrary.Get("UI"));
 	m_ObjectManager.SetPost(2, m_UIPost);
+	m_ObjectManager.Add(2, m_PlayerUI);
 	m_ObjectManager.Add(2, m_EnemyUI);
+
 
 	m_ObjectManager.SetPost(3, m_BloomPost);
 	m_ObjectManager.Add(3, m_HeartFBO);
@@ -84,6 +86,7 @@ void TutorialBattleScene::OnAttach()
 	m_Enemy->SetStage(m_Stage);
 	m_Enemy->SetParticleSystem(m_ParticleSystem);
 	m_EnemyUI->SetEnemy(m_Enemy);
+	m_PlayerUI->SetPlayer(m_Player);
 	m_HeartFBO->SetHeart(m_Heart);
 	m_StagePost->SetDepthTest(false);
 

@@ -103,13 +103,23 @@ void TutorialBattleStage::Render(std::shared_ptr<Engine::Camera> camera)
 	auto texture = m_ObjectManager->GetTextureLibrary()->Get("number");
 
 	Engine::Renderer2D::BeginScene(camera, texture, shader);
+
 	for (int i = 0; i < m_Stage.size(); i++)
 	{
 		if (m_Stage[i].Awake)
 		{
 			if (m_Stage[i].Step != 0)
 			{
-				Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(m_Color * m_Brightness,1.0f), -1.0f);
+				if (m_Stage[i].Danger)
+				{
+					glm::vec3 color = { Engine::Random::Float(), Engine::Random::Float(), Engine::Random::Float() };
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -1.0f);
+				}
+				else
+				{
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(m_Color * m_Brightness,1.0f), -1.0f);
+				}
+				
 				if (m_Stage[i].Step <= 9)
 				{
 					Engine::Renderer2D::DrawQuad(m_Stage[i].Number1.GetMatrix(), glm::vec4(m_Color * m_Brightness, 1.0f), m_Stage[i].Step);
@@ -125,7 +135,16 @@ void TutorialBattleStage::Render(std::shared_ptr<Engine::Camera> camera)
 			}
 			else
 			{ 
-				Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(m_Color * m_Brightness, 1.0f), -2.0f);
+				if (m_Stage[i].Danger)
+				{
+					glm::vec3 color = { Engine::Random::Float(), Engine::Random::Float(), Engine::Random::Float() };
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -1.0f);
+				}
+				else
+				{
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(m_Color * m_Brightness, 1.0f), -2.0f);
+				}
+				
 			}
 		}
 

@@ -63,7 +63,7 @@ vec4 MpegGlitch(vec2 uv)
 
 	// discolor block lines
 	if (RGBAnoise(vec2(uv_noise.y, 0.0)).b * 3.5 < line_thresh)
-		fragColor.rgb = vec3(dot(fragColor.rgb, vec3(1.0)), 0.0, 0.0);
+		fragColor.rgb = vec3(0.0, dot(fragColor.rgb, vec3(1.0)), 0.0);
 
 	// interleave lines in some blocks
 	if (RGBAnoise(uv_noise).g * 1.5 < block_thresh || RGBAnoise(vec2(uv_noise.y, 0.0)).g * 2.5 < line_thresh) 

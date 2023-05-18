@@ -90,8 +90,13 @@ void TutorialBattleEnemy::OnImGuiRender()
 
 void TutorialBattleEnemy::HitBind(int step)
 {
-	if(!m_LifeLock)
+	if (!m_LifeLock)
+	{
 		m_Life -= step + 3;
+		if (m_Life < 0)
+			m_Life = 0;
+	}
+		
 }
 
 void TutorialBattleEnemy::Unlock()

@@ -35,7 +35,6 @@ private:
 	Transform m_PointerBloom;
 
 	Transform m_Knob;
-
 	Transform m_Base;
 
 	Transform m_LifeSlot;

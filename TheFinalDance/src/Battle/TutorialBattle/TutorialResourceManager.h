@@ -47,7 +47,7 @@ public:
 		textures->Load("number", "assets/textures/number.png", 10, 1);
 		textures->Load("metronome", "assets/textures/metronome.png", 2, 1);
 		textures->Load("heart", "assets/textures/heart.png", 5, 1);
-		textures->Load("player", "assets/textures/player.png", 3, 1);
+		textures->Load("player", "assets/textures/player.png", 4, 1);
 		textures->Load("dancetime", "assets/textures/DanceTime.png", 2, 1);
 
 		textures->Load("metronome_ui", "assets/textures/metronome_ui.png", 3, 3);

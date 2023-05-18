@@ -143,7 +143,7 @@ void TutorialEnemyUI::Render(std::shared_ptr<Engine::Camera> camera)
 	Engine::RendererCommand::SetStencilFunc(ALWAYS, 1, 0xFF);
 	Engine::RendererCommand::SetStencilMask(0xFF);
 	Engine::Renderer2D::BeginScene(camera);
-	Engine::Renderer2D::DrawQuad(m_Background.GetMatrix(), glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+	Engine::Renderer2D::DrawQuad(m_Background.GetMatrix(), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	Engine::Renderer2D::EndScene();
 
 	
@@ -180,7 +180,6 @@ void TutorialEnemyUI::Render(std::shared_ptr<Engine::Camera> camera)
 		for (int i = 0; i < m_SlotNumber ; i++)
 		{
 			Engine::Renderer2D::DrawQuad(m_Slot[i].GetMatrix(), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-
 		}
 
 		Engine::Renderer2D::EndScene();

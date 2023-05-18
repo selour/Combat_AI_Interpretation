@@ -100,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialDangerControl.cpp" />
     <ClCompile Include="src\Core\BrightFBO.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Background\HeartFBO.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Background\Heart.cpp" />
@@ -117,10 +118,13 @@
     <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\TutorialPost.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\UI\TutorialEnemyUI.cpp" />
+    <ClCompile Include="src\Battle\TutorialBattle\UI\TutorialPlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialDangerControl.h" />
     <ClInclude Include="src\Battle\Base\BattleEnemy.h" />
     <ClInclude Include="src\Battle\Base\BattleUI.h" />
+    <ClInclude Include="src\Battle\Base\BlockDanger.h" />
     <ClInclude Include="src\Battle\Base\ParticleComponent.h" />
     <ClInclude Include="src\Battle\Base\PlayerUI.h" />
     <ClInclude Include="src\Core\BrightFBO.h" />
@@ -151,6 +155,7 @@
     <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.h" />
     <ClInclude Include="src\Battle\TutorialBattle\TutorialPost.h" />
     <ClInclude Include="src\Battle\TutorialBattle\UI\TutorialEnemyUI.h" />
+    <ClInclude Include="src\Battle\TutorialBattle\UI\TutorialPlayerUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

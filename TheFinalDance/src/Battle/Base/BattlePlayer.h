@@ -10,7 +10,6 @@ class BattlePlayer : public GameObject
 public:
 	BattlePlayer()
 	{
-
 	}
 	enum PlayerState
 	{
@@ -61,6 +60,18 @@ public:
 	{
 		m_Step = 0;
 		m_Stage->ClearStep();
+	}
+	void LostCombo()
+	{
+		m_ComboCount = 0;
+	}
+	int GetLife()
+	{
+		return m_Life;
+	}
+	int GetComboCount()
+	{
+		return m_ComboCount;
 	}
 protected:
 	
@@ -321,6 +332,12 @@ protected:
 	}
 	virtual void MoveBind(){}
 	virtual void ErrorBind(){}
+
+	int m_Life = 8;
+	int m_ComboCount = 0;
+
+
+
 	float m_Time = 0.0f;
 	bool m_Enable = true;
 	GameTimer m_EnableFlag;
@@ -348,6 +365,9 @@ protected:
 	std::shared_ptr<BattleEnemy> m_Enemy;
 	std::shared_ptr<BattleStage> m_Stage;
 	std::shared_ptr<ParticleCompomemt> m_ParticleSystem;
+
+
+
 private:
 	
 	void MoveTo(MoveForward forward)
@@ -372,6 +392,11 @@ private:
 		//m_Stage->ClearStep();
 		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("error"));
 	}
+	void ComboCount()
+	{
+		m_ComboCount += m_Step;
+	}
+	
 	void OnBeat()
 	{
 		m_MoveFlag.SetTime(m_BeatTime - m_OffsetTime);
@@ -388,15 +413,18 @@ private:
 		{
 			if (m_Enemy->OnHit(m_Step))
 			{
+				ComboCount();
 				SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("clap"));
 			}
 			else
 			{
+				LostCombo();
 				SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("solid"));
 			}
 		}
 		else
 		{
+			LostCombo();
 			SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("swoosh"));
 		}
 		m_Step = 0;

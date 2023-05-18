@@ -13,6 +13,7 @@
 #include "Main/TutorialBattleEnemy.h"
 #include "Main/TutorialBattlePlayer.h"
 #include "UI/TutorialEnemyUI.h"
+#include "UI/TutorialPlayerUI.h"
 #include "Logic/TutorialBattleControl.h"
 
 #include "TutorialPost.h"
@@ -70,7 +71,7 @@ private:
 	std::shared_ptr<BeatCounter> m_BeatCounter;
 	std::shared_ptr<TutorialBattleControl> m_Control;
 	std::shared_ptr<TutorialEnemyUI> m_EnemyUI;
-
+	std::shared_ptr<TutorialPlayerUI> m_PlayerUI;
 
 
 };

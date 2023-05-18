@@ -17,6 +17,7 @@ void TutorialBattlePlayer::Render(std::shared_ptr<Engine::Camera> camera)
 void TutorialBattlePlayer::OnImGuiRender()
 {
 	ImGui::Text("Player:");
+	ImGui::Text("Combo: %d", m_ComboCount);
 	ImGui::DragFloat("PlayerBrightness", &m_Brightness, 0.001f, 0.0f, 5.0f);
 }
 
