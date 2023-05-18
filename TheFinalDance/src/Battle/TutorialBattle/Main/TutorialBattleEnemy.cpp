@@ -67,6 +67,7 @@ void TutorialBattleEnemy::Render(std::shared_ptr<Engine::Camera> camera)
 
 void TutorialBattleEnemy::OnImGuiRender()
 {
+	ImGui::Text("EnemyLife: %d", m_Life);
 	ImGui::Text("BeatTipPool:");
 	for (int i = 0; i < m_BeatTips.size(); i++)
 	{

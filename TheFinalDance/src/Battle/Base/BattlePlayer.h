@@ -376,8 +376,7 @@ private:
 	{
 		m_MoveFlag.SetTime(m_BeatTime - m_OffsetTime);
 		m_State = Beat;
-		m_Step = 0;
-		m_Stage->ClearStep();
+		
 		m_ParticleSystem->EmitParticle(10 ,m_Position, m_Color);
 		StageBlock* boss = m_Enemy->GetBlock();
 		if (boss == m_Stage->GetBlock(m_Current)->Link[0] || boss == m_Stage->GetBlock(m_Current)->Link[1] ||
@@ -400,6 +399,8 @@ private:
 		{
 			SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("swoosh"));
 		}
+		m_Step = 0;
+		m_Stage->ClearStep();
 		
 	}
 	

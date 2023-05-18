@@ -22,8 +22,6 @@ public:
 
 
 	void StartShow();
-	void Start();
-	void Phase1();
 
 
 	void SetEnemyUI(std::shared_ptr<TutorialEnemyUI> enemyUI);

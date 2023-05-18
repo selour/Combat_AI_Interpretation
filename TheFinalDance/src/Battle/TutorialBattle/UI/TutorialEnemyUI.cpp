@@ -114,7 +114,9 @@ void TutorialEnemyUI::Update(float ts)
 	}
 	if (m_Awake)
 	{
-		m_SlotNumber = m_Enemy->GetLife() / 5;
+		int life = m_Enemy->GetLife();
+		m_SlotNumber = life / 5;
+		m_topAlpha = (float)(life % 5) / 5.0f;
 	}
 	
 	if (m_Metronome)
@@ -175,11 +177,11 @@ void TutorialEnemyUI::Render(std::shared_ptr<Engine::Camera> camera)
 		
 		Engine::Renderer2D::BeginScene(camera);
 
-			for (int i = 0; i < m_SlotNumber ; i++)
-			{
-				Engine::Renderer2D::DrawQuad(m_Slot[i].GetMatrix(), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+		for (int i = 0; i < m_SlotNumber ; i++)
+		{
+			Engine::Renderer2D::DrawQuad(m_Slot[i].GetMatrix(), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 
-			}
+		}
 
 		Engine::Renderer2D::EndScene();
 		 
@@ -200,17 +202,21 @@ void TutorialEnemyUI::Render(std::shared_ptr<Engine::Camera> camera)
 
 		Engine::Renderer2D::BeginScene(camera, texture);
 
-		Engine::Renderer2D::DrawQuad(m_Frame.GetMatrix(), glm::vec4(1.0f), 6.0f);
+		Engine::Renderer2D::DrawQuad(m_Frame.GetMatrix(), glm::vec4(1.0f), 7.0f);
 
 		Engine::Renderer2D::EndScene();
 
 
 		Engine::Renderer2D::BeginScene(camera);
 
-		for (int i = 0; i < m_SlotNumber; i++)
+		for (int i = 0; i < m_SlotNumber ; i++)
 		{
-			Engine::Renderer2D::DrawQuad(m_Slot[i].GetMatrix(), glm::vec4(5.0f, 0.0f, 0.0f, 1.0f));
+			Engine::Renderer2D::DrawQuad(m_Slot[i].GetMatrix(), glm::vec4(2.0f, 0.0f, 0.0f, 1.0f));
 
+		}
+		if (m_topAlpha != 0.0f)
+		{
+			Engine::Renderer2D::DrawQuad(m_Slot[m_SlotNumber].GetMatrix(), glm::vec4(2.0f, 0.0f, 0.0f, m_topAlpha));
 		}
 
 		Engine::Renderer2D::EndScene();

@@ -18,7 +18,9 @@ public:
 	virtual void OnImGuiRender() override;
 
 	void Awake();
+
 	void SetEnemy(std::shared_ptr<TutorialBattleEnemy> enemy);
+
 	void OnBeat();
 	void OnWait();
 	void StartShow();
@@ -39,6 +41,7 @@ private:
 	Transform m_LifeSlot;
 	Transform m_Slot[20];
 	int m_SlotNumber = 0;
+	float m_topAlpha = 0;
 	
 	bool m_Awake = false;
 	bool m_Wait = false;

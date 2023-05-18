@@ -5,7 +5,7 @@
 
 extern Engine::Application* Engine::CreateApp();
 
-#pragma comment(lib, "imm32.lib")
+
 
 int main(int argc, char** argv)
 {

@@ -26,13 +26,14 @@ uniform sampler2D u_Texture0;
 void main()
 {
 		
-		vec3 outColor = texture(u_Texture0, v_TexCoords).rgb;
 		FragColor = texture(u_Texture0,v_TexCoords);
 
-		vec3 vector1 = outColor;
-		vec3 vector2 = vec3(0.2126, 0.7152, 0.0722);
+
+		float R = FragColor.r;
+		float G = FragColor.g;
+		float B = FragColor.b;
 		
-		float brightness = dot(vector1, vector2);
+		float brightness = sqrt(0.299 * R * R + 0.587 * G * G + 0.114 * B * B);
 		//brightness = max(brightness, 5.0);
 		
 		// so this should never execute since dot is 1.0

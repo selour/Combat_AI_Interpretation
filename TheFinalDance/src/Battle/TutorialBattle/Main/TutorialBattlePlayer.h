@@ -15,6 +15,6 @@ public:
 	virtual void OnImGuiRender() override;
 	void ChangeColor();
 private:
-	float m_Brightness = 4.0f;
+	float m_Brightness = 2.0f;
 };
 

@@ -5,6 +5,12 @@
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Core/Random.h"
 #include "PlatformCommand.h"
+
+#ifdef _DEBUG
+	#define DEBUG_UI layer->OnImGuiRender();
+#else
+	#define DEBUG_UI
+#endif
 namespace Engine
 {
 
@@ -49,9 +55,11 @@ namespace Engine
 			}
 			m_ImGuiLayer->Begin();
 
+
+
 			for (Layer* layer : m_LayerStack)
 			{
-				layer->OnImGuiRender();
+				DEBUG_UI
 			}
 			m_ImGuiLayer->End();
 

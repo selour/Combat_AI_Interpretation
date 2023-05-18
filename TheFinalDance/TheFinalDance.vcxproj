@@ -122,6 +122,7 @@
     <ClInclude Include="src\Battle\Base\BattleEnemy.h" />
     <ClInclude Include="src\Battle\Base\BattleUI.h" />
     <ClInclude Include="src\Battle\Base\ParticleComponent.h" />
+    <ClInclude Include="src\Battle\Base\PlayerUI.h" />
     <ClInclude Include="src\Core\BrightFBO.h" />
     <ClInclude Include="src\Battle\Base\BattlePlayer.h" />
     <ClInclude Include="src\Core\GenericFBO.h" />
