@@ -12,9 +12,10 @@
 #include "Main/TutorialBattleStage.h"
 #include "Main/TutorialBattleEnemy.h"
 #include "Main/TutorialBattlePlayer.h"
+#include "Main/TutorialDangerControl.h"
 #include "UI/TutorialEnemyUI.h"
 #include "UI/TutorialPlayerUI.h"
-#include "Logic/TutorialBattleControl.h"
+//#include "Logic/TutorialBattleControl.h"
 
 #include "TutorialPost.h"
 #include "TutorialResourceManager.h"
@@ -40,10 +41,23 @@ public:
 
 	virtual void OnImGuiRender() override;
 	
-
+	
 
 private:
+	void UpdateState(float ts);
+	void CheckWinOrLost();
+	void StartShow();
+	void EndShow();
 	float m_Time = 0;
+	
+	int m_State = 0;
+	int m_Bpm = 100;
+	int m_Count = 0;
+	GameTimer m_Awake;
+	GameTimer m_Beat;
+
+
+
 	TutorialResourceManager m_ResourceManager;
 
 	ObjectManager m_ObjectManager;
@@ -56,6 +70,7 @@ private:
 	std::shared_ptr<TutorialBattleStage> m_Stage;
 	std::shared_ptr<TutorialBattlePlayer> m_Player;
 	std::shared_ptr<TutorialBattleEnemy> m_Enemy;
+	std::shared_ptr<TutorialDangerControl> m_Danger;
 	
 	std::shared_ptr<ParticleCompomemt> m_ParticleSystem;
 
@@ -69,7 +84,7 @@ private:
 
 
 	std::shared_ptr<BeatCounter> m_BeatCounter;
-	std::shared_ptr<TutorialBattleControl> m_Control;
+	//std::shared_ptr<TutorialBattleControl> m_Control;
 	std::shared_ptr<TutorialEnemyUI> m_EnemyUI;
 	std::shared_ptr<TutorialPlayerUI> m_PlayerUI;
 

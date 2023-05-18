@@ -32,7 +32,12 @@ in float v_Alpha;
 
 uniform sampler2DArray u_Texture0;
 uniform float u_Proportion;
+uniform float u_Beat;
 uniform float u_Hit;
+
+float noise1d(float v){
+    return cos(v + cos(v * 90.1415) * 100.1415) * 0.5 + 0.5;
+}
 vec2 hash( vec2 x )
 {
     const vec2 k = vec2( 0.3183099, 0.3678794 );
@@ -93,17 +98,25 @@ void main()
     float outAlpha = 0.0;
     switch(int(v_TexCoord.z))
     {
-    case -2: 
-        outAlpha = beatCircle(uv, 1.-u_Proportion);
-        outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
-        break;
-    case -1:
-        outAlpha = determineCircle(uv) * 2;
-        outColor = vec4(v_Color.rgb, outAlpha * v_Alpha);
-        break;
     case 0:
-        uv.y += u_Hit*0.01;
-        outColor = vec4(mix(texture(u_Texture0, v_TexCoord).rgb, vec3(1.0f), u_Hit).rgb, texture(u_Texture0, v_TexCoord).a)* vec4(v_Color, v_Alpha);
+        float alpha = texture(u_Texture0, v_TexCoord).a *v_Alpha;
+		if( alpha < 0.1)
+			discard;
+        if(u_Hit == -1.0)
+        {
+            outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color.rgb, v_Alpha);
+        }
+        else
+		{
+			if(noise1d(u_Hit)>0.5)
+			{
+				outColor = vec4(vec3(v_Color.rgb),alpha);
+			}
+			else
+			{
+				outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color.rgb, v_Alpha);
+			}
+		}
         break;
     case 1:
         outColor = texture(u_Texture0, v_TexCoord) * vec4(v_Color, v_Alpha);
@@ -116,7 +129,7 @@ void main()
         outColor = vec4(v_Color.rgb,outAlpha * v_Alpha);
         break;
     case 4:
-        outAlpha = FinalBeat(uv, u_Proportion);
+        outAlpha = FinalBeat(uv, u_Beat);
         outColor = vec4(v_Color.rgb,outAlpha * v_Alpha);
         break;
         

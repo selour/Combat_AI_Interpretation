@@ -44,27 +44,8 @@ void TutorialBattleStage::Init()
 			m_Stage[j * 7 + i].Step = 0;
 			m_Stage[j * 7 + i].Occupy = false;
 			m_Stage[j * 7 + i].Danger = false;
-			m_Stage[j * 7 + i].Awake = i == 3 && j >= 2 && j <= 3;
+			m_Stage[j * 7 + i].Awake = i == 3 && (j == 2 || j == 3);
 				
-		
-			
-			
-			if (i > 0)
-			{
-				m_Stage[j * 7 + i].Link[2] = &m_Stage[j * 7 + i - 1];
-			}
-			if (i < 6)
-			{
-				m_Stage[j * 7 + i].Link[3] = &m_Stage[j * 7 + i + 1];
-			}
-			if (j > 0)
-			{
-				m_Stage[j * 7 + i].Link[1] = &m_Stage[j * 7 + i - 7];
-			}
-			if (j < 6)
-			{
-				m_Stage[j * 7 + i].Link[0] = &m_Stage[j * 7 + i + 7];
-			}
 		}
 	}
 }
@@ -112,8 +93,8 @@ void TutorialBattleStage::Render(std::shared_ptr<Engine::Camera> camera)
 			{
 				if (m_Stage[i].Danger)
 				{
-					glm::vec3 color = { Engine::Random::Float(), Engine::Random::Float(), Engine::Random::Float() };
-					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -1.0f);
+					glm::vec3 color = { Engine::Random::Float() * 5.0f , Engine::Random::Float() * 5.0f, Engine::Random::Float() * 5.0f };
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -3.0f);
 				}
 				else
 				{
@@ -137,8 +118,8 @@ void TutorialBattleStage::Render(std::shared_ptr<Engine::Camera> camera)
 			{ 
 				if (m_Stage[i].Danger)
 				{
-					glm::vec3 color = { Engine::Random::Float(), Engine::Random::Float(), Engine::Random::Float() };
-					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -1.0f);
+					glm::vec3 color = { Engine::Random::Float() * 5.0f , Engine::Random::Float() * 5.0f, Engine::Random::Float() * 5.0f };
+					Engine::Renderer2D::DrawQuad(m_Stage[i].Postion.GetMatrix(), glm::vec4(color * m_Brightness, 1.0f), -3.0f);
 				}
 				else
 				{

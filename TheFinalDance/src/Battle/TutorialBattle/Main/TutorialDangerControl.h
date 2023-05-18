@@ -2,7 +2,7 @@
 #include "Core/ObjectManager.h"
 #include "Core/GameTimer.h"
 #include "Battle/Base/BlockDanger.h"
-class TutorialDangerControl : public GameObject
+class TutorialDangerControl : public BlocKDangerSystem
 {
 public:
 	TutorialDangerControl();
@@ -17,8 +17,18 @@ public:
 	virtual void Render(std::shared_ptr<Engine::Camera> camera) override;
 	//µ˜ ‘UI‰÷»æ
 	virtual void OnImGuiRender() override;
+	bool IsActive();
+	void Active();
+	void End();
 private:
+	int m_BPM = 100;
+	int m_Count = 0;
+	//-------------------
+	//       [0]
+	//    [2]   [3]
+	//       [1]
+	//---------------------
+	int m_RandomMode = 0;
 	GameTimer m_Timer;
-	BlocKDangerSystem m_Danger;
 };
 

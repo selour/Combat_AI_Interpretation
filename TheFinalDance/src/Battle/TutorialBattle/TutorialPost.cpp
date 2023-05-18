@@ -34,8 +34,8 @@ void TutorialPost::Render(std::shared_ptr<Engine::Camera> camera)
 	auto shader = m_ObjectManager->GetShaderLibrary()->Get("Post");
 	shader->SetFloat("u_Time", m_Time, true);
 	shader->SetVector2f("u_Resolution", glm::vec2(1280.0f, 720.0f));
-	shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
 
+	shader->SetFloat("u_Rhythm", sin(glm::radians(m_Rhythm.GetProportion() * 180.0f)));
 	if (m_Noise)
 	{
 		shader->SetInteger("u_State", 1);
@@ -52,6 +52,7 @@ void TutorialPost::Render(std::shared_ptr<Engine::Camera> camera)
 		}
 
 	}
+	
 	Engine::RendererPostProcessing::Draw(m_FBO, shader);
 }
 

@@ -32,6 +32,10 @@ public:
 	{
 		m_Awake = true;
 	}
+	void End()
+	{
+		m_Noise.SetTime(5.0f);
+	}
 private:
 	float m_Time = 0;
 	bool m_Awake = false;

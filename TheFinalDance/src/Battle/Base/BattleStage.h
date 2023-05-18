@@ -52,6 +52,15 @@ public:
 			m_Stage[i].Step = 0;
 		}
 	}
+	void Clear()
+	{
+		for (unsigned int i = 0; i < m_Stage.size(); i++)
+		{
+			m_Stage[i].Awake = 0;
+			m_Stage[i].Danger = 0;
+			m_Stage[i].Step = 0;
+		}
+	}
 	StageBlock* GetBlock(int index)
 	{
 		if (index < m_Stage.size() && index >= 0)

@@ -8,6 +8,7 @@ public:
 		auto shaders = GetShaderLibrary();
 		auto soundSources = GetSoundSourceLibrary();
 		auto textures = GetTextureLibrary();
+
 		shaders->Load("BeatShader", "assets/shaders/BeatShader.glsl");
 		shaders->Load("BeatTip", "assets/shaders/BeatTip.glsl");
 		shaders->Load("Enemy", "assets/shaders/Enemy.glsl");
@@ -24,6 +25,7 @@ public:
 
 		soundSources->Load("tutorial_metronome_start", "assets/audio/tutorial_metronome/tutorial_metronome_start.wav");
 		soundSources->Load("tutorial_metronome_loop", "assets/audio/tutorial_metronome/tutorial_metronome_loop.wav");
+		soundSources->Load("tutorial_metronome_loop2", "assets/audio/tutorial_metronome/tutorial_metronome_loop2.wav");
 		soundSources->Load("tutorial_startup", "assets/audio/tutorial_metronome/tutorial_startup.wav");
 		soundSources->Load("white_noise", "assets/audio/tutorial_metronome/white_noise.wav");
 		soundSources->Load("brick", "assets/audio/tutorial_metronome/brick.wav");
@@ -33,6 +35,7 @@ public:
 		soundSources->Load("ddddance", "assets/audio/ddddance_time.wav");
 		soundSources->Load("hat", "assets/audio/hat.wav");
 		soundSources->Load("clap", "assets/audio/clap.wav");
+		soundSources->Load("break", "assets/audio/break.wav");
 		soundSources->Load("swoosh", "assets/audio/swoosh.wav");
 		soundSources->Load("solid", "assets/audio/solid.wav");
 		soundSources->Load("error", "assets/audio/error.wav");
@@ -49,7 +52,7 @@ public:
 		textures->Load("heart", "assets/textures/heart.png", 5, 1);
 		textures->Load("player", "assets/textures/player.png", 4, 1);
 		textures->Load("dancetime", "assets/textures/DanceTime.png", 2, 1);
-
+		textures->Load("danger", "assets/textures/danger.png", 1, 1);
 		textures->Load("metronome_ui", "assets/textures/metronome_ui.png", 3, 3);
 	}
 };

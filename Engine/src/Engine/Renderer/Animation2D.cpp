@@ -42,10 +42,16 @@ namespace Engine
 			m_Playtime.push_back(playtime);
 		}
 	}
+
 	void Animation2D::pushBackFrame(float texCoordZs, float playtime)
 	{
 		m_TexCoordZs.push_back(texCoordZs);
 		m_Playtime.push_back(playtime);
+	}
+	void Animation2D::Play()
+	{
+		m_Play = true;
+		m_Time = 0;
 	}
 	void Animation2D::Reset()
 	{

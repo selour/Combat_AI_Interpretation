@@ -52,7 +52,7 @@ public:
 	}
 	void OnWait()
 	{
-		m_MoveFlag.SetTime(m_MoveTime - m_OffsetTime);
+		m_CoolDown.SetTime(m_CoolDownTime - m_OffsetTime);
 		m_State = Wait;
 		m_WaitInput = None;
 	}
@@ -73,6 +73,13 @@ public:
 	{
 		return m_ComboCount;
 	}
+	void OnHit()
+	{
+		m_Life -= 1;
+		m_HitFlag.SetTime(m_HitTime);
+		LostCombo();
+		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("break"));
+	}
 protected:
 	
 	void OnRender(std::shared_ptr<Engine::Camera> camera)
@@ -82,11 +89,18 @@ protected:
 		float size = 1.0f;
 		
 		Engine::Renderer2D::BeginScene(camera, texuture, shader);
-		shader->SetFloat("u_Proportion", m_MoveFlag.GetProportion());
-		shader->SetFloat("u_Hit", 0.0f);
+		shader->SetFloat("u_Proportion", m_CoolDown.GetProportion());
+		shader->SetFloat("u_Beat", m_MoveFlag);
+		if (m_HitFlag.GetFlag())
+		{
+			shader->SetFloat("u_Hit", m_HitFlag.GetProportion());
+		}
+		else
+		{
+			shader->SetFloat("u_Hit", -1.0f);
+		}
 		if(m_Enable)
 			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(3.0f), 0, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f);
-		
 		
 		//жуд╘ед
 		if (m_State == Beat)
@@ -116,39 +130,45 @@ protected:
 		m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion();
 		m_MoveFlag.Update(ts);
 		m_ErrorFlag.Update(ts);
+		m_CoolDown.Update(ts);
+		m_HitFlag.Update(ts);
 		m_Time += ts;
+		CheckHit();
+		switch (m_State)
+		{
+		case Move:
+			if (m_MoveFlag.IsTimeOut())
+			{
+				m_Stage->GetBlock(m_Current)->Occupy = false;
+				m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion();
+				m_Current = m_Next;
+			}
+			if (m_CoolDown.IsTimeOut())
+			{
+				
+				
+				m_State = Free;
+			}
+			else
+			{
+				m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion() + m_MoveFlag.GetProportion() * (m_Stage->GetBlock(m_Next)->Postion.GetPostion() - m_Stage->GetBlock(m_Current)->Postion.GetPostion());
+			}
+			break;
+		case Beat:
+			if (m_CoolDown.IsTimeOut())
+			{
+				m_State = Free;
+			}
+			break;
+		case Wait:
+			if (m_CoolDown.IsTimeOut())
+			{
+				PlayerWaitInput();
+			}
+			break;
+		}
 		if (m_Enable)
 		{
-			
-			
-			switch (m_State)
-			{
-			case Move:
-				if (m_MoveFlag.IsTimeOut())
-				{
-					m_Stage->GetBlock(m_Current)->Occupy = false;
-					m_Current = m_Next;
-					m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion();
-					m_State = Free;
-				}
-				else
-				{
-					m_Position = m_Stage->GetBlock(m_Current)->Postion.GetPostion() + m_MoveFlag.GetProportion() * (m_Stage->GetBlock(m_Next)->Postion.GetPostion() - m_Stage->GetBlock(m_Current)->Postion.GetPostion());
-				}
-				break;
-			case Beat:
-				if (m_MoveFlag.IsTimeOut())
-				{
-					m_State = Free;
-				}
-				break;
-			case Wait:
-				if (m_MoveFlag.IsTimeOut())
-				{
-					PlayerWaitInput();
-				}
-				break;
-			}
 			PlayerControl();
 		}
 	}
@@ -349,15 +369,19 @@ protected:
 	
 
 	int m_Step = 0;
-	float m_OffsetTime = 0.05f;
+	
 
 
 	GameTimer m_MoveFlag;
-	float m_MoveTime = 60.0f / 100.0f;
-	float m_BeatTime = 60.0f / 400.0f;
+	GameTimer m_CoolDown;
+	float m_CoolDownTime = 60.0f / 100.0f;
+	float m_OffsetTime = 60.0f / 100.0f / 8.0f;
+
 	GameTimer m_ErrorFlag;
-	float m_ErrorTime = 60.0f / 200.0f;
 	glm::vec2 m_ErrorDirection = { 0.0f, 0.0f };
+
+	GameTimer m_HitFlag;
+	float m_HitTime = 60.0f / 100.0f * 4.0f;
 
 	int m_Current = -1;;
 	int  m_Next = -1;
@@ -374,7 +398,8 @@ private:
 	{
 		m_Next = m_Stage->GetBlock(m_Current)->Link[(int)forward]->Index;
 		m_Stage->GetBlock(m_Next)->Occupy = true;
-		m_MoveFlag.SetTime(m_MoveTime - m_OffsetTime);
+		m_MoveFlag.SetTime(m_CoolDownTime / 4.0f);
+		m_CoolDown.SetTime(m_CoolDownTime - m_OffsetTime);
 		m_State = Move;
 		m_ParticleSystem->EmitParticle(3, m_Position, glm::vec3(1.0f));
 		if (m_Stage->GetBlock(m_Current)->Step == 0)
@@ -387,7 +412,7 @@ private:
 	void MoveError(const glm::vec2 direction)
 	{
 		m_ErrorDirection = direction;
-		m_ErrorFlag.SetTime(m_ErrorTime);
+		m_ErrorFlag.SetTime(m_CoolDownTime / 2.0f);
 		//m_Step = 0;
 		//m_Stage->ClearStep();
 		SoundEngine::Play2D(m_ObjectManager->GetSoundSourceLibrary()->Get("error"));
@@ -396,10 +421,32 @@ private:
 	{
 		m_ComboCount += m_Step;
 	}
-	
+	void CheckHit()
+	{
+		if (!m_HitFlag)
+		{
+			if (m_State == Move)
+			{
+				if (m_Stage->GetBlock(m_Current)->Danger|| m_Stage->GetBlock(m_Next)->Danger)
+				{
+					OnHit();
+				}
+			}
+			else
+			{
+				if (m_Stage->GetBlock(m_Current)->Danger)
+				{
+					OnHit();
+				}
+			}
+			
+		}
+		
+	}
 	void OnBeat()
 	{
-		m_MoveFlag.SetTime(m_BeatTime - m_OffsetTime);
+		m_MoveFlag.SetTime(m_CoolDownTime / 4.0f);
+		m_CoolDown.SetTime(m_CoolDownTime - m_OffsetTime);
 		m_State = Beat;
 		
 		m_ParticleSystem->EmitParticle(10 ,m_Position, m_Color);

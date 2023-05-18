@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "Core/Scene.h"
+#include "Battle/BattleScene.h"
 class GameLayer :public Engine::Layer
 {
 public:
@@ -18,6 +19,7 @@ protected:
 	void LayerPopOverScene(Scene* scene);
 private:
 	int m_FPS = 0;
+	Scene* m_BattleScene = nullptr;
 	SceneStack m_SceneStack;
 
 };

@@ -1,11 +1,10 @@
 #include "GameLayer.h"
 #include "imgui.h"
 #include "TestScene.h"
-#include "Battle/BattleScene.h"
+#include "MapSence.h"
 void GameLayer::OnAttach()
 {
-	LayerPushScene(new TestScene());
-	LayerPushScene(new TutorialBattleScene());
+	LayerPushScene(new MapScene());
 }
 
 void GameLayer::OnDetach()
@@ -15,6 +14,25 @@ void GameLayer::OnDetach()
 void GameLayer::OnUpdate(Engine::TimeStep ts)
 {
 	m_FPS = int(1.0f / ts);
+
+
+	if (GlobalFlag::ShouldInBattle())
+	{
+		m_BattleScene = new TutorialBattleScene();
+		LayerPushScene(m_BattleScene);
+		GlobalFlag::SetShouldInBattle(false);
+		GlobalFlag::SetInBattle(true);
+	}
+	if (GlobalFlag::ShouldExitBattle())
+	{
+		LayerPopScene(m_BattleScene);
+		delete m_BattleScene;
+		GlobalFlag::SetInBattle(false);
+		GlobalFlag::SetShouldExitBattle(false);
+		
+	}
+		
+
 
 	for (Scene* scene : m_SceneStack)
 	{
@@ -31,6 +49,7 @@ void GameLayer::OnImGuiRender()
 {
 	ImGui::Begin("GameLayer");
 	ImGui::Text("%dFPS", m_FPS);
+	ImGui::Text("InBattle:%d", GlobalFlag::InBattle());
 	ImGui::End();
 	for (Scene* scene : m_SceneStack)
 	{

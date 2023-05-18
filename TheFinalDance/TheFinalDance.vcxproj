@@ -100,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\MapSence.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialDangerControl.cpp" />
     <ClCompile Include="src\Core\BrightFBO.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Background\HeartFBO.cpp" />
@@ -110,10 +111,10 @@
     <ClCompile Include="src\Core\Bloom.cpp" />
     <ClCompile Include="src\Core\GameInput.cpp" />
     <ClCompile Include="src\Core\GameLayer.cpp" />
+    <ClCompile Include="src\Core\GlobalFlag.cpp" />
     <ClCompile Include="src\Core\ObjectManager.cpp" />
     <ClCompile Include="src\Core\Scene.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattlePlayer.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.cpp" />
     <ClCompile Include="src\Battle\TutorialBattle\TutorialPost.cpp" />
@@ -121,6 +122,8 @@
     <ClCompile Include="src\Battle\TutorialBattle\UI\TutorialPlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\MapSence.h" />
+    <ClInclude Include="src\Core\GlobalFlag.h" />
     <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialDangerControl.h" />
     <ClInclude Include="src\Battle\Base\BattleEnemy.h" />
     <ClInclude Include="src\Battle\Base\BattleUI.h" />
@@ -149,7 +152,6 @@
     <ClInclude Include="src\Core\Scene.h" />
     <ClInclude Include="src\Core\Transform.h" />
     <ClInclude Include="src\Core\TestScene.h" />
-    <ClInclude Include="src\Battle\TutorialBattle\Logic\TutorialBattleControl.h" />
     <ClInclude Include="src\Core\Object.h" />
     <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattlePlayer.h" />
     <ClInclude Include="src\Battle\TutorialBattle\Main\TutorialBattleEnemy.h" />

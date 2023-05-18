@@ -1,4 +1,5 @@
 #pragma once
+#include "Core\ObjectManager.h"
 #include "BattleStage.h"
 
 struct BlockDanger
@@ -8,14 +9,20 @@ struct BlockDanger
 	float Time = 0;
 };
 
-class BlocKDangerSystem
+class BlocKDangerSystem : public GameObject
 {
 public:
 	BlocKDangerSystem(unsigned int size = 50)
 	{
 		m_Dangers.resize(size);
 	}
-	void Update(float ts)
+	void SetStage(std::shared_ptr<BattleStage> stage)
+	{
+		m_Stage = stage;
+	}
+protected:
+
+	void OnUpdate(float ts)
 	{
 		for (int i = 0; i < m_Dangers.size(); i++)
 		{
@@ -31,7 +38,14 @@ public:
 			
 		}
 	}
+	void Clear()
+	{
+		for (int i = 0; i < m_Dangers.size(); i++)
+		{
+			m_Dangers[i].Awake = false;
 
+		}
+	}
 	void Submit(int index, float time)
 	{
 		m_Dangers[index].Awake = true;
@@ -41,9 +55,10 @@ public:
 		m_Index++;
 		m_Index %= m_Dangers.size();
 	}
-
+	
+	std::shared_ptr<BattleStage> m_Stage;
 private:
 	int m_Index = 0;
 	std::vector<BlockDanger> m_Dangers;
-	std::shared_ptr<BattleStage> m_Stage;
+	
 };

@@ -11,8 +11,7 @@ SoundSource::SoundSource(const char* path)
 
 SoundSource::~SoundSource()
 {
-	m_SoundSource->drop();
-	
+	SoundEngine::s_SoundEngine->removeSoundSource(m_SoundSource);
 }
 
 void SoundSource::SetVolume(float value)

@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine.h"
+#include "GlobalFlag.h"
 enum InputType
 {
 	InteractiveKey = 0, UpKey = 1, DownKey = 2, LeftKey = 3, RightKey = 4, None = 5

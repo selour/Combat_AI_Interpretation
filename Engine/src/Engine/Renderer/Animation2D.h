@@ -15,7 +15,7 @@ namespace Engine
 
 		void AutoGenerateFrames(float offset, float playtime);
 		void pushBackFrame(float texCoordZs, float playtime);
-
+		void Play();
 		const float GetTexCoordZs() const { return m_TexCoordZs[m_index]; }
 
 		void SetLoop(bool loop) { m_Loop = loop; }

@@ -47,15 +47,22 @@ public:
 	{
 		s_SoundEngine->stopAllSounds();
 	}
+	inline static void StopAllSound(std::shared_ptr<SoundSource> soundSource)
+	{
+		s_SoundEngine->stopAllSoundsOfSoundSource(soundSource->GetSoundSource());
+	}
 	inline static void SetAllSoundsPaused(bool puased)
 	{
 		s_SoundEngine->setAllSoundsPaused(puased);
 
 	}
+protected:
 	
+	static ISoundEngine* s_SoundEngine;
 private:
+	
 	SoundEngine()
 	{
 	}
-	static ISoundEngine* s_SoundEngine;
+	
 };
