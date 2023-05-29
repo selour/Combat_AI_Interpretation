@@ -281,8 +281,6 @@ protected:
 					}
 				}
 			}
-
-
 		}
 	}
 	void PlayerWaitInput()
@@ -360,7 +358,6 @@ protected:
 
 	float m_Time = 0.0f;
 	bool m_Enable = true;
-	GameTimer m_EnableFlag;
 	PlayerState m_State = Free;
 	InputType m_WaitInput = None;
 	glm::vec4 m_Color = { 0.0f,1.0f,1.0f,1.0f };

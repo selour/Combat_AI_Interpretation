@@ -91,7 +91,7 @@ namespace Engine
 		virtual const unsigned int GetColorAttachment(unsigned index) const = 0;
 		virtual const unsigned int GetColorAttachmentSize() const = 0;
 
-		virtual const ColorAttachmentSpecification& GetSpecification(unsigned index) const = 0;
+		virtual const ColorAttachmentSpecification& GetColorAttachmentSpec(unsigned index) const = 0;
 
 		static std::shared_ptr<MRTFrameBuffer> Create(const ColorAttachmentSpecification* cas, unsigned amount, const RenderBufferSpecification* rbs = nullptr);
 

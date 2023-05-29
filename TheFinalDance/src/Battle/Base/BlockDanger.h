@@ -9,10 +9,10 @@ struct BlockDanger
 	float Time = 0;
 };
 
-class BlocKDangerSystem : public GameObject
+class BlockDangerSystem : public GameObject
 {
 public:
-	BlocKDangerSystem(unsigned int size = 50)
+	BlockDangerSystem(unsigned int size = 50)
 	{
 		m_Dangers.resize(size);
 	}

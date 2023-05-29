@@ -7,7 +7,7 @@
 namespace Engine
 {
 	//--------------------------------Shader-------------------------------------
-	std::shared_ptr<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string fragmentSrc)
+	std::shared_ptr<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (Renderer::GetRendererAPI())
 		{
@@ -61,7 +61,7 @@ namespace Engine
 		Add(shader, name);
 		return shader;
 	}
-	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& name, const std::string& vertexSrc, const std::string fragmentSrc)
+	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		auto shader = Shader::Create(name, vertexSrc, fragmentSrc);
 		Add(shader);

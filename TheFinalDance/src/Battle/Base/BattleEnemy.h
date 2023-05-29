@@ -138,8 +138,7 @@ protected:
 
 	int m_CurrentBeatTip = 0;
 	float m_BeatTipSize = 3.0f;
-	glm::vec4 m_BeatTipColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec4 m_BeatCheckColor = glm::vec4(1.2f, 1.2f, 1.2f, 1.0f);
+	
 	std::vector<BeatTip> m_BeatTips;
 	std::shared_ptr<BattleStage> m_Stage;
 	std::shared_ptr<ParticleCompomemt> m_ParticleSystem;

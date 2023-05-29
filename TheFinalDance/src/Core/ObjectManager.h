@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-class ObjectLayer
+class ObjectList
 {
 friend class ObjectManager;
 protected:
@@ -72,7 +72,7 @@ public:
 private:
 
 	std::vector<std::shared_ptr<GameObject>> m_LogicObjects;
-	std::vector<ObjectLayer> m_ObjectLayers;
+	std::vector<ObjectList> m_ObjectLayers;
 	int m_MaxIndex = 0;
 
 	ResourceManager* m_ResourceManager = nullptr;

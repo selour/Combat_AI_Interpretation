@@ -62,7 +62,6 @@ public:
 		}
 		
 	}
-	
 	void SetFather(Transform* father)
 	{
 		father->AddChild(this);
@@ -122,6 +121,7 @@ private:
 			m_TransformMatrix = glm::scale(m_TransformMatrix, m_Scale);
 			if (m_Father)
 				m_TransformMatrix = m_Father->GetMatrix() * m_TransformMatrix ;
+			m_TransformFlag = false;
 		}
 	}
 	void SetChildrenFlag()

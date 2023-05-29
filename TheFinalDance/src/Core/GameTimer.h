@@ -92,7 +92,9 @@ public:
 	GameTimeline()
 	{
 		Clear();
+		m_TimeLine.reserve(3);
 	}
+
 	TimePoint* Add(float time)
 	{
 		m_TimeLine.push_back(TimePoint(time));
@@ -227,18 +229,11 @@ public:
 		
 		
 	}
-	const std::vector<TimePoint>& GetTimeLine()
-	{
-		return m_TimeLine;
-	}
 	const float GetTime()
 	{
 		return m_Time;
 	}
-	TimePoint* Get(int index)
-	{
-		return &m_TimeLine[index];
-	}
+
 private:
 	float m_Time = 0.0f;
 	int m_CurrentIndex = 0;

@@ -27,7 +27,7 @@ float random (vec2 st, float seed)
 {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * (43758.5453123 * seed));
 }
-vec3 RGBAnoise(vec2 uv)
+vec3 RGBnoise(vec2 uv)
 {
     float seed = fract(u_Time);
     return vec3(random(uv,seed + 0.1),random(uv,seed + 0.2),random(uv,seed + 0.3));
@@ -45,7 +45,7 @@ vec4 MpegGlitch(vec2 uv)
 	vec2 uv_r = uv, uv_g = uv, uv_b = uv;
 
 	// glitch some blocks and lines
-	if (RGBAnoise(uv_noise).r < block_thresh || RGBAnoise(vec2(uv_noise.y, 0.0)).g < line_thresh) 
+	if (RGBnoise(uv_noise).r < block_thresh || RGBnoise(vec2(uv_noise.y, 0.0)).g < line_thresh) 
 	{
 
 		vec2 dist = (fract(uv_noise) - 0.5) * 0.3;
@@ -58,15 +58,15 @@ vec4 MpegGlitch(vec2 uv)
 	fragColor.g = texture(u_Texture0, uv_g).g;
 	fragColor.b = texture(u_Texture0, uv_b).b;
 	// loose luma for some blocks
-	if (RGBAnoise(uv_noise).g < block_thresh)
+	if (RGBnoise(uv_noise).g < block_thresh)
 		fragColor.rgb = fragColor.ggg;
 
 	// discolor block lines
-	if (RGBAnoise(vec2(uv_noise.y, 0.0)).b * 3.5 < line_thresh)
+	if (RGBnoise(vec2(uv_noise.y, 0.0)).b * 3.5 < line_thresh)
 		fragColor.rgb = vec3(0.0, dot(fragColor.rgb, vec3(1.0)), 0.0);
 
 	// interleave lines in some blocks
-	if (RGBAnoise(uv_noise).g * 1.5 < block_thresh || RGBAnoise(vec2(uv_noise.y, 0.0)).g * 2.5 < line_thresh) 
+	if (RGBnoise(uv_noise).g * 1.5 < block_thresh || RGBnoise(vec2(uv_noise.y, 0.0)).g * 2.5 < line_thresh) 
 	{
 		float line = fract(fragCoord.y / 3.0);
 		vec3 mask = vec3(3.0, 0.0, 0.0);
@@ -86,8 +86,8 @@ void main()
     switch(u_State)
     {
     case 0:FragColor = vec4(vec3(texture(u_Texture0,v_TexCoords).rgb),1.);break;
-    case 1:FragColor = vec4(RGBAnoise(v_TexCoords),0.5);break;
-	case 2:FragColor = vec4(MpegGlitch(v_TexCoords).rgb - RGBAnoise(v_TexCoords)*(0.1 + (1. - u_Rhythm)*0.2), 1.0);break;
+    case 1:FragColor = vec4(RGBnoise(v_TexCoords),0.5);break;
+	case 2:FragColor = vec4(MpegGlitch(v_TexCoords).rgb - RGBnoise(v_TexCoords)*(0.1 + (1. - u_Rhythm)*0.2), 1.0);break;
     }
     
 }

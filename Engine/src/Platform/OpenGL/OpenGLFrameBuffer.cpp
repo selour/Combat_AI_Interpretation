@@ -64,6 +64,30 @@ namespace Engine
 		}
 		return 0;
 	}
+	GLint GetDateInternalFormat(TextureInternalFormat format)
+	{
+		switch (format)
+		{
+		case RGB4:	 
+		case RGB5:	 
+		case RGB8:	 
+		case RGB10:	 
+		case RGB12:	 
+		case RGB16:	 
+		case RGBA2:	 
+		case RGBA4:	 
+		case RGB5A1: 
+		case RGBA8:	 
+		case RGB10A2:
+		case RGBA12: 
+		case RGBA16: return GL_UNSIGNED_BYTE;
+		case RGBA32F:
+		case RGB32F: 
+		case RGBA16F:
+		case RGB16F: return GL_FLOAT;
+		}
+		return 0;
+	}
 
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const ColorAttachmentSpecification& spec)
 		:m_HasRBO(false),  m_ColorAttachmentSpec(spec)
@@ -88,7 +112,7 @@ namespace Engine
 		glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
 		glTexImage2D(GL_TEXTURE_2D, 0, OpenGLEnum(m_ColorAttachmentSpec.InternalFormat),
 			m_ColorAttachmentSpec.Width, m_ColorAttachmentSpec.Height,
-			0, OpenGLEnum(m_ColorAttachmentSpec.Format), GL_UNSIGNED_BYTE, nullptr);
+			0, OpenGLEnum(m_ColorAttachmentSpec.Format), GetDateInternalFormat(m_ColorAttachmentSpec.InternalFormat), nullptr);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, OpenGLEnum(m_ColorAttachmentSpec.Filter));
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, OpenGLEnum(m_ColorAttachmentSpec.Filter));
@@ -161,7 +185,6 @@ namespace Engine
 		glCreateFramebuffers(1, &m_FBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-
 		unsigned int colorAttachment[32];
 		glCreateTextures(GL_TEXTURE_2D, m_Amount, colorAttachment);
 		for (int i = 0; i < m_Amount; i++)
@@ -171,7 +194,7 @@ namespace Engine
 
 			glTexImage2D(GL_TEXTURE_2D, 0, OpenGLEnum(m_ColorAttachmentSpec[i].InternalFormat),
 				m_ColorAttachmentSpec[i].Width, m_ColorAttachmentSpec[i].Height,
-				0, OpenGLEnum(m_ColorAttachmentSpec[i].Format), GL_UNSIGNED_BYTE, nullptr);
+				0, OpenGLEnum(m_ColorAttachmentSpec[i].Format), GetDateInternalFormat(m_ColorAttachmentSpec[i].InternalFormat), nullptr);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, OpenGLEnum(m_ColorAttachmentSpec[i].Filter));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, OpenGLEnum(m_ColorAttachmentSpec[i].Filter));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, OpenGLEnum(m_ColorAttachmentSpec[i].Wrap));
@@ -194,8 +217,6 @@ namespace Engine
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_RenderBufferSpec.Width, m_RenderBufferSpec.Height);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 		}
-
-		
 
 		ENGINE_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "FrameBuffer is incomplete!");
 

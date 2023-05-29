@@ -136,11 +136,11 @@ namespace Engine
 
 
 		//VeiwMatrix…Ë÷√∫Ø ˝
-		void SetPosition(const glm::vec3& postion)
+		void SetPosition(const glm::vec3& position)
 		{
 			m_UpdateFlag = true;
 			m_VeiwMatrix.m_UpdateFlag = true;
-			m_VeiwMatrix.m_Position = postion;
+			m_VeiwMatrix.m_Position = position;
 		}
 		const glm::vec3& GetPosition()
 		{

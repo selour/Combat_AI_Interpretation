@@ -54,13 +54,13 @@ private:
 	int m_Bpm = 100;
 	int m_Count = 0;
 	GameTimer m_Awake;
-	GameTimer m_Beat;
+	//GameTimer m_Beat;
 
 
 
 	TutorialResourceManager m_ResourceManager;
 
-	ObjectManager m_ObjectManager;
+	
 	
 	Engine::CameraLibrary m_CameraLibrary;
 

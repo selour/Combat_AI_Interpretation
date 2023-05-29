@@ -16,7 +16,7 @@ namespace Engine
         ENGINE_CORE_ASSERT(false, "Unknown shader type!");
         return 0;
     }
-    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string fragmentSrc)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
         :m_Name(name)
     {
 

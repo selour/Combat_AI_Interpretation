@@ -96,6 +96,8 @@ void TutorialBattleScene::OnAttach()
 
 	m_State = 0;
 	m_Awake.SetTime(2.0f);
+
+	StartShow();
 	
 }
 
@@ -135,25 +137,26 @@ void TutorialBattleScene::UpdateState(float ts)
 	switch (m_State)
 	{
 	case 0:
-		//开场终末拍教学
+		//场景启动阶段
 		m_Awake.Update(ts);
 		if (m_Awake.IsTimeOut())
 		{
-			m_Beat.SetTime(60.0f / (float)m_Bpm * 8.0f);
-			m_Beat.SetLoop(true);
+			m_Awake.SetTime(60.0f / (float)m_Bpm * 8.0f);
+			m_Awake.SetLoop(true);
 			m_State = 1;
 			m_Enemy->AddBeatTip(60.0f / (float)m_Bpm * 7.0f);
 			SoundEngine::Play2D(m_ObjectManager.GetSoundSourceLibrary()->Get("tutorial_startup"));
 		}
 		break;
 	case 1:
+		//开场终末拍教学
 		//击中后开始开场动画
+		m_Awake.Update(ts);
 		if (m_Enemy->IsOnHit())
 		{
 			StartShow();
 		}
-		m_Beat.Update(ts);
-		if (m_Beat.IsTimeOut())
+		if (m_Awake.IsTimeOut())
 		{
 			m_Enemy->AddBeatTip(60.0f / (float)m_Bpm * 7.0f);
 			SoundEngine::Play2D(m_ObjectManager.GetSoundSourceLibrary()->Get("tutorial_startup"));
@@ -196,7 +199,7 @@ void TutorialBattleScene::UpdateState(float ts)
 			m_Player->ClearStep();
 			m_Player->ChangeColor();
 			m_EnemyUI->Awake();
-			m_Post->GetNoise()->SetTime(60.0f / (float)m_Bpm * 2.0f);
+			m_Post->GetNoise()->SetTime(60.0f / (float)m_Bpm * 2.0f + 0.02f);
 			m_Post->Awake();
 			SoundEngine::Play2D(m_ObjectManager.GetSoundSourceLibrary()->Get("white_noise"));
 		}
@@ -319,6 +322,7 @@ void TutorialBattleScene::StartShow()
 	m_Stage->StartShow();
 	m_EnemyUI->StartShow();
 	m_Awake.SetTime(4.0f);
+	m_Awake.SetLoop(false);
 }
 
 void TutorialBattleScene::EndShow()

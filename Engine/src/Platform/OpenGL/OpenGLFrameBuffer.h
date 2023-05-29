@@ -44,7 +44,7 @@ namespace Engine
 		virtual const unsigned int GetColorAttachment(unsigned index) const override { return m_ColorAttachments[index]; }
 		virtual const unsigned int GetColorAttachmentSize() const override;
 
-		virtual const ColorAttachmentSpecification& GetSpecification(unsigned index) const override { return m_ColorAttachmentSpec[index]; }
+		virtual const ColorAttachmentSpecification& GetColorAttachmentSpec(unsigned index) const override { return m_ColorAttachmentSpec[index]; }
 	private:
 		unsigned int m_FBO;
 		unsigned int m_Amount;

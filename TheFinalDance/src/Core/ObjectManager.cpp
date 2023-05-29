@@ -1,23 +1,23 @@
 #include "ObjectManager.h"
 //----------------------游戏对象列表-----------------------------
-void ObjectLayer::Add(const std::shared_ptr<GameObject>& object)
+void ObjectList::Add(const std::shared_ptr<GameObject>& object)
 {
 	m_Objects.push_back(object);
 	object->Init();
 }
 
-void ObjectLayer::SetPost(const std::shared_ptr<PostObject>& object)
+void ObjectList::SetPost(const std::shared_ptr<PostObject>& object)
 {
 	m_Post = object;
 }
 
-void ObjectLayer::SetCamera(const std::shared_ptr<Engine::Camera>& camera)
+void ObjectList::SetCamera(const std::shared_ptr<Engine::Camera>& camera)
 {
 	m_Camera = camera;
 }
 
 
-void ObjectLayer::Update(float ts)
+void ObjectList::Update(float ts)
 {
 	for (auto& object : m_Objects)
 	{
@@ -25,7 +25,7 @@ void ObjectLayer::Update(float ts)
 	}
 }
 
-void ObjectLayer::Render()
+void ObjectList::Render()
 {
 	if (m_Post)
 	{
@@ -50,7 +50,7 @@ void ObjectLayer::Render()
 	
 }
 
-void ObjectLayer::OnImGuiRender()
+void ObjectList::OnImGuiRender()
 {
 	for (auto& object : m_Objects)
 	{

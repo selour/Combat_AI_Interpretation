@@ -1,10 +1,11 @@
 #include "GameLayer.h"
 #include "imgui.h"
 #include "TestScene.h"
-#include "MapSence.h"
+
 void GameLayer::OnAttach()
 {
-	LayerPushScene(new MapScene());
+	m_MapScene = new MapScene();
+	LayerPushScene(m_MapScene);
 }
 
 void GameLayer::OnDetach()
@@ -22,6 +23,7 @@ void GameLayer::OnUpdate(Engine::TimeStep ts)
 		LayerPushScene(m_BattleScene);
 		GlobalFlag::SetShouldInBattle(false);
 		GlobalFlag::SetInBattle(true);
+		m_MapScene->InBattle();
 	}
 	if (GlobalFlag::ShouldExitBattle())
 	{
@@ -29,6 +31,7 @@ void GameLayer::OnUpdate(Engine::TimeStep ts)
 		delete m_BattleScene;
 		GlobalFlag::SetInBattle(false);
 		GlobalFlag::SetShouldExitBattle(false);
+		m_MapScene->OutBattle();
 		
 	}
 		

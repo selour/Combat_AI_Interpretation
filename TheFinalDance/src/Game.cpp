@@ -12,6 +12,7 @@ class Game : public Engine::Application
 {
 public:
 	Game()
+		:Application("TheFinalDance")
 	{
 		//AppPushLayer(new TestLayer());
 		AppPushLayer(new GameLayer());

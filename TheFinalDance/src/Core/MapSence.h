@@ -1,4 +1,5 @@
 #pragma once
+#include"Audio/SoundEngine.h"
 #include "Core/Scene.h"
 #include "GlobalFlag.h"
 #include "GameInput.h"
@@ -14,8 +15,10 @@ public:
 		m_Shader = Engine::Shader::Create("assets/shaders/purity.glsl");
 		m_Player = Engine::Texture2DArray::Create("assets/textures/yanyan.png",3,2);
 		m_Sence = Engine::Texture2DArray::Create("assets/textures/MapSence.png", 1, 1);
+		m_BGM = std::make_shared<SoundSource>("assets/audio/map.wav");
 		m_Camera = std::make_shared<Engine::Camera>();
 
+		m_BGM->SetVolume(0.2f);
 		m_Transform.SetPostion(glm::vec3(-1.0f, -0.5f, 0.0f));
 		m_Transform.SetScale(glm::vec3(0.3f));
 		m_BattleTip.SetFather(&m_Transform);
@@ -23,6 +26,9 @@ public:
 		m_Metronome.SetPostion(glm::vec3(0.0f,-0.5f,0.0f));
 		m_Metronome.SetScale(glm::vec3(0.3f));
 		m_Run.AutoGenerateFrames(1, 0.2f);
+
+		SoundEngine::Play2D(m_BGM, true);
+		
 		
 	}
 
@@ -33,10 +39,6 @@ public:
 	{
 		m_Time += ts;
 		
-
-		
-
-
 		if (!GlobalFlag::InBattle())
 		{
 			
@@ -133,6 +135,14 @@ public:
 	{
 	}
 
+	void InBattle()
+	{
+		SoundEngine::StopAllSound(m_BGM);
+	}
+	void OutBattle()
+	{
+		SoundEngine::Play2D(m_BGM, true);
+	}
 private:
 
 	bool m_Battle = false;
@@ -152,6 +162,7 @@ private:
 	std::shared_ptr<Engine::Texture2DArray> m_Player;
 	std::shared_ptr<Engine::Texture2DArray> m_Sence;
 	std::shared_ptr<Engine::Camera> m_Camera;
+	std::shared_ptr<SoundSource> m_BGM;
 };
 
 

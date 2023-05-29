@@ -16,21 +16,20 @@ namespace Engine
 
 	Application* Application::s_Instance = nullptr;
 	
-	Application::Application()
+	Application::Application(const std::string& title)
 	{
 		ENGINE_ASSERT(!s_Instance, "Application already exists!")
-		s_Instance = this;
+			s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(title)));
 		m_Window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
-		
+
 		Renderer::Init();
 
 		Random::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		AppPushOverlay(m_ImGuiLayer);
-		
 	}
 	Application::~Application()
 	{

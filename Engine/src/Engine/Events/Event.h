@@ -43,8 +43,6 @@ namespace Engine
 	class Event
 	{
 	public:
-
-
 		//事件是否已被处理
 		bool m_Handled = false;
 
@@ -60,10 +58,8 @@ namespace Engine
 		{
 			return GetCategoryFlags() & category;
 		}
-		
 	};
 	//事件调度器
-	
 	class EventDispatcher
 	{
 		template<typename T>

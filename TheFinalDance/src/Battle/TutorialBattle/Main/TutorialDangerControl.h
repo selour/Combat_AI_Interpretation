@@ -2,7 +2,7 @@
 #include "Core/ObjectManager.h"
 #include "Core/GameTimer.h"
 #include "Battle/Base/BlockDanger.h"
-class TutorialDangerControl : public BlocKDangerSystem
+class TutorialDangerControl : public BlockDangerSystem
 {
 public:
 	TutorialDangerControl();

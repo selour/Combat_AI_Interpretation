@@ -15,9 +15,6 @@ namespace Engine
 		ENGINE_CORE_ERROR("GLFW Error ({0}): {1}", error_code, description);
 	}
 
-
-
-
 	GLFWWindow::GLFWWindow(const WindowProps& props)
 	{
 		Init(props);

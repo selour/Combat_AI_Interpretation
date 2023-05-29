@@ -15,7 +15,7 @@ public:
 	}
 private:
 	float m_Exposure = 1.0f;
-	float m_AspectRatio = 1280.0f / 720.0f;
+	//float m_AspectRatio = 1280.0f / 720.0f;
 	bool m_Horizontal = true;
 	std::shared_ptr <Engine::MRTFrameBuffer> m_MTRFBO;
 	std::shared_ptr <Engine::FrameBuffer> m_FBOs[3][2];

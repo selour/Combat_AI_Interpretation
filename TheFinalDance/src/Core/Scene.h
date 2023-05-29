@@ -1,4 +1,5 @@
 #pragma once
+#include "ObjectManager.h"
 #include "Engine.h"
 class Scene
 {
@@ -17,6 +18,7 @@ public:
 
 protected:
 	std::string m_DebugName;
+	ObjectManager m_ObjectManager;
 };
 
 

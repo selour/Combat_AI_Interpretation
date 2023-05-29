@@ -34,7 +34,7 @@ public:
 	}
 	void End()
 	{
-		m_Noise.SetTime(5.0f);
+		m_Noise.SetTime(5.02f);
 	}
 private:
 	float m_Time = 0;

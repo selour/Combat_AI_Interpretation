@@ -32,7 +32,7 @@ void TutorialBattleEnemy::Render(std::shared_ptr<Engine::Camera> camera)
 				onCheck = onCheck || beatTip.CheckFlag;
 				if (!beatTip.CheckFlag)
 				{
-					Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize), 0, m_BeatTipColor, beatTip.BeatCheck.GetProportion(0));
+					Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize), 0, glm::vec4(1.0f), beatTip.BeatCheck.GetProportion(0));
 
 				}
 			}
@@ -40,11 +40,11 @@ void TutorialBattleEnemy::Render(std::shared_ptr<Engine::Camera> camera)
 		}
 		if (onCheck)
 		{
-			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize / 3.0f), 0, m_BeatCheckColor, -1.0f);
+			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize / 3.0f), 0, glm::vec4(1.2f, 1.2f, 1.2f, 1.0f), -1.0f);
 		}
 		else
 		{
-			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize / 3.0f), 0, m_BeatTipColor, -1.0f);
+			Engine::Renderer2D::DrawQuad(m_Position, glm::vec2(m_BeatTipSize / 3.0f), 0, glm::vec4(1.0f), -1.0f);
 		}
 
 		Engine::Renderer2D::EndScene();
@@ -75,13 +75,7 @@ void TutorialBattleEnemy::OnImGuiRender()
 		ImGui::Text("%d Active:%d,CheckFlag:%d, Tip:%.2f, Check:%.2f",
 			i, beatTip.IsActive, beatTip.CheckFlag, beatTip.BeatCheck.GetProportion(0), beatTip.BeatCheck.GetProportion(1));;
 		ImGui::Text("Time:%.2f, CurrentIndex:%d", beatTip.BeatCheck.GetTime(), beatTip.BeatCheck.GetCurrentIndex());
-		if (!beatTip.BeatCheck.GetTimeLine().empty())
-		{
-			for (int j = 0; j < beatTip.BeatCheck.GetTimeLine().size(); j++)
-			{
-				ImGui::Text("TimePoint:%.2f, Flag:%d", beatTip.BeatCheck.GetTimeLine()[j].Time, beatTip.BeatCheck.GetTimeLine()[j].Flag);
-			}
-		}
+		
 			
 	
 	

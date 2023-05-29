@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "Core/Scene.h"
+#include "MapSence.h"
 #include "Battle/BattleScene.h"
 class GameLayer :public Engine::Layer
 {
@@ -20,6 +21,7 @@ protected:
 private:
 	int m_FPS = 0;
 	Scene* m_BattleScene = nullptr;
+	MapScene* m_MapScene = nullptr;
 	SceneStack m_SceneStack;
 
 };
